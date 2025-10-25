@@ -1,5 +1,6 @@
-#include <iostream> 
+#include <iostream>
 
-int main(){
+int main()
+{
   std::cout << "strelnikov.matvey\n";
 }
