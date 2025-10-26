@@ -2,5 +2,5 @@
 
 int main()
 {
-    std::cout << "saldaev.lev\n";
+  std::cout << "saldaev.lev\n";
 }
