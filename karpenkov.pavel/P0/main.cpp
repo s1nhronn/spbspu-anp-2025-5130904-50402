@@ -1,4 +1,6 @@
 #include <iostream>
-int main(){
+
+int main()
+{
   std::cout << "karpenkov.pavel\n";	
 }
