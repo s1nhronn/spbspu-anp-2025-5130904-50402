@@ -2,10 +2,21 @@
 #include <fstream>
 
 int* inputFunc(std::istream& input, size_t& rows, size_t& cols) {
-  input >> rows >> cols;
+  if (!(input >> rows >> cols)) {
+    return nullptr;
+  }
+  if (rows == 0 || cols == 0) {
+    return nullptr;
+  }
   int* arr = new int[rows * cols];
+  if (!arr) {
+    return nullptr;
+  }
   for (size_t i = 0; i < rows * cols; ++i) {
-    input >> arr[i];
+    if (!(input >> arr[i])) {
+      delete[] arr;
+      return nullptr;
+    }
   }
   return arr;
 }
@@ -21,10 +32,10 @@ void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_
 }
 
 size_t locMin(const int* arrdyn, size_t rows, size_t cols) {
-  size_t minimum = 0;
-  if (rows < 3 || cols < 3) {
+  if (!arrdyn || rows < 3 || cols < 3) {
     return 0;
   }
+  size_t minimum = 0;
   for (size_t i = 1; i < rows - 1; ++i) {
     for (size_t j = 1; j < cols - 1; ++j) {
       size_t k = i * cols + j;
@@ -44,7 +55,7 @@ size_t locMin(const int* arrdyn, size_t rows, size_t cols) {
 }
 
 int* lfttopclk(const int* arrdyn, size_t rows, size_t cols) {
-  if (rows == 0 || cols == 0) {
+  if (!arrdyn || rows == 0 || cols == 0) {
     return nullptr;
   }
   size_t total = rows * cols;
@@ -81,11 +92,8 @@ int* lfttopclk(const int* arrdyn, size_t rows, size_t cols) {
 }
 
 int main(int argc, char ** argv) {
-  if (argc > 4) {
-    std::cerr << "Too many arguments\n";
-    return 1;
-  } else if (argc < 4) {
-    std::cerr << "Not enough arguments\n";
+  if (argc != 4) {
+    std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
   if (argv[1][0] == '\0' || argv[1][1] != '\0') {
@@ -93,22 +101,45 @@ int main(int argc, char ** argv) {
     return 1;
   }
   char c = argv[1][0];
-  if (c == '1' || c == '2') {
-
-  } else if (c >= '0' && c <= '9') {
-    std::cerr << "First parameter is out of range\n";
-    return 1;
-  } else {
-    std::cerr << "First parameter is not a number\n";
+  if (c != '1' && c != '2') {
+    if (c >= '0' && c <= '9') {
+      std::cerr << "First parameter is out of range\n";
+    } else {
+      std::cerr << "First parameter is not a number\n";
+    }
     return 1;
   }
+
   std::ifstream input(argv[2]);
+  if (!input.is_open()) {
+    std::cerr << "Failed to open input file\n";
+    return 2;
+  }
+
   size_t rows = 0; size_t cols = 0;
   int* arrdyn = inputFunc(input, rows, cols);
   input.close();
+
   int* res2 = lfttopclk(arrdyn, rows, cols);
+  if (!res2) {
+    std::cerr << "Memory allocation failed for result\n";
+    delete[] arrdyn;
+    return 2;
+  }
+
   std::ofstream output(argv[3]);
+  if (!output.is_open()) {
+    std::cerr << "Failed to open output file\n";
+    delete[] arrdyn;
+    delete[] res2;
+    return 2;
+  }
+
   size_t res1 = locMin(arrdyn, rows, cols);
   outputFunc(output, res1, res2, rows, cols);
   output.close();
+  delete[] arrdyn;
+  delete[] res2;
+
+  return 0;
 }
