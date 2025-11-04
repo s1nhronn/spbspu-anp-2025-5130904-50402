@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstdlib>
 
 //./"main" 2 input.txt output.txt
 
@@ -22,12 +23,36 @@ int main (int argc, char ** argv)
     if (arg == "2")
     {
       // Динамический
+      long long *mtx = (long long *)malloc(r * c * sizeof(long long));
+
+      if (mtx == nullptr) {
+        std::cerr << "Get memory failed" << "\n";
+        return 2;
+      }
+
+      for (size_t i = 0; i < (r * c); i++)
+      {
+        input >> mtx[i];
+        if (input.fail()) {
+          std::cerr << "Incorrect input" << "\n";
+          free(mtx);
+          return 2;
+        }
+      }
+
+      for (size_t i = 0; i < (r * c); i++)
+      {
+        std::cout << mtx[i] << "\n";
+      }
+
+      free(mtx);
+
     } else if (arg == "1")
     {
       // Фиксированный
       int long long mtx[10000];
 
-      for (size_t i = 0; i <= (r + c); i++)
+      for (size_t i = 0; i < (r * c); i++)
       {
         input >> mtx[i];
         if (input.fail()) {
@@ -36,7 +61,7 @@ int main (int argc, char ** argv)
         }
       }
       
-      //for (size_t i = 0; i <= (r + c); i++)
+      //for (size_t i = 0; i < (r * c); i++)
       //{
       //  std::cout << mtx[i] << "\n";
       //}
@@ -57,7 +82,5 @@ int main (int argc, char ** argv)
     std::cerr << "Incorrect quantity of arguments" << "\n";
     return 1;
   }
-  
-  
   return 0;
 }
