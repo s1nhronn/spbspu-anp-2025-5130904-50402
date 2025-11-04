@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+int* input_func(std::istream& input, size_t& rows, size_t& cols);
+
 int main(int argc, char ** argv) {
   if (argc > 4) {
     std::cerr << "Too many arguments\n";
@@ -17,12 +19,21 @@ int main(int argc, char ** argv) {
   if (c == '1' || c == '2') {
 
   } else if (c >= '0' && c <= '9') {
-      std::cerr << "First parameter is out of range\n";
-      return 1;
+    std::cerr << "First parameter is out of range\n";
+    return 1;
   } else {
-      std::cerr << "First parameter is not a number\n";
-      return 1;
+    std::cerr << "First parameter is not a number\n";
+    return 1;
   }
   std::ifstream input(argv[2]);
   std::ofstream output(argv[3]);
+}
+
+int* input_func(std::istream& input, size_t& rows, size_t& cols) {
+  input >> rows >> cols;
+  int* arr = new int[rows * cols];
+  for (size_t i = 0; i < rows * cols; ++i) {
+    input >> arr[i];
+  }
+  return arr;
 }
