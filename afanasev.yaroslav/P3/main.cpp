@@ -15,28 +15,43 @@ int main (int argc, char ** argv)
     }
 
     size_t r = 0, c = 0;
-    int a = 0;
 
     std::ifstream input(argv[2]);
     input >> r >> c;
-    input >> a;
+
+    if (arg == "2")
+    {
+      // Динамический
+    } else if (arg == "1")
+    {
+      // Фиксированный
+      int long long mtx[10000];
+
+      for (size_t i = 0; i <= (r + c); i++)
+      {
+        input >> mtx[i];
+        if (input.fail()) {
+          std::cerr << "Incorrect input" << "\n";
+          return 2;
+        }
+      }
+      
+      //for (size_t i = 0; i <= (r + c); i++)
+      //{
+      //  std::cout << mtx[i] << "\n";
+      //}
+    }
 
     input.close();
 
-    std::cout << "file :" << r << c << a << "\n";
+    //std::cout << "file :" << r << c << a << "\n";
 
     std::ofstream output(argv[3]);
     //output << a;
 
-    if (arg == "2")
-    {
-      std::cout << 22 << "\n";
-      // Динамический
-    } else if (arg == "1")
-    {
-      std::cout << 11 << "\n";
-      // Фиксированный
-    }
+    
+
+
   } else
   {
     std::cerr << "Incorrect quantity of arguments" << "\n";
