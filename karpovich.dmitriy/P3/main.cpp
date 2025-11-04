@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-int* input_func(std::istream& input, size_t& rows, size_t& cols);
+int* inputFunc(std::istream& input, size_t& rows, size_t& cols);
+void outputFunc(std::ostream& output, const int* arr, size_t rows, size_t cols);
 
 int main(int argc, char ** argv) {
   if (argc > 4) {
@@ -26,14 +27,31 @@ int main(int argc, char ** argv) {
     return 1;
   }
   std::ifstream input(argv[2]);
+  size_t rows = 0; size_t cols = 0;
+  int* arrdyn = inputFunc(input, rows, cols);
+  input.close();
   std::ofstream output(argv[3]);
+  outputFunc(output, arrdyn, rows, cols);
+  output.close();
 }
 
-int* input_func(std::istream& input, size_t& rows, size_t& cols) {
+int* inputFunc(std::istream& input, size_t& rows, size_t& cols) {
   input >> rows >> cols;
   int* arr = new int[rows * cols];
   for (size_t i = 0; i < rows * cols; ++i) {
     input >> arr[i];
   }
   return arr;
+}
+
+void outputFunc(std::ostream& output, const int* arr, size_t rows, size_t cols) {
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; j++) {
+      output << arr[i*cols + j];
+      if (j + 1 < cols) {
+        output << ' ';
+      }
+    }
+    output << '\n';
+  }
 }
