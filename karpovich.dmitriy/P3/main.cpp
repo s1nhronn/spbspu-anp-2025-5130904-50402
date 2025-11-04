@@ -2,7 +2,8 @@
 #include <fstream>
 
 int* inputFunc(std::istream& input, size_t& rows, size_t& cols);
-void outputFunc(std::ostream& output, const int* arr, size_t rows, size_t cols);
+void outputFunc(std::ostream& output, size_t res1, size_t res2);
+size_t localmin(int* arrdyn, size_t rows, size_t cols);
 
 int main(int argc, char ** argv) {
   if (argc > 4) {
@@ -31,7 +32,8 @@ int main(int argc, char ** argv) {
   int* arrdyn = inputFunc(input, rows, cols);
   input.close();
   std::ofstream output(argv[3]);
-  outputFunc(output, arrdyn, rows, cols);
+  size_t res = localmin(arrdyn, rows, cols);
+  outputFunc(output, res, 0);
   output.close();
 }
 
@@ -44,14 +46,30 @@ int* inputFunc(std::istream& input, size_t& rows, size_t& cols) {
   return arr;
 }
 
-void outputFunc(std::ostream& output, const int* arr, size_t rows, size_t cols) {
-  for (size_t i = 0; i < rows; ++i) {
-    for (size_t j = 0; j < cols; j++) {
-      output << arr[i*cols + j];
-      if (j + 1 < cols) {
-        output << ' ';
+void outputFunc(std::ostream& output, size_t res1, size_t res2) {
+  output << res1 << '\n';
+  output << res2 << '\n';
+}
+
+size_t localmin(int* arrdyn, size_t rows, size_t cols) {
+  size_t minimum = 0;
+  if (rows < 3 || cols < 3) {
+    return 0;
+  }
+  for (size_t i = 1; i < rows - 1; ++i) {
+    for (size_t j = 1; j < cols - 1; ++j) {
+      size_t k = i * cols + j;
+      int now = arrdyn[k];
+      bool yeslocalmin = (now < arrdyn[k - 1]) && (now < arrdyn[k + 1]);
+      yeslocalmin = yeslocalmin && (now < arrdyn[k - cols]) && (now < arrdyn[k + cols]);
+      yeslocalmin = yeslocalmin && (now < arrdyn[k - 1 + cols]);
+      yeslocalmin = yeslocalmin && (now < arrdyn[k + 1 + cols]);
+      yeslocalmin = yeslocalmin && (now < arrdyn[k + 1 - cols]);
+      yeslocalmin = yeslocalmin && (now < arrdyn[k - 1 - cols]);
+      if (yeslocalmin) {
+        minimum += 1;
       }
     }
-    output << '\n';
   }
+  return minimum;
 }
