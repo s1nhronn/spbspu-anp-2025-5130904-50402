@@ -122,7 +122,7 @@ int main(int argc, char ** argv) {
   std::cerr << "Failed to read input data\n";
   return 2;
   }
-  
+
   int* res2 = karp::lfttopclk(arrdyn, rows, cols);
 
   std::ofstream output(argv[3]);
