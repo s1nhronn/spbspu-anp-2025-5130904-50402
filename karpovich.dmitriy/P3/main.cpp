@@ -8,13 +8,21 @@ int main(int argc, char ** argv) {
   } else if (argc < 4) {
     std::cerr << "Not enough arguments\n";
     return 1;
-  } else if ((argv[1][0] > '2' && argv[1][0] < '9')|| (argv[1][0] < '1' && argv[1][0] > '0')) {
-    std::cerr << "First parametr is out of range\n";
-    return 1;
-  } else if (argv[1][0] != '2' && argv[1][0] != '1') {
-    std::cerr << "First parametr is not a number\n";
+  }
+  if (argv[1][0] == '\0' || argv[1][1] != '\0') {
+    std::cerr << "First parameter is not a number\n";
     return 1;
   }
+  char c = argv[1][0];
+  if (c == '1' || c == '2') {
+
+  } else if (c >= '0' && c <= '9') {
+      std::cerr << "First parameter is out of range\n";
+      return 1;
+  } else {
+      std::cerr << "First parameter is not a number\n";
+      return 1;
+  }
   std::ifstream input(argv[2]);
-  std::ifstream input(argv[3]);
+  std::ofstream output(argv[3]);
 }
