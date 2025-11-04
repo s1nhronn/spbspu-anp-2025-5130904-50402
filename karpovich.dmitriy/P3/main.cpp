@@ -6,22 +6,16 @@ namespace karpovich
     if (!(input >> rows >> cols)) {
       return nullptr;
     }
-    if (rows == 0 || cols == 0) {
-      return nullptr;
-    }
-    int* arr = new int[rows * cols];
-    if (!arr) {
-      return nullptr;
-    }
-    for (size_t i = 0; i < rows * cols; ++i) {
+    size_t total = rows * cols;
+    int* arr = new int[total];
+    for (size_t i = 0; i < total; ++i) {
       if (!(input >> arr[i])) {
         delete[] arr;
         return nullptr;
       }
     }
     return arr;
-  }
-
+}
   void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols) {
     output << res1 << '\n';
     output << rows << ' ';
@@ -56,13 +50,16 @@ namespace karpovich
   }
 
   int* lfttopclk(const int* arrdyn, size_t rows, size_t cols) {
-    if (!arrdyn || rows == 0 || cols == 0) {
+    if (!arrdyn) {
       return nullptr;
     }
     size_t total = rows * cols;
     int* result = new int[total];
     for (size_t i = 0; i < total; ++i) {
       result[i] = arrdyn[i];
+    }
+    if (total == 0) {
+      return result;
     }
     size_t top = 0, bottom = rows - 1;
     size_t left = 0, right = cols - 1;
@@ -121,13 +118,12 @@ int main(int argc, char ** argv) {
   namespace karp = karpovich;
   int* arrdyn = karp::inputFunc(input, rows, cols);
   input.close();
-
-  int* res2 = karp::lfttopclk(arrdyn, rows, cols);
-  if (!res2) {
-    std::cerr << "Memory allocation failed for result\n";
-    delete[] arrdyn;
-    return 2;
+  if (!arrdyn) {
+  std::cerr << "Failed to read input data\n";
+  return 2;
   }
+  
+  int* res2 = karp::lfttopclk(arrdyn, rows, cols);
 
   std::ofstream output(argv[3]);
   if (!output.is_open()) {
