@@ -3,7 +3,7 @@
 namespace chernikov
 {
     void output (const int * a, size_t c, size_t r);
-    bool down_triangle_matrix (const int * a, int rows, int cols);
+    bool is_down_triangle_matrix (const int * a, int rows, int cols);
 }
 
 int main (int argc, char ** argv)
@@ -72,9 +72,13 @@ int main (int argc, char ** argv)
 
   //LWR-TRI-MTX
   namespace cher = chernikov;
-  bool LWR_TRI_MTX = down_triangle_matrix (a, rows, cols);
+  bool LWR_TRI_MTX = is_down_triangle_matrix (a, rows, cols);
   std::ofstream output(argv[3]);
   output << "LWR_TRI_MTX = " << LWR_TRI_MTX << "\n";
+
+  //MAX
+  size_t CNT_LOC_MAX = local_max_quantity (a, rows, cols);
+  output << "CNT_LOC_MAX = " << CNT_LOC_MAX << "\n";
 
   std::ofstream output(argv[3]);
   output(output, ... ) << "\n"
@@ -90,11 +94,11 @@ void output (std::ostream & out, const int * a, size_t c, size_t r)
   return out << ... ;
 }
 
-bool down_triangle_matrix(const int* a, int rows, int cols)
+bool is_down_triangle_matrix(const int* a, int rows, int cols)
 {
   if (rows == cols)
   {
-    if (&a[0] == 0)
+    if (a[0] == 0)
     {
       int k = 0;
       for (size_t i = 0; i < (rows - 1); ++i)
@@ -102,7 +106,7 @@ bool down_triangle_matrix(const int* a, int rows, int cols)
         int line = rows * i;
         for (size_t j = 0; j < (cols - k); ++j)
         {
-          if (&a[j + line] != 0)
+          if (a[j + line] != 0)
           {
               return false;
           }
@@ -111,7 +115,7 @@ bool down_triangle_matrix(const int* a, int rows, int cols)
       }
       return true;
     }
-    if (&a[cols - 1] == 0)
+    if (a[cols - 1] == 0)
     {
       int k = 0;
       for (size_t i = 0; i < (rows - 1); ++i)
@@ -119,7 +123,7 @@ bool down_triangle_matrix(const int* a, int rows, int cols)
         int line = rows * i;
         for (size_t j = (cols); j > k; --j)
         {
-          if (&a[j - line] != 0)
+          if (a[j - line] != 0)
           {
             return false;
           }
@@ -137,4 +141,33 @@ bool down_triangle_matrix(const int* a, int rows, int cols)
   {
       return false;
   }
+}
+
+size_t local_max_quantity(const int* a, int rows, int cols)
+{
+  if (rows < 3 || cols < 3)
+  {
+    return 0;
+  }
+  size_t count = 0;
+  for (size_t i = 1; i < (rows - 1); ++i)
+  {
+    for (size_t j = 1; j < (cols - 1); ++j)
+    {
+      t = a[j + i * cols];
+      l1 = t > a[(j - 1) + (i - 1) * cols];
+      l2 = t > a[j + (i - 1) * cols];
+      l3 = t > a[(j + 1) + (i - 1) * cols];
+      l4 = t > a[(j - 1) + i * cols];
+      l5 = t > a[(j + 1) + i * cols];
+      l6 = t > a[(j - 1) + (i + 1) * cols];
+      l7 = t > a[j + (i + 1) * cols];
+      l1 = t > a[(j + 1) + (i + 1) * cols];
+      if (l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8 == 8)
+      {
+        count++;
+      }
+    }
+  }
+  return count;
 }
