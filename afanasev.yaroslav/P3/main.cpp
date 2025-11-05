@@ -84,7 +84,7 @@ int main (int argc, char ** argv)
     size_t r = 0, c = 0;
     std::ifstream input(argv[2]);
     input >> r >> c;
-    if (input.fail())
+    if (input.fail() || r < 0 || c < 0)
     {
       std::cerr << "Incorrect input" << "\n";
       return 2;
