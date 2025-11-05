@@ -5,7 +5,7 @@
 
 namespace afanasev
 {
-  int long long CNT_LOC_MIN(long long *mtx, size_t r, size_t c)
+  int long long CNT_LOC_MIN(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
     long long int n = 0;
@@ -37,7 +37,7 @@ namespace afanasev
     return ans;
   }
 
-  int long long CNT_LOC_MAX(long long *mtx, size_t r, size_t c)
+  int long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
     long long int n = 0;
@@ -82,9 +82,9 @@ int main (int argc, char ** argv)
     }
 
     size_t r = 0, c = 0;
-
     std::ifstream input(argv[2]);
     input >> r >> c;
+
     if (arg == "2")
     {
       long long *mtx = (long long *)malloc(r * c * sizeof(long long));
@@ -115,8 +115,8 @@ int main (int argc, char ** argv)
       std::ofstream output(argv[3]);
       output << min << " " << max << "\n";
       output.close();
-
-    } else if (arg == "1")
+    }
+    else if (arg == "1")
     {
       long long mtx[10000] = {};
 
@@ -139,8 +139,8 @@ int main (int argc, char ** argv)
       output.close();
     }
     input.close();
-
-  } else
+  }
+  else
   {
     std::cerr << "Incorrect quantity of arguments" << "\n";
     return 1;
