@@ -7,7 +7,7 @@ namespace afanasev
 {
   long long CNT_LOC_MIN(const long long *mtx, const size_t r, const size_t c)
   {
-    if (r < 3 || c < 3)
+    if (!mtx || r < 3 || c < 3)
     {
       return 0;
     }
@@ -43,6 +43,10 @@ namespace afanasev
 
   long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
   {
+    if (!mtx || r < 3 || c < 3)
+    {
+      return 0;
+    }
     bool flag = 1;
     long long n = 0;
     size_t ans = 0;
