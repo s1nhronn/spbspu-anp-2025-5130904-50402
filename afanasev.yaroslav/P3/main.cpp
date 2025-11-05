@@ -40,7 +40,7 @@ namespace afanasev
   int long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
-    long long int n = 0;
+    int long long n = 0;
     size_t ans = 0;
 
     for (size_t y = 1; y < r - 1; y++)
