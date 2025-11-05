@@ -81,14 +81,15 @@ int main (int argc, char ** argv)
       return 1;
     }
 
-    long long r = 0, c = 0;
+    long long r_1 = 0, c_1 = 0;
     std::ifstream input(argv[2]);
-    input >> r >> c;
-    if (input.fail() || r < 0 || c < 0)
+    input >> r_1 >> c_1;
+    if (input.fail() || r_1 < 0 || c_1 < 0)
     {
       std::cerr << "Incorrect input" << "\n";
       return 2;
     }
+    size_t r = r_1, c = c_1;
 
     if (arg == "2")
     {
