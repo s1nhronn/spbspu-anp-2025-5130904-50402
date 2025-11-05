@@ -27,7 +27,7 @@ namespace afanasev
         flag = flag && (n < mtx[(y + 1) * c + (x - 1)]);
         flag = flag && (n < mtx[(y + 1) * c + (x)]);
         flag = flag && (n < mtx[(y + 1) * c + (x + 1)]);
-        
+
         if (flag)
         {
           ans++;
@@ -59,7 +59,7 @@ namespace afanasev
         flag = flag && (n > mtx[(y + 1) * c + (x - 1)]);
         flag = flag && (n > mtx[(y + 1) * c + (x)]);
         flag = flag && (n > mtx[(y + 1) * c + (x + 1)]);
-        
+
         if (flag)
         {
           ans++;
