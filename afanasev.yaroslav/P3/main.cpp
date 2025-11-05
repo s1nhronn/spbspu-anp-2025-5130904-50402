@@ -5,7 +5,7 @@
 
 namespace afanasev
 {
-  long long CNT_LOC_MIN(const long long *mtx, const long long r, const long long c)
+  long long CNT_LOC_MIN(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
     long long n = 0;
@@ -37,7 +37,7 @@ namespace afanasev
     return ans;
   }
 
-  long long CNT_LOC_MAX(const long long *mtx, const long long r, const long long c)
+  long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
     long long n = 0;
