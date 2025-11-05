@@ -5,10 +5,10 @@
 
 namespace afanasev
 {
-  int long long CNT_LOC_MIN(const int long long *mtx, const size_t r, const size_t c)
+  long long CNT_LOC_MIN(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
-    int long long n = 0;
+    long long n = 0;
     size_t ans = 0;
 
     for (size_t y = 1; y < r - 1; y++)
@@ -37,10 +37,10 @@ namespace afanasev
     return ans;
   }
 
-  int long long CNT_LOC_MAX(const int long long *mtx, const size_t r, const size_t c)
+  long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
-    int long long n = 0;
+    long long n = 0;
     size_t ans = 0;
 
     for (size_t y = 1; y < r - 1; y++)
@@ -92,7 +92,7 @@ int main (int argc, char ** argv)
 
     if (arg == "2")
     {
-      int long long *mtx = (int long long *)malloc(r * c * sizeof(int long long));
+      long long *mtx = (long long *)malloc(r * c * sizeof(long long));
 
       if (mtx == nullptr)
       {
@@ -110,9 +110,9 @@ int main (int argc, char ** argv)
         }
       }
 
-      int long long min = 0;
+      long long min = 0;
       min = afanasev::CNT_LOC_MIN(mtx, r, c);
-      int long long max = 0;
+      long long max = 0;
       max = afanasev::CNT_LOC_MAX(mtx, r, c);
 
       free(mtx);
@@ -123,7 +123,7 @@ int main (int argc, char ** argv)
     }
     else if (arg == "1")
     {
-      int long long mtx[10000] = {};
+      long long mtx[10000] = {};
 
       for (size_t i = 0; i < (r * c); i++)
       {
@@ -134,9 +134,9 @@ int main (int argc, char ** argv)
           return 2;
         }
       }
-      int long long min = 0;
+      long long min = 0;
       min = afanasev::CNT_LOC_MIN(mtx, r, c);
-      int long long max = 0;
+      long long max = 0;
       max = afanasev::CNT_LOC_MAX(mtx, r, c);
 
       std::ofstream output(argv[3]);
