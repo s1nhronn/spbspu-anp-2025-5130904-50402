@@ -123,7 +123,8 @@ int main (int argc, char ** argv)
       for (size_t i = 0; i < (r * c); i++)
       {
         input >> mtx[i];
-        if (input.fail()) {
+        if (input.fail())
+        {
           std::cerr << "Incorrect input" << "\n";
           return 2;
         }
