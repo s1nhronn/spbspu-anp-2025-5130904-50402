@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstring>
 #include <fstream>
 
 namespace dirko
@@ -20,8 +19,11 @@ int main(int argc, char const **argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  mode = atoi(argv[1]);
-  if (mode == 0 || std::strlen(argv[1]) > 1)
+  try
+  {
+    mode = std::stoi(argv[1]);
+  }
+  catch (std::out_of_range &e)
   {
     std::cerr << "First parameter is not a number\n";
     return 1;
