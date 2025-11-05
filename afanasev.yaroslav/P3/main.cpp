@@ -5,15 +5,70 @@
 
 //./"main" 2 input.txt output.txt
 
-namespace afanasev {
-  int long long CNT_LOC_MIN(long long *mtx, size_t a)
+namespace afanasev
+{
+  int long long CNT_LOC_MIN(long long *mtx, size_t r, size_t c)
   {
-    return 0;
+    bool flag = 1;
+    long long int n = 0;
+    size_t ans = 0;
+
+    for (size_t y = 1; y < r - 1; y++)
+    {
+      flag = 1;
+      for (size_t x = 1; x < c - 1; x++)
+      {
+        n = mtx[(y * c) + (x)];
+        flag = flag && (n < mtx[(y - 1) * c + (x - 1)]);
+        flag = flag && (n < mtx[(y - 1) * c + (x)]);
+        flag = flag && (n < mtx[(y - 1) * c + (x + 1)]);
+
+        flag = flag && (n < mtx[(y * c) + (x - 1)]);
+        flag = flag && (n < mtx[(y * c) + (x + 1)]);
+
+        flag = flag && (n < mtx[(y + 1) * c + (x - 1)]);
+        flag = flag && (n < mtx[(y + 1) * c + (x)]);
+        flag = flag && (n < mtx[(y + 1) * c + (x + 1)]);
+        
+        if (flag)
+        {
+          ans++;
+        }
+      }
+    }
+    return ans;
   }
 
-  int long long CNT_LOC_MAX(long long *mtx, size_t a)
+  int long long CNT_LOC_MAX(long long *mtx, size_t r, size_t c)
   {
-    return 0;
+    bool flag = 1;
+    long long int n = 0;
+    size_t ans = 0;
+
+    for (size_t y = 1; y < r - 1; y++)
+    {
+      flag = 1;
+      for (size_t x = 1; x < c - 1; x++)
+      {
+        n = mtx[(y * c) + (x)];
+        flag = flag && (n > mtx[(y - 1) * c + (x - 1)]);
+        flag = flag && (n > mtx[(y - 1) * c + (x)]);
+        flag = flag && (n > mtx[(y - 1) * c + (x + 1)]);
+
+        flag = flag && (n > mtx[(y * c) + (x - 1)]);
+        flag = flag && (n > mtx[(y * c) + (x + 1)]);
+
+        flag = flag && (n > mtx[(y + 1) * c + (x - 1)]);
+        flag = flag && (n > mtx[(y + 1) * c + (x)]);
+        flag = flag && (n > mtx[(y + 1) * c + (x + 1)]);
+        
+        if (flag)
+        {
+          ans++;
+        }
+      }
+    }
+    return ans;
   }
 }
 
@@ -32,12 +87,7 @@ int main (int argc, char ** argv)
 
     std::ifstream input(argv[2]);
     input >> r >> c;
-    if (!(r * c))
-    {
-      std::ofstream output(argv[3]);
-      output << "0 0";
-      output.close();
-    } else if (arg == "2")
+    if (arg == "2")
     {
       // Динамический
       long long *mtx = (long long *)malloc(r * c * sizeof(long long));
@@ -60,9 +110,9 @@ int main (int argc, char ** argv)
 
 
       int long long min = 0;
-      min = afanasev::CNT_LOC_MIN(mtx, r * c);
+      min = afanasev::CNT_LOC_MIN(mtx, r, c);
       int long long max = 0;
-      min = afanasev::CNT_LOC_MAX(mtx, r * c);
+      max = afanasev::CNT_LOC_MAX(mtx, r, c);
 
       free(mtx);
 
@@ -73,7 +123,7 @@ int main (int argc, char ** argv)
     } else if (arg == "1")
     {
       // Фиксированный
-      int long long mtx[10000];
+      long long mtx[10000] = {};
 
       for (size_t i = 0; i < (r * c); i++)
       {
@@ -83,11 +133,16 @@ int main (int argc, char ** argv)
           return 2;
         }
       }
-      
-      //for (size_t i = 0; i < (r * c); i++)
-      //{
-      //  std::cout << mtx[i] << "\n";
-      //}
+
+      int long long min = 0;
+      min = afanasev::CNT_LOC_MIN(mtx, r, c);
+      int long long max = 0;
+      max = afanasev::CNT_LOC_MAX(mtx, r, c);
+
+
+      std::ofstream output(argv[3]);
+      output << min << " " << max << "\n";
+      output.close();
     }
 
     input.close();
