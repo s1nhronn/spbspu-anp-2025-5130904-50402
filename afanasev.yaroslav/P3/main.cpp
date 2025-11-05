@@ -92,7 +92,7 @@ int main (int argc, char ** argv)
 
     if (arg == "2")
     {
-      long long *mtx = (long long *)malloc(r * c * sizeof(long long));
+      long long *mtx = static_cast<long long*>(malloc(r * c * sizeof(long long)));
 
       if (mtx == nullptr)
       {
