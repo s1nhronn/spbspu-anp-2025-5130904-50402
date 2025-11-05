@@ -5,10 +5,10 @@
 
 namespace afanasev
 {
-  int long long CNT_LOC_MIN(const long long *mtx, const size_t r, const size_t c)
+  int long long CNT_LOC_MIN(const int long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
-    long long int n = 0;
+    int long long n = 0;
     size_t ans = 0;
 
     for (size_t y = 1; y < r - 1; y++)
@@ -37,7 +37,7 @@ namespace afanasev
     return ans;
   }
 
-  int long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
+  int long long CNT_LOC_MAX(const int long long *mtx, const size_t r, const size_t c)
   {
     bool flag = 1;
     int long long n = 0;
@@ -84,10 +84,15 @@ int main (int argc, char ** argv)
     size_t r = 0, c = 0;
     std::ifstream input(argv[2]);
     input >> r >> c;
+    if (input.fail())
+    {
+      std::cerr << "Incorrect input" << "\n";
+      return 2;
+    }
 
     if (arg == "2")
     {
-      long long *mtx = (long long *)malloc(r * c * sizeof(long long));
+      int long long *mtx = (int long long *)malloc(r * c * sizeof(int long long));
 
       if (mtx == nullptr)
       {
@@ -118,7 +123,7 @@ int main (int argc, char ** argv)
     }
     else if (arg == "1")
     {
-      long long mtx[10000] = {};
+      int long long mtx[10000] = {};
 
       for (size_t i = 0; i < (r * c); i++)
       {
