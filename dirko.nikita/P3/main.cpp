@@ -27,6 +27,7 @@ namespace dirko
           throw std::logic_error("Cant read");
         }
       }
+      return arr;
     }
     catch (std::bad_alloc &e)
     {
@@ -34,8 +35,31 @@ namespace dirko
     }
   }
   int *var1(int *arr, size_t r, size_t c);
-  bool var2(int *arr, size_t r, size_t c);
-  std::ostream &output(std::ostream &out, int *arr, size_t r, size_t c)
+  bool var2(const int *arr, size_t r, size_t c)
+  {
+    size_t min = (r > c) ? c : r;
+    size_t line = 0;
+    for (size_t i = 0; i < min; ++i)
+    {
+      for (size_t j = line; j < line + i + 1; ++j)
+      {
+        if (arr[i + j] == 0)
+        {
+          return false;
+        }
+      }
+      for (size_t j = line + i + 1; j < line + min; j++)
+      {
+        if (arr[i + j] != 0)
+        {
+          return false;
+        }
+      }
+      line += min - 1;
+    }
+    return true;
+  }
+  std::ostream &output(std::ostream &out, const int *arr, size_t r, size_t c)
   {
     out << r << ' ' << c << ' ';
     for (size_t i = 0; i < r * c - 1; ++i)
@@ -100,7 +124,7 @@ int main(int argc, char const **argv)
       res1 = dirko::var1(arr, rows, cols);
       res2 = dirko::var2(arr, rows, cols);
       std::ofstream fout(argv[3]);
-      dirko::output(fout, arr, rows, cols) << '\n';
+      dirko::output(fout, res1, rows, cols) << '\n';
       fout << std::boolalpha << res2 << '\n';
     }
     catch (std::logic_error &e)
