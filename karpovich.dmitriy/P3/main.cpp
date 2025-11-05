@@ -135,7 +135,7 @@ int main(int argc, char ** argv) {
   size_t rows = 0; 
   size_t cols = 0;
   namespace karp = karpovich;
-  
+
   if (c == '1') {
     int arr_static[karp::MAX];
     if (!karp::inputStaticFunc(input, arr_static, rows, cols)) {
@@ -144,25 +144,25 @@ int main(int argc, char ** argv) {
       return 2;
     }
     input.close();
-    
+
     int* res2 = karp::lfttopclk(arr_static, rows, cols);
     if (!res2) {
       std::cerr << "Failed to process matrix\n";
       return 2;
     }
-    
+
     std::ofstream output(argv[3]);
     if (!output.is_open()) {
       std::cerr << "Failed to open output file\n";
       delete[] res2;
       return 2;
     }
-    
+
     size_t res1 = karp::locMin(arr_static, rows, cols);
     karp::outputFunc(output, res1, res2, rows, cols);
     output.close();
     delete[] res2;
-  } 
+  }
   else if (c == '2') {
     int* arrdyn = karp::inputFunc(input, rows, cols);
     input.close();
