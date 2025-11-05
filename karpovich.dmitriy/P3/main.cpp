@@ -2,6 +2,23 @@
 #include <fstream>
 namespace karpovich
 {
+  const size_t MAX = 10000;
+
+  bool inputStaticFunc(std::istream& input, int* arr, size_t& rows, size_t& cols) {
+    if (!(input >> rows >> cols)) {
+      return false;
+    }
+    if (rows * cols > MAX) {
+      return false;
+    }
+    for (size_t i = 0; i < rows * cols; ++i) {
+      if (!(input >> arr[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   int* inputFunc(std::istream& input, size_t& rows, size_t& cols) {
     if (!(input >> rows >> cols)) {
       return nullptr;
@@ -15,7 +32,8 @@ namespace karpovich
       }
     }
     return arr;
-}
+  }
+
   void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols) {
     output << res1 << '\n';
     output << rows << ' ';
@@ -114,30 +132,61 @@ int main(int argc, char ** argv) {
     return 2;
   }
 
-  size_t rows = 0; size_t cols = 0;
+  size_t rows = 0; 
+  size_t cols = 0;
   namespace karp = karpovich;
-  int* arrdyn = karp::inputFunc(input, rows, cols);
-  input.close();
-  if (!arrdyn) {
-  std::cerr << "Failed to read input data\n";
-  return 2;
-  }
+  
+  if (c == '1') {
+    int arr_static[karp::MAX];
+    if (!karp::inputStaticFunc(input, arr_static, rows, cols)) {
+      std::cerr << "Failed to read input data\n";
+      input.close();
+      return 2;
+    }
+    input.close();
+    
+    int* res2 = karp::lfttopclk(arr_static, rows, cols);
+    if (!res2) {
+      std::cerr << "Failed to process matrix\n";
+      return 2;
+    }
+    
+    std::ofstream output(argv[3]);
+    if (!output.is_open()) {
+      std::cerr << "Failed to open output file\n";
+      delete[] res2;
+      return 2;
+    }
+    
+    size_t res1 = karp::locMin(arr_static, rows, cols);
+    karp::outputFunc(output, res1, res2, rows, cols);
+    output.close();
+    delete[] res2;
+  } 
+  else if (c == '2') {
+    int* arrdyn = karp::inputFunc(input, rows, cols);
+    input.close();
+    if (!arrdyn) {
+      std::cerr << "Failed to read input data\n";
+      return 2;
+    }
 
-  int* res2 = karp::lfttopclk(arrdyn, rows, cols);
+    int* res2 = karp::lfttopclk(arrdyn, rows, cols);
 
-  std::ofstream output(argv[3]);
-  if (!output.is_open()) {
-    std::cerr << "Failed to open output file\n";
+    std::ofstream output(argv[3]);
+    if (!output.is_open()) {
+      std::cerr << "Failed to open output file\n";
+      delete[] arrdyn;
+      delete[] res2;
+      return 2;
+    }
+
+    size_t res1 = karp::locMin(arrdyn, rows, cols);
+    karp::outputFunc(output, res1, res2, rows, cols);
+    output.close();
     delete[] arrdyn;
     delete[] res2;
-    return 2;
   }
-
-  size_t res1 = karp::locMin(arrdyn, rows, cols);
-  karp::outputFunc(output, res1, res2, rows, cols);
-  output.close();
-  delete[] arrdyn;
-  delete[] res2;
 
   return 0;
 }
