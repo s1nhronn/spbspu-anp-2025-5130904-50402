@@ -35,7 +35,15 @@ namespace dirko
   }
   int *var1(int *arr, size_t r, size_t c);
   bool var2(int *arr, size_t r, size_t c);
-  std::ostream &output(std::ostream &out, int *arr, size_t r, size_t c);
+  std::ostream &output(std::ostream &out, int *arr, size_t r, size_t c)
+  {
+    out << r << ' ' << c << ' ';
+    for (size_t i = 0; i < r * c - 1; ++i)
+    {
+      out << arr[i] << ' ';
+    }
+    return out << arr[r * c - 1];
+  }
 }
 
 int main(int argc, char const **argv)
@@ -92,8 +100,8 @@ int main(int argc, char const **argv)
       res1 = dirko::var1(arr, rows, cols);
       res2 = dirko::var2(arr, rows, cols);
       std::ofstream fout(argv[3]);
-      dirko::output(fout, arr, rows, cols);
-      fout << std::boolalpha << res2;
+      dirko::output(fout, arr, rows, cols) << '\n';
+      fout << std::boolalpha << res2 << '\n';
     }
     catch (std::logic_error &e)
     {
@@ -124,8 +132,8 @@ int main(int argc, char const **argv)
     res1 = dirko::var1(arr, rows, cols);
     res2 = dirko::var2(arr, rows, cols);
     std::ofstream fout(argv[3]);
-    dirko::output(fout, res1, rows, cols);
-    fout << std::boolalpha << res2;
+    dirko::output(fout, res1, rows, cols) << '\n';
+    fout << std::boolalpha << res2 << '\n';
     delete[] arr;
     delete[] res1;
   }
