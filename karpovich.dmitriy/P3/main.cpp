@@ -3,7 +3,6 @@
 namespace karpovich
 {
   const size_t MAX = 10000;
-
   bool inputStaticFunc(std::istream& input, int* arr, size_t& rows, size_t& cols) {
     if (!(input >> rows >> cols)) {
       return false;
@@ -18,7 +17,6 @@ namespace karpovich
     }
     return true;
   }
-
   int* inputFunc(std::istream& input, size_t& rows, size_t& cols) {
     if (!(input >> rows >> cols)) {
       return nullptr;
@@ -33,7 +31,6 @@ namespace karpovich
     }
     return arr;
   }
-
   void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols) {
     output << res1 << '\n';
     output << rows << ' ';
@@ -43,7 +40,6 @@ namespace karpovich
     }
     output << '\n';
   }
-
   size_t locMin(const int* arrdyn, size_t rows, size_t cols) {
     if (!arrdyn || rows < 3 || cols < 3) {
       return 0;
@@ -66,7 +62,6 @@ namespace karpovich
     }
     return minimum;
   }
-
   int* lfttopclk(const int* arrdyn, size_t rows, size_t cols) {
     if (!arrdyn) {
       return nullptr;
@@ -107,6 +102,7 @@ namespace karpovich
     return result;
   }
 }
+
 int main(int argc, char ** argv) {
   if (argc != 4) {
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
@@ -132,7 +128,7 @@ int main(int argc, char ** argv) {
     return 2;
   }
 
-  size_t rows = 0; 
+  size_t rows = 0;
   size_t cols = 0;
   namespace karp = karpovich;
 
@@ -187,6 +183,5 @@ int main(int argc, char ** argv) {
     delete[] arrdyn;
     delete[] res2;
   }
-
   return 0;
 }
