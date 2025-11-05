@@ -3,8 +3,6 @@
 #include <string>
 #include <cstdlib>
 
-//./"main" 2 input.txt output.txt
-
 namespace afanasev
 {
   int long long CNT_LOC_MIN(long long *mtx, size_t r, size_t c)
@@ -89,7 +87,6 @@ int main (int argc, char ** argv)
     input >> r >> c;
     if (arg == "2")
     {
-      // Динамический
       long long *mtx = (long long *)malloc(r * c * sizeof(long long));
 
       if (mtx == nullptr)
@@ -108,7 +105,6 @@ int main (int argc, char ** argv)
         }
       }
 
-
       int long long min = 0;
       min = afanasev::CNT_LOC_MIN(mtx, r, c);
       int long long max = 0;
@@ -122,7 +118,6 @@ int main (int argc, char ** argv)
 
     } else if (arg == "1")
     {
-      // Фиксированный
       long long mtx[10000] = {};
 
       for (size_t i = 0; i < (r * c); i++)
@@ -133,18 +128,15 @@ int main (int argc, char ** argv)
           return 2;
         }
       }
-
       int long long min = 0;
       min = afanasev::CNT_LOC_MIN(mtx, r, c);
       int long long max = 0;
       max = afanasev::CNT_LOC_MAX(mtx, r, c);
 
-
       std::ofstream output(argv[3]);
       output << min << " " << max << "\n";
       output.close();
     }
-
     input.close();
 
   } else
