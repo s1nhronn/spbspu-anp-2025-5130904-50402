@@ -11,10 +11,10 @@ int main(int argc, char **argv)
 
   std::ifstream input(argv[2]);
 
-  int x, y;
+  size_t x, y;
   input >> x >> y;
-  size_t total = (size_t)x * (size_t)y;
-  int total_for_memory = x * y;
+  size_t total = x * y;
+  int total_for_memory = (int)x * (int)y;
   int *arr = (int *)malloc(total_for_memory * sizeof(int));
   if (arr == nullptr)
   {
