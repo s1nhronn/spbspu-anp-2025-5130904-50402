@@ -14,8 +14,8 @@ int main(int argc, char **argv)
   size_t x, y;
   input >> x >> y;
   size_t total = x * y;
-  int total_for_memory = (int)x * (int)y;
-  int *arr = (int *)malloc(total_for_memory * sizeof(int));
+  int total_for_memory = static_cast<int>(x) * static_cast<int>(y);
+  int *arr = static_cast<int*>(malloc(total_for_memory * sizeof(int)));
   if (arr == nullptr)
   {
     std::cerr << "Memory allocation fail" << "\n";
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
   }
 
   int mas[y][2];
-  for (int i = 0; i < y; ++i)
+  for (size_t i = 0; i < y; ++i)
   {
     mas[i][0] = -1;
     mas[i][1] = 0;
