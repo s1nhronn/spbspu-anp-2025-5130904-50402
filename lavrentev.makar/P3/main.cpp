@@ -95,5 +95,11 @@ int main(int argc, char **argv)
     }
   }
 
+  std::ofstream output;
+  output.open("output.txt");
+
+  output << "Answer for var_2: " << ans_2 << "\n";
+  output << "Answer for var_11: " << ans_11 << "\n";
+
   free(arr);
 }
