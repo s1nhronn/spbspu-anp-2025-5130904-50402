@@ -63,5 +63,37 @@ int main(int argc, char **argv)
     }
   }
 
+  int mas[y][2];
+  for (int i = 0; i < y; ++i)
+  {
+    mas[i][0] = -1;
+    mas[i][1] = 0;
+  }
+
+  for (size_t i = 0; i < total; ++i)
+  {
+    size_t j = i % y;
+    if (mas[j][0] == -1)
+    {
+      mas[j][0] = j + 1;
+      mas[j][1] = 1;
+    }
+    if (arr[i] == arr[i - y])
+    {
+      ++mas[j][1];
+    } else
+    {
+      mas[j][1] = 1;
+    }
+  }
+  int ans_11 = 0;
+  for (size_t i = 0; i < y; ++i)
+  {
+    if (ans_11 < mas[i][1])
+    {
+      ans_11 = mas[i][0];
+    }
+  }
+
   free(arr);
 }
