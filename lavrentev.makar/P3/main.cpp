@@ -13,8 +13,9 @@ int main(int argc, char **argv)
 
   int x, y;
   input >> x >> y;
-  int total = x * y;
-  int *arr = (int *)malloc(total * sizeof(int));
+  size_t total = (size_t)x * (size_t)y;
+  int total_for_memory = x * y;
+  int *arr = (int *)malloc(total_for_memory * sizeof(int));
   if (arr == nullptr)
   {
     std::cerr << "Memory allocation fail" << "\n";
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
   }
   input.close();
 
-  if (size_arr != total)
+  if (size_arr != total_for_memory)
   {
     free(arr);
     std::cerr << "Uncorrect file" << "\n";
