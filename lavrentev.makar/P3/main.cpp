@@ -45,5 +45,23 @@ int main(int argc, char **argv)
     return 2;
   }
 
+  int ans_2 = 0;
+  for (size_t i = y + 1; i < total - y; ++i)
+  {
+    try
+    {
+      if ((arr[i] < arr[i + 1]) && (arr[i] < arr[i - 1]) &&
+          (arr[i] < arr[i + y]) && (arr[i] < arr[i - y]) &&
+          (arr[i] < arr[i + y + 1]) && (arr[i] < arr[i - y - 1]) &&
+          (arr[i] < arr[i + y - 1]) && (arr[i] < arr[i - y + 1]))
+          {
+        ans_2 += 1;
+      }
+    } catch (const std::out_of_range &)
+    {
+      continue;
+    }
+  }
+
   free(arr);
 }
