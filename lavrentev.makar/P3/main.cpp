@@ -94,7 +94,7 @@ int main(int argc, char **argv)
       {
         if(mas[j][1] > ans_11)
         {
-          ans_11 = mas[j][1];
+          ans_11 = mas[j][0];
         }
         mas[j][1] = 1;
       }
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
   {
     if (ans_11 < mas[i][1])
     {
-      ans_11 = mas[i][1];
+      ans_11 = mas[i][0];
     }
   }
 
