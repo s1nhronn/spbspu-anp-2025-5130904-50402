@@ -100,7 +100,7 @@ int main(int argc, char **argv)
       }
     }
   }
-  
+
   for (size_t i = 0; i < y; ++i)
   {
     if (ans_11 < mas[i][1])
