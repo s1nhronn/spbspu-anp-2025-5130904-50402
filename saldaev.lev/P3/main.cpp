@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 
-size_t CNT_ROW_NSM(int long long* matrix, size_t rows, size_t cols);
-int long long* LFT_BOT_CLK(int long long* matrix, size_t rows, size_t cols);
+size_t CNT_ROW_NSM(long long* matrix, size_t rows, size_t cols);
+long long* LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols);
 
 int main(int argc, char ** argv)
 {
@@ -25,15 +25,63 @@ int main(int argc, char ** argv)
   }
 
   std::ifstream input(argv[2]);
-  std::ofstream output(argv[3]);
+  std::ofstream output(argv[3], std::ios::trunc);
+  
+  size_t rows = 0;
+  size_t cols = 0;
+  input >> rows >> cols;
+  if (input.fail())
+  {
+    std::cerr << "data from file is unacceptable\n";
+    return 2;
+  }
 
   if (arg == "1")
   {
-    //работа с массивом фиксированного размера
+    long long matrix[1000] = {};
+    for (size_t i = 0; i < rows * cols; ++i)
+    {
+      input >> matrix[i];
+    }
+    if (input.fail())
+    {
+      std::cerr << "data from file is unacceptable\n";
+      return 2;
+    }
+
+    size_t res1 = CNT_ROW_NSM(matrix, rows, cols);
+    long long* res2 = LFT_BOT_CLK(matrix, rows, cols);
+
+    output << res1 << "\n";
+    for (size_t i = 0; i < rows * cols - 1; ++i)
+    {
+      output << res2[i] << " ";
+    }
+    output << res2[rows * cols - 1];    
   }
   else
   {
-    //работа с динамическим массивом
+    long long* matrix = new long long[rows * cols];
+    for (size_t i = 0; i < rows * cols; ++i)
+    {
+      input >> matrix[i];
+    }
+    if (input.fail())
+    {
+      std::cerr << "data from file is unacceptable\n";
+      return 2;
+    }
+
+    size_t res1 = CNT_ROW_NSM(matrix, rows, cols);
+    long long* res2 = LFT_BOT_CLK(matrix, rows, cols);
+    delete[] res2;
+
+    output << res1 << "\n";
+    for (size_t i = 0; i < rows * cols - 1; ++i)
+    {
+      output << res2[i] << " ";
+    }
+    output << res2[rows * cols - 1];
   }
 
   return 0;
