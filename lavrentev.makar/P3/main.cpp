@@ -1,16 +1,20 @@
 #include <fstream>
 #include <iostream>
+#include <string>
 
 int main(int argc, char **argv)
 {
-  if(*argv[1] != 1 || *argv[1] != '2')
-  {
-    std::cerr << "First parameter is out of range";
-    return 1;
-  }
   if (argc != 4)
   {
     std::cerr << "Input error" << "\n";
+    return 1;
+  }
+
+  std::string s1 = argv[1];
+
+  if(s1 != "1" || s1 != "2")
+  {
+    std::cerr << "First parameter is out of range";
     return 1;
   }
 
