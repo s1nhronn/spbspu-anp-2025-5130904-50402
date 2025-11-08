@@ -3,11 +3,11 @@
 
 int main(int argc, char **argv)
 {
-  /*int q = static_cast<int>(argv[1]);
-  if(argv[1] != '1' || argv[1] != '2')
+  if(*argv[1] != 1 || *argv[1] != '2')
   {
-
-  }*/
+    std::cerr << "First parameter is out of range";
+    return 1;
+  }
   if (argc != 4)
   {
     std::cerr << "Input error" << "\n";
