@@ -204,6 +204,8 @@ void bukreev::lftTopClk(int* matrix, size_t rows, size_t cols)
 
   size_t i = 0, j = 0;
 
+  int sub = 1;
+
   while (n != 0 && m != 0)
   {
     i = start;
@@ -213,7 +215,8 @@ void bukreev::lftTopClk(int* matrix, size_t rows, size_t cols)
     {
       for (; j < start + m; j++)
       {
-        matrix[i * cols + j]--;
+        matrix[i * cols + j] -= sub;
+        sub++;
       }
       break;
     }
@@ -221,26 +224,31 @@ void bukreev::lftTopClk(int* matrix, size_t rows, size_t cols)
     {
       for (; i < start + n; i++)
       {
-        matrix[i * cols + j]--;
+        matrix[i * cols + j] -= sub;
+        sub++;
       }
       break;
     }
 
     for(; j < start + m - 1; j++)
     {
-      matrix[i * cols + j]--;
+      matrix[i * cols + j] -= sub;
+      sub++;
     }
     for (; i < start + n - 1; i++)
     {
-      matrix[i * cols + j]--;
+      matrix[i * cols + j] -= sub;
+      sub++;
     }
     for(; j > start; j--)
     {
-      matrix[i * cols + j]--;
+      matrix[i * cols + j] -= sub;
+      sub++;
     }
     for (; i > start; i--)
     {
-      matrix[i * cols + j]--;
+      matrix[i * cols + j] -= sub;
+      sub++;
     }
 
     start+=1;
