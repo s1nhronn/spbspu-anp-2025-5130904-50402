@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-size_t CNT_ROW_NSM(long long* matrix, size_t rows, size_t cols);
+size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols);
 long long* LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols);
 
 int main(int argc, char ** argv)
@@ -85,4 +85,26 @@ int main(int argc, char ** argv)
   }
 
   return 0;
+}
+
+size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols)
+{
+  size_t count = 0;
+  for (size_t r = 0; r < rows; ++r)
+  {
+    bool flag = true;
+    for (size_t c = 1; c < cols; ++c)
+    {
+      if (matrix[r * cols + c] == matrix[r * cols + c - 1])
+      {
+        flag = false;
+        break;
+      }
+    }
+    if (flag)
+    {
+      count += 1;
+    }
+  }
+  return count;
 }
