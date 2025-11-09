@@ -48,9 +48,13 @@ int main(int argc, char **argv)
     std::cerr << "Memory allocation fail" << "\n";
     return 1;
   }
-  int size_arr = 0;
+  size_t size_arr = 0;
   for (size_t i = 0; i < total; ++i)
   {
+    if(input.eof())
+    {
+      break;
+    }
     try
     {
       int k;
@@ -66,7 +70,7 @@ int main(int argc, char **argv)
   }
   input.close();
 
-  if (size_arr != total_for_memory)
+  if (size_arr != total)
   {
     free(arr);
     std::cerr << "Uncorrect file" << "\n";
