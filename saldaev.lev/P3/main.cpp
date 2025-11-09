@@ -2,7 +2,7 @@
 #include <fstream>
 
 size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols);
-long long* LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols);
+void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols);
 
 int main(int argc, char ** argv)
 {
@@ -50,14 +50,14 @@ int main(int argc, char ** argv)
     }
 
     size_t res1 = CNT_ROW_NSM(matrix, rows, cols);
-    long long* res2 = LFT_BOT_CLK(matrix, rows, cols);
+    LFT_BOT_CLK(matrix, rows, cols);
 
     output << res1 << "\n";
     for (size_t i = 0; i < rows * cols - 1; ++i)
     {
-      output << res2[i] << " ";
+      output << matrix[i] << " ";
     }
-    output << res2[rows * cols - 1];    
+    output << matrix[rows * cols - 1];    
   }
   else
   {
@@ -73,15 +73,15 @@ int main(int argc, char ** argv)
     }
 
     size_t res1 = CNT_ROW_NSM(matrix, rows, cols);
-    long long* res2 = LFT_BOT_CLK(matrix, rows, cols);
-    delete[] res2;
+    LFT_BOT_CLK(matrix, rows, cols);
+    delete[] matrix;
 
     output << res1 << "\n";
     for (size_t i = 0; i < rows * cols - 1; ++i)
     {
-      output << res2[i] << " ";
+      output << matrix[i] << " ";
     }
-    output << res2[rows * cols - 1];
+    output << matrix[rows * cols - 1];
   }
 
   return 0;
@@ -107,4 +107,49 @@ size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols)
     }
   }
   return count;
+}
+
+void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
+{
+  size_t x = 0;
+  size_t y = rows - 1;
+  size_t c = 1;
+  matrix[y * cols] -= c;
+  size_t top = 0;
+  size_t bottom = rows - 1;
+  size_t left = 0;
+  size_t right = cols - 1;
+  bool flag = true;
+  while (flag)
+  {
+    flag = false;
+    for (; y >= top; --y)
+    {
+      flag = true;
+      c++;
+      matrix[y * cols + x] -= c;
+    }
+    left++;
+    for (; x <= right; ++x)
+    {
+      flag = true;
+      c++;
+      matrix[y * cols + x] -= c;
+    }
+    top++;
+    for (; y <= bottom; ++y)
+    {
+      flag = true;
+      c++;
+      matrix[y * cols + x] -= c;
+    }
+    right--;
+    for (; x >= left; --x)
+    {
+      flag = true;
+      c++;
+      matrix[y * cols + x] -= c;
+    }
+    bottom--;
+  }
 }
