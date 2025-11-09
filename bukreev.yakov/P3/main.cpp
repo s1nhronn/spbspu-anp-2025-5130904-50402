@@ -12,6 +12,8 @@ namespace bukreev
 
   size_t cntSdlPnt(const int* matrix, size_t rows, size_t cols);
   void lftTopClk(int* matrix, size_t rows, size_t cols);
+
+  void output(std::ostream& out, size_t sdl, const int* matrix, size_t rows, size_t cols);
 }
 
 int main(int argc, char* argv[])
@@ -77,10 +79,10 @@ int main(int argc, char* argv[])
     return 3;
   }
 
-  size_t res = 0;
+  size_t sdl = 0;
   try
   {
-    res = bukreev::cntSdlPnt(matrix, rows, cols);
+    sdl = bukreev::cntSdlPnt(matrix, rows, cols);
   }
   catch(const std::bad_alloc& e)
   {
@@ -90,11 +92,7 @@ int main(int argc, char* argv[])
 
   bukreev::lftTopClk(matrix, rows, cols);
 
-  std::cout << res << '\n';
-  for (size_t i = 0; i < rows * cols; i++)
-  {
-    std::cout << matrix[i] << ' ';
-  }
+  bukreev::output(std::cout, sdl, matrix, rows, cols);
 
   bukreev::deleteMatrix(matrix);
 
@@ -255,4 +253,15 @@ void bukreev::lftTopClk(int* matrix, size_t rows, size_t cols)
     n -= 2;
     m -= 2;
   }
+}
+
+void bukreev::output(std::ostream& out, size_t sdl, const int* matrix, size_t rows, size_t cols)
+{
+  out << sdl << '\n';
+  out << rows << ' ' << cols << ' ';
+  for (size_t i = 0; i < rows * cols; i++)
+  {
+    out << matrix[i] << ' ';
+  }
+  out << '\n';
 }
