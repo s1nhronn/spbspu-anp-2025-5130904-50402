@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
   if (!(input >> x >> y))
   {
-    std::cerr << "Cannot read matrix dimensions from file" << "\n";
+    std::cerr << "Uncorrect file" << "\n";
     return 2;
   }
 
@@ -51,22 +51,13 @@ int main(int argc, char **argv)
   size_t size_arr = 0;
   for (size_t i = 0; i < total; ++i)
   {
-    if(input.eof())
+    int k;
+    if(!(input >> k))
     {
       break;
     }
-    try
-    {
-      int k;
-      input >> k;
-      arr[i] = k;
-      ++size_arr;
-    } catch (const std::invalid_argument &)
-    {
-      free(arr);
-      std::cerr << "Uncorrect file" << "\n";
-      return 2;
-    }
+    arr[i] = k;
+    ++size_arr;
   }
   input.close();
 
