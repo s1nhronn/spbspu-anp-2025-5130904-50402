@@ -133,8 +133,8 @@ int* bukreev::inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size
 
   if (in.fail())
   {
-    throw std::invalid_argument("Not enough elements of matrix");
     deleteMatrix(matrix);
+    throw std::invalid_argument("Not enough elements of matrix");
   }
 
   *rows = n;
