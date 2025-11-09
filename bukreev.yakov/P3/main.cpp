@@ -94,7 +94,11 @@ int main(int argc, char* argv[])
 
   bukreev::lftTopClk(matrix, rows, cols);
 
-  bukreev::output(std::cout, sdl, matrix, rows, cols);
+  std::ofstream output(argv[3]);
+
+  bukreev::output(output, sdl, matrix, rows, cols);
+
+  output.close();
 
   bukreev::deleteMatrix(matrix);
 
