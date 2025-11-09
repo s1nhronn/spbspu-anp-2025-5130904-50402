@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
 int* bukreev::inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size_t* cols)
 {
   int* matrix = nullptr;
-  
+
   size_t n = 0, m = 0;
   in >> n >> m;
 
