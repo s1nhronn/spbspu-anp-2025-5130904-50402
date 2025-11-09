@@ -11,6 +11,7 @@ namespace bukreev
   void deleteMatrix(const int* matrix);
 
   size_t cntSdlPnt(const int* matrix, size_t rows, size_t cols);
+  void lftTopClk(int* matrix, size_t rows, size_t cols);
 }
 
 int main(int argc, char* argv[])
@@ -87,7 +88,13 @@ int main(int argc, char* argv[])
     return 3;
   }
 
+  bukreev::lftTopClk(matrix, rows, cols);
+
   std::cout << res << '\n';
+  for (size_t i = 0; i < rows * cols; i++)
+  {
+    std::cout << matrix[i] << ' ';
+  }
 
   bukreev::deleteMatrix(matrix);
 
@@ -188,4 +195,56 @@ size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
   delete[] colsMaximums;
 
   return res;
+}
+
+void bukreev::lftTopClk(int* matrix, size_t rows, size_t cols)
+{
+  size_t start = 0;
+  size_t n = rows, m = cols;
+
+  size_t i = 0, j = 0;
+
+  while (n != 0 && m != 0)
+  {
+    i = start;
+    j = start;
+
+    if (n == 1)
+    {
+      for (; j < start + m; j++)
+      {
+        matrix[i * cols + j]--;
+      }
+      break;
+    }
+    else if (m == 1)
+    {
+      for (; i < start + n; i++)
+      {
+        matrix[i * cols + j]--;
+      }
+      break;
+    }
+
+    for(; j < start + m - 1; j++)
+    {
+      matrix[i * cols + j]--;
+    }
+    for (; i < start + n - 1; i++)
+    {
+      matrix[i * cols + j]--;
+    }
+    for(; j > start; j--)
+    {
+      matrix[i * cols + j]--;
+    }
+    for (; i > start; i--)
+    {
+      matrix[i * cols + j]--;
+    }
+
+    start+=1;
+    n -= 2;
+    m -= 2;
+  }
 }
