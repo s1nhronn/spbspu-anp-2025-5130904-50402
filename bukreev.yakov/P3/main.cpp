@@ -7,9 +7,7 @@ namespace bukreev
 {
   int mode = 0;
 
-  size_t mrows = 0, mcols = 0;
-
-  int* inputMatrix(std::istream& in, int* stackMatrix);
+  int* inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size_t* cols);
   void deleteMatrix(const int* matrix);
 
   size_t cntSdlPnt(const int* matrix, size_t rows, size_t cols);
@@ -54,6 +52,7 @@ int main(int argc, char* argv[])
   bukreev::mode = arg1;
 
   int* matrix = nullptr;
+  size_t rows = 0, cols = 0;
   std::ifstream input(argv[2]);
   if (arg1 == 1)
   {
@@ -64,7 +63,7 @@ int main(int argc, char* argv[])
 
   try
   {
-    matrix = bukreev::inputMatrix(input, matrix);
+    matrix = bukreev::inputMatrix(input, matrix, &rows, &cols);
   }
   catch(const std::invalid_argument& e)
   {
@@ -76,7 +75,7 @@ int main(int argc, char* argv[])
   size_t res = 0;
   try
   {
-    res = bukreev::cntSdlPnt(matrix, bukreev::mrows, bukreev::mcols);
+    res = bukreev::cntSdlPnt(matrix, rows, cols);
   }
   catch(const std::bad_alloc& e)
   {
@@ -91,11 +90,12 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-int* bukreev::inputMatrix(std::istream& in, int* stackMatrix)
+int* bukreev::inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size_t* cols)
 {
   int* matrix = nullptr;
-
-  in >> mrows >> mcols;
+  
+  size_t n = 0, m = 0;
+  in >> n >> m;
 
   if (in.fail())
   {
@@ -108,10 +108,10 @@ int* bukreev::inputMatrix(std::istream& in, int* stackMatrix)
   }
   else
   {
-    matrix = new int[mrows * mcols];
+    matrix = new int[n * m];
   }
 
-  for (size_t i = 0; i < mrows * mcols; i++)
+  for (size_t i = 0; i < n * m; i++)
   {
     in >> matrix[i];
   }
@@ -120,6 +120,9 @@ int* bukreev::inputMatrix(std::istream& in, int* stackMatrix)
   {
     throw std::invalid_argument("Not enough elements of matrix");
   }
+
+  *rows = n;
+  *cols = m;
 
   return matrix;
 }
