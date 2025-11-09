@@ -38,7 +38,7 @@ int main(int argc, char ** argv)
 
   if (rows == 0 && cols == 0)
   {
-    output << 0;
+    output << 0 << "\n" << 0 << " " << 0;
     return 0;
   }
 
@@ -58,7 +58,7 @@ int main(int argc, char ** argv)
     size_t res1 = CNT_ROW_NSM(matrix, rows, cols);
     LFT_BOT_CLK(matrix, rows, cols);
 
-    output << res1 << "\n";
+    output << res1 << "\n" << rows << " " << cols << " ";
     for (size_t i = 0; i < rows * cols - 1; ++i)
     {
       output << matrix[i] << " ";
@@ -75,19 +75,20 @@ int main(int argc, char ** argv)
     if (input.fail())
     {
       std::cerr << "data from file is unacceptable\n";
+      delete[] matrix;
       return 2;
     }
 
     size_t res1 = CNT_ROW_NSM(matrix, rows, cols);
     LFT_BOT_CLK(matrix, rows, cols);
-    delete[] matrix;
 
-    output << res1 << "\n";
+    output << res1 << "\n" << rows << " " << cols << " ";
     for (size_t i = 0; i < rows * cols - 1; ++i)
     {
       output << matrix[i] << " ";
     }
     output << matrix[rows * cols - 1];
+    delete[] matrix;
   }
 
   return 0;
@@ -117,14 +118,9 @@ size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols)
 
 void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
 {
-  if (rows == 0 || cols == 0)
-  {
-    return;
-  }
   size_t x = 0;
   size_t y = rows - 1;
-  size_t c = 1;
-  matrix[y * cols + x] -= c;
+  size_t c = 0;
   size_t top = 0;
   size_t bottom = rows - 1;
   size_t left = 0;
@@ -133,28 +129,43 @@ void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
   while (flag)
   {
     flag = false;
-    for (; y >= top; --y)
+    for (; y > top; --y)
     {
       flag = true;
       c++;
       matrix[y * cols + x] -= c;
     }
     left++;
-    for (; x <= right; ++x)
+    if (!flag)
+    {
+      break;
+    }
+
+    for (; x < right; ++x)
     {
       flag = true;
       c++;
       matrix[y * cols + x] -= c;
     }
     top++;
-    for (; y <= bottom; ++y)
+    if (!flag)
+    {
+      break;
+    }
+
+    for (; y < bottom; ++y)
     {
       flag = true;
       c++;
       matrix[y * cols + x] -= c;
     }
     right--;
-    for (; x >= left; --x)
+    if (!flag)
+    {
+      break;
+    }
+
+    for (; x > left; --x)
     {
       flag = true;
       c++;
@@ -162,4 +173,6 @@ void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
     }
     bottom--;
   }
+  c += 1;
+  matrix[y * cols + x] -= c;
 }
