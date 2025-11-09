@@ -6,6 +6,8 @@ namespace bukreev
 {
   int mode = 0;
 
+  size_t rows = 0, cols = 0;
+
   int* inputMatrix(std::istream& in, int* stackMatrix);
   void deleteMatrix(const int* matrix);
 }
@@ -77,8 +79,7 @@ int* bukreev::inputMatrix(std::istream& in, int* stackMatrix)
 {
   int* matrix = nullptr;
 
-  int n = 0, m = 0;
-  in >> n >> m;
+  in >> rows >> cols;
 
   if (in.fail())
   {
@@ -91,10 +92,10 @@ int* bukreev::inputMatrix(std::istream& in, int* stackMatrix)
   }
   else
   {
-    matrix = new int[n * m];
+    matrix = new int[rows * cols];
   }
 
-  for (int i = 0; i < n * m; i++)
+  for (size_t i = 0; i < rows * cols; i++)
   {
     in >> matrix[i];
   }
