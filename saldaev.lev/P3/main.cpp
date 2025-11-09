@@ -36,6 +36,12 @@ int main(int argc, char ** argv)
     return 2;
   }
 
+  if (rows == 0 && cols == 0)
+  {
+    output << 0;
+    return 0;
+  }
+
   if (arg == "1")
   {
     long long matrix[1000] = {};
@@ -111,10 +117,14 @@ size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols)
 
 void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
 {
+  if (rows == 0 || cols == 0)
+  {
+    return;
+  }
   size_t x = 0;
   size_t y = rows - 1;
   size_t c = 1;
-  matrix[y * cols] -= c;
+  matrix[y * cols + x] -= c;
   size_t top = 0;
   size_t bottom = rows - 1;
   size_t left = 0;
