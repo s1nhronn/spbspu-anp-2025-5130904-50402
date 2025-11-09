@@ -12,16 +12,34 @@ int main(int argc, char **argv)
 
   std::string s1 = argv[1];
 
-  if(s1 != "1" || s1 != "2")
+  if(s1 != "1" && s1 != "2")
   {
     std::cerr << "First parameter is out of range";
     return 1;
   }
 
+  size_t x, y;
+
   std::ifstream input(argv[2]);
 
-  size_t x, y;
-  input >> x >> y;
+  if(!input.is_open())
+  {
+    std::cerr << "Uncorrect file" << "\n";
+    return 2;
+  }
+
+  if (input.peek() == std::ifstream::traits_type::eof())
+  {
+    std::cerr << "Input file is empty" << "\n";
+    return 2;
+  }
+
+  if (!(input >> x >> y))
+  {
+    std::cerr << "Cannot read matrix dimensions from file" << "\n";
+    return 2;
+  }
+
   size_t total = x * y;
   int total_for_memory = static_cast<int>(x) * static_cast<int>(y);
   int *arr = static_cast<int*>(malloc(total_for_memory * sizeof(int)));
