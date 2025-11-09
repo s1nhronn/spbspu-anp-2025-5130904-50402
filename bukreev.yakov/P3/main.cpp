@@ -71,6 +71,10 @@ int main(int argc, char* argv[])
     std::cerr << e.what() << ".\n";
     return 2;
   }
+  catch(const std::bad_alloc& e)
+  {
+    return 3;
+  }
 
   size_t res = 0;
   try
@@ -119,6 +123,7 @@ int* bukreev::inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size
   if (in.fail())
   {
     throw std::invalid_argument("Not enough elements of matrix");
+    deleteMatrix(matrix);
   }
 
   *rows = n;
