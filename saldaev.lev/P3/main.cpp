@@ -26,7 +26,7 @@ int main(int argc, char ** argv)
 
   std::ifstream input(argv[2]);
   std::ofstream output(argv[3], std::ios::trunc);
-  
+
   size_t rows = 0;
   size_t cols = 0;
   input >> rows >> cols;
@@ -63,7 +63,7 @@ int main(int argc, char ** argv)
     {
       output << matrix[i] << " ";
     }
-    output << matrix[rows * cols - 1];    
+    output << matrix[rows * cols - 1];
   }
   else
   {
