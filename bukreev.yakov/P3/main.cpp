@@ -79,6 +79,8 @@ int main(int argc, char* argv[])
     return 3;
   }
 
+  input.close();
+
   size_t sdl = 0;
   try
   {
