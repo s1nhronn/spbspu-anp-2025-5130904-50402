@@ -38,8 +38,8 @@ namespace dirko
       throw;
     }
   }
-  int *var1(int *arr, size_t r, size_t c);
-  bool var2(const int *arr, size_t r, size_t c)
+  int *LFT_BOT_CLK(int *arr, size_t r, size_t c);
+  bool LWR_TRI_MTX(const int *arr, size_t r, size_t c)
   {
     size_t min = (r > c) ? c : r;
     if (min < 2)
@@ -60,14 +60,14 @@ namespace dirko
     }
     return true;
   }
-  std::ostream &output(std::ostream &out, const int *arr, size_t r, size_t c)
+  std::ostream &output(std::ostream &out, const int *arr, size_t r, size_t c, bool ans2)
   {
     out << r << ' ' << c << ' ';
-    for (size_t i = 0; i < r * c - 1; ++i)
+    for (size_t i = 0; i < r * c; ++i)
     {
       out << arr[i] << ' ';
     }
-    return out << arr[r * c - 1];
+    return out << std::boolalpha << ans2;
   }
 }
 
@@ -125,11 +125,10 @@ int main(int argc, char const **argv)
     {
       dirko::staticInput(fin, arr, rows, cols);
       fin.close();
-      res1 = dirko::var1(arr, rows, cols);
-      res2 = dirko::var2(arr, rows, cols);
+      res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
+      res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
       std::ofstream fout(argv[3]);
-      dirko::output(fout, res1, rows, cols) << '\n';
-      fout << std::boolalpha << res2 << '\n';
+      dirko::output(fout, res1, rows, cols, res2) << '\n';
       delete[] res1;
     }
     catch (std::logic_error &e)
@@ -159,11 +158,10 @@ int main(int argc, char const **argv)
       std::cerr << "Cant alloc\n";
       return 3;
     }
-    res1 = dirko::var1(arr, rows, cols);
-    res2 = dirko::var2(arr, rows, cols);
+    res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
+    res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
     std::ofstream fout(argv[3]);
-    dirko::output(fout, res1, rows, cols) << '\n';
-    fout << std::boolalpha << res2 << '\n';
+    dirko::output(fout, res1, rows, cols, res2) << '\n';
     delete[] arr;
     delete[] res1;
   }
