@@ -3,90 +3,90 @@
 
 namespace dirko
 {
-  void staticInput(std::istream &in, int *arr, size_t r, size_t c)
+  void staticInput(std::istream &input, int *matrix, size_t rows, size_t cols)
   {
-    for (size_t i = 0; i < r * c; ++i)
+    for (size_t i = 0; i < rows * cols; ++i)
     {
-      in >> arr[i];
-      if (in.eof())
+      input >> matrix[i];
+      if (input.eof())
       {
         throw std::logic_error("Not enougth data\n");
       }
-      else if (in.fail())
+      else if (input.fail())
       {
         throw std::logic_error("Cant read\n");
       }
     }
   }
-  int *dinamicInput(std::istream &in, size_t r, size_t c)
+  int *dinamicInput(std::istream &input, size_t rows, size_t cols)
   {
     try
     {
-      int *arr = new int[r * c];
-      for (size_t i = 0; i < r * c; ++i)
+      int *matrix = new int[rows * cols];
+      for (size_t i = 0; i < rows * cols; ++i)
       {
-        in >> arr[i];
-        if (in.fail())
+        input >> matrix[i];
+        if (input.fail())
         {
           throw std::logic_error("Cant read");
         }
       }
-      return arr;
+      return matrix;
     }
     catch (std::bad_alloc &e)
     {
       throw;
     }
   }
-  int *LFT_BOT_CLK(const int *arr, size_t r, size_t c)
+  int *LFT_BOT_CLK(const int *matrix, size_t rows, size_t cols)
   {
-    size_t elements = r * c;
+    size_t elements = rows * cols;
     if (elements == 0)
     {
       return nullptr;
     }
-    int *res = new int[elements];
+    int *result = new int[elements];
     for (size_t i = 0; i < elements; ++i)
     {
-      res[i] = arr[i];
+      result[i] = matrix[i];
     }
     size_t decrement = 1;
-    size_t left = 0, right = c - 1;
-    size_t top = 0, bottom = r - 1;
+    size_t left = 0, right = cols - 1;
+    size_t top = 0, bottom = rows - 1;
     while (top <= bottom && left <= right)
     {
       if (top <= bottom)
       {
         for (size_t j = right + 1; j > left; --j)
         {
-          res[bottom * c + j - 1] -= decrement++;
+          result[bottom * cols + j - 1] -= decrement++;
         }
         bottom--;
       }
       for (size_t j = left; j <= right; ++j)
       {
-        res[top * c + j] -= decrement++;
+        result[top * cols + j] -= decrement++;
       }
       top++;
       for (size_t i = top; i <= bottom; ++i)
       {
-        res[i * c + right] -= decrement++;
+        result[i * cols + right] -= decrement++;
       }
       right--;
       if (left <= right)
       {
         for (size_t i = bottom + 1; i > top; --i)
         {
-          res[(i - 1) * c + left] -= decrement++;
+          result[(i - 1) * cols + left] -= decrement++;
         }
         left++;
       }
     }
-    return res;
+    return result;
   }
-  bool LWR_TRI_MTX(const int *arr, size_t r, size_t c)
+  bool LWR_TRI_MTX(const int *matrix, size_t rows, size_t cols)
   {
-    size_t min = (r > c) ? c : r;
+    size_t min = (rows > cols) ? cols : rows;
     if (min < 2)
     {
       return false;
@@ -96,7 +96,7 @@ namespace dirko
     {
       for (size_t j = line + i + 1; j < line + min; j++)
       {
-        if (arr[i + j] != 0)
+        if (matrix[i + j] != 0)
         {
           return false;
         }
@@ -105,14 +105,14 @@ namespace dirko
     }
     return true;
   }
-  std::ostream &output(std::ostream &out, const int *arr, size_t r, size_t c, bool ans2)
+  std::ostream &output(std::ostream &output, const int *matrix, size_t rows, size_t cols, bool result2)
   {
-    out << r << ' ' << c << ' ';
-    for (size_t i = 0; i < r * c; ++i)
+    output << rows << ' ' << cols << ' ';
+    for (size_t i = 0; i < rows * cols; ++i)
     {
-      out << arr[i] << ' ';
+      output << matrix[i] << ' ';
     }
-    return out << std::boolalpha << ans2;
+    return output << std::boolalpha << result2;
   }
 }
 
@@ -160,54 +160,51 @@ int main(int argc, char const **argv)
     std::cerr << "Cant read\n";
     return 2;
   }
-
+  int *result1 = nullptr;
+  bool result2 = false;
   if (mode == 1)
   {
-    int arr[1000]{};
-    int *res1 = nullptr;
-    bool res2 = false;
+    int matrix[1000]{};
     try
     {
-      dirko::staticInput(fin, arr, rows, cols);
+      dirko::staticInput(fin, matrix, rows, cols);
       fin.close();
-      res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
-      res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
+      result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
+      result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
     }
     catch (std::logic_error &e)
     {
       std::cerr << e.what();
-      delete[] res1;
+      delete[] result1;
       return 2;
     }
     std::ofstream fout(argv[3]);
-    dirko::output(fout, res1, rows, cols, res2) << '\n';
-    delete[] res1;
+    dirko::output(fout, result1, rows, cols, result2) << '\n';
   }
   else
   {
-    int *arr = nullptr;
-    int *res1 = nullptr;
-    bool res2 = false;
+    int *matrix = nullptr;
     try
     {
-      arr = dirko::dinamicInput(fin, rows, cols);
+      matrix = dirko::dinamicInput(fin, rows, cols);
       fin.close();
-      res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
-      res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
-    }
-    catch (std::logic_error &e)
-    {
-      std::cerr << e.what();
-      return 2;
+      result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
+      result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
     }
     catch (std::bad_alloc &e)
     {
       std::cerr << "Cant alloc\n";
       return 3;
     }
+    catch (std::logic_error &e)
+    {
+      delete[] matrix;
+      std::cerr << e.what();
+      return 2;
+    }
     std::ofstream fout(argv[3]);
-    dirko::output(fout, res1, rows, cols, res2) << '\n';
-    delete[] arr;
-    delete[] res1;
+    dirko::output(fout, result1, rows, cols, result2) << '\n';
+    delete[] matrix;
   }
+  delete[] result1;
 }
