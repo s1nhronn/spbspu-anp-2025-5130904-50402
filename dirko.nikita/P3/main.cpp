@@ -8,7 +8,11 @@ namespace dirko
     for (size_t i = 0; i < r * c; ++i)
     {
       in >> arr[i];
-      if (in.fail())
+      if (in.eof())
+      {
+        throw std::logic_error("Not enougth data\n");
+      }
+      else if (in.fail())
       {
         throw std::logic_error("Cant read\n");
       }
@@ -38,6 +42,10 @@ namespace dirko
   bool var2(const int *arr, size_t r, size_t c)
   {
     size_t min = (r > c) ? c : r;
+    if (min < 2)
+    {
+      return false;
+    }
     size_t line = 0;
     for (size_t i = 0; i < min; ++i)
     {
@@ -98,7 +106,6 @@ int main(int argc, char const **argv)
     return 1;
   }
   std::ifstream fin(argv[2]);
-  // std::ofstream fout(argv[3]);
   if (!fin.is_open())
   {
     std::cerr << "Cant open input file\n";
@@ -106,7 +113,11 @@ int main(int argc, char const **argv)
   }
   size_t rows = 0, cols = 0;
   fin >> rows >> cols;
-  if (fin.fail())
+  if (fin.eof())
+  {
+    std::cerr << "Not enougth data\n";
+  }
+  else if (fin.fail())
   {
     std::cerr << "Cant read\n";
     return 2;
@@ -114,11 +125,11 @@ int main(int argc, char const **argv)
 
   if (mode == 1)
   {
+    int arr[1000]{};
+    int *res1 = nullptr;
+    bool res2 = false;
     try
     {
-      int arr[1000]{};
-      int *res1 = nullptr;
-      bool res2 = false;
       dirko::staticInput(fin, arr, rows, cols);
       fin.close();
       res1 = dirko::var1(arr, rows, cols);
@@ -126,10 +137,12 @@ int main(int argc, char const **argv)
       std::ofstream fout(argv[3]);
       dirko::output(fout, res1, rows, cols) << '\n';
       fout << std::boolalpha << res2 << '\n';
+      delete[] res1;
     }
     catch (std::logic_error &e)
     {
       std::cerr << e.what();
+      delete[] res1;
       return 2;
     }
   }
