@@ -208,6 +208,12 @@ int main(int argc, char const **argv)
       std::cerr << "Cant alloc\n";
       return 3;
     }
+    catch (std::logic_error &e)
+    {
+      delete[] matrix;
+      std::cerr << e.what();
+      return 2;
+    }
     try
     {
       fin.close();
@@ -219,12 +225,6 @@ int main(int argc, char const **argv)
       delete[] matrix;
       std::cerr << "Cant alloc\n";
       return 3;
-    }
-    catch (std::logic_error &e)
-    {
-      delete[] matrix;
-      std::cerr << e.what();
-      return 2;
     }
     std::ofstream fout(argv[3]);
     dirko::output(fout, result1, rows, cols, result2) << '\n';
