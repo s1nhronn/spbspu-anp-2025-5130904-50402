@@ -38,7 +38,52 @@ namespace dirko
       throw;
     }
   }
-  int *LFT_BOT_CLK(int *arr, size_t r, size_t c);
+  int *LFT_BOT_CLK(const int *arr, size_t r, size_t c)
+  {
+    size_t elements = r * c;
+    if (elements == 0)
+    {
+      return nullptr;
+    }
+    int *res = new int[elements];
+    for (size_t i = 0; i < elements; ++i)
+    {
+      res[i] = arr[i];
+    }
+    size_t decrement = 1;
+    size_t left = 0, right = c - 1;
+    size_t top = 0, bottom = r - 1;
+    while (top <= bottom && left <= right)
+    {
+      if (top <= bottom)
+      {
+        for (size_t j = right + 1; j > left; --j)
+        {
+          res[bottom * c + j - 1] -= decrement++;
+        }
+        bottom--;
+      }
+      for (size_t j = left; j <= right; ++j)
+      {
+        res[top * c + j] -= decrement++;
+      }
+      top++;
+      for (size_t i = top; i <= bottom; ++i)
+      {
+        res[i * c + right] -= decrement++;
+      }
+      right--;
+      if (left <= right)
+      {
+        for (size_t i = bottom + 1; i > top; --i)
+        {
+          res[(i - 1) * c + left] -= decrement++;
+        }
+        left++;
+      }
+    }
+    return res;
+  }
   bool LWR_TRI_MTX(const int *arr, size_t r, size_t c)
   {
     size_t min = (r > c) ? c : r;
@@ -127,9 +172,6 @@ int main(int argc, char const **argv)
       fin.close();
       res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
       res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
-      std::ofstream fout(argv[3]);
-      dirko::output(fout, res1, rows, cols, res2) << '\n';
-      delete[] res1;
     }
     catch (std::logic_error &e)
     {
@@ -137,6 +179,9 @@ int main(int argc, char const **argv)
       delete[] res1;
       return 2;
     }
+    std::ofstream fout(argv[3]);
+    dirko::output(fout, res1, rows, cols, res2) << '\n';
+    delete[] res1;
   }
   else
   {
@@ -147,6 +192,8 @@ int main(int argc, char const **argv)
     {
       arr = dirko::dinamicInput(fin, rows, cols);
       fin.close();
+      res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
+      res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
     }
     catch (std::logic_error &e)
     {
@@ -158,8 +205,6 @@ int main(int argc, char const **argv)
       std::cerr << "Cant alloc\n";
       return 3;
     }
-    res1 = dirko::LFT_BOT_CLK(arr, rows, cols);
-    res2 = dirko::LWR_TRI_MTX(arr, rows, cols);
     std::ofstream fout(argv[3]);
     dirko::output(fout, res1, rows, cols, res2) << '\n';
     delete[] arr;
