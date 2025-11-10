@@ -69,13 +69,13 @@ namespace dirko
     size_t top = 0, bottom = rows - 1;
     while (top <= bottom && left <= right)
     {
-      if (top <= bottom)
+      if (left <= right)
       {
-        for (size_t j = right + 1; j > left; --j)
+        for (size_t i = bottom + 1; i > top; --i)
         {
-          result[bottom * cols + j - 1] -= decrement++;
+          result[(i - 1) * cols + left] -= decrement++;
         }
-        bottom--;
+        left++;
       }
       for (size_t j = left; j <= right; ++j)
       {
@@ -87,13 +87,13 @@ namespace dirko
         result[i * cols + right] -= decrement++;
       }
       right--;
-      if (left <= right)
+      if (top <= bottom)
       {
-        for (size_t i = bottom + 1; i > top; --i)
+        for (size_t j = right + 1; j > left; --j)
         {
-          result[(i - 1) * cols + left] -= decrement++;
+          result[bottom * cols + j - 1] -= decrement++;
         }
-        left++;
+        bottom--;
       }
     }
     return result;
@@ -126,6 +126,7 @@ namespace dirko
     {
       output << matrix[i] << ' ';
     }
+    output << '\n';
     return output << std::boolalpha << result2;
   }
 }
