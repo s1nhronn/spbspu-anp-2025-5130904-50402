@@ -26,8 +26,14 @@ namespace dirko
       for (size_t i = 0; i < rows * cols; ++i)
       {
         input >> matrix[i];
-        if (input.fail())
+        if (input.eof())
         {
+          delete[] matrix;
+          throw std::logic_error("Not enougth data\n");
+        }
+        else if (input.fail())
+        {
+          delete[] matrix;
           throw std::logic_error("Cant read");
         }
       }
@@ -45,7 +51,15 @@ namespace dirko
     {
       return nullptr;
     }
-    int *result = new int[elements];
+    int *result = nullptr;
+    try
+    {
+      result = new int[elements];
+    }
+    catch (const std::bad_alloc &e)
+    {
+      throw;
+    }
     for (size_t i = 0; i < elements; ++i)
     {
       result[i] = matrix[i];
@@ -154,6 +168,7 @@ int main(int argc, char const **argv)
   if (fin.eof())
   {
     std::cerr << "Not enougth data\n";
+    return 2;
   }
   else if (fin.fail())
   {
@@ -187,12 +202,21 @@ int main(int argc, char const **argv)
     try
     {
       matrix = dirko::dinamicInput(fin, rows, cols);
+    }
+    catch (const std::bad_alloc &e)
+    {
+      std::cerr << "Cant alloc\n";
+      return 3;
+    }
+    try
+    {
       fin.close();
       result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
       result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
     }
     catch (std::bad_alloc &e)
     {
+      delete[] matrix;
       std::cerr << "Cant alloc\n";
       return 3;
     }
