@@ -6,9 +6,17 @@
 #include <string>
 #include <algorithm>
 
-void fll_inc_wav(std::vector<int> data, char* argv[]);
-void max_sum_mdg(std::vector<int> data, char* argv[]);
-bool checkonTypeData(int number);
+namespace muhamadiarov
+{
+  void toChoiseMemmory(std::vector<int> data, char* argv[]); //done
+  void fll_inc_wav(int* begin, char output, size_t count, int n, int k); // done
+  void max_sum_mdg(int* begin, char* argv[]);
+  void fll_inc_wav(int array[], char output, size_t count, int n, int k); //done
+  void max_sum_mdg(int array[], char* argv[]);
+  bool checkonTypeData(int number);
+  void output(int array[], char out);
+  void output(int* begin, char out);
+}
 
 int main(int argc, char *argv[]) 
 {
@@ -60,10 +68,9 @@ int main(int argc, char *argv[])
       {
 	try
 	{
-          muf::fll_inc_wav(data, argv);
-          muf::max_sum_mdg(data, argv);
+          muf::toChoiseMemmory(data, argv)
 	}
-	catch (...)
+	catch (const std::block_alloc e)
 	{
 	  std::cerr << "Dynamic memory generation error\n";
 	  return 1;
@@ -73,91 +80,106 @@ int main(int argc, char *argv[])
     data.clear();
   }
   input.close();
-  return 0; 
+  return 0;
 }
-namespace muhamadiarov
+
+namespace muh = muhamadiarov;
+
+void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
 {
-  void fll_inc_wav(std::vector<int> data, char* argv[])
+  int n = data[0], k = data[1];
+  size_t count = data[0]*data[1];
+  if (argv[1] == 1)
   {
-    int n = data[0], k = data[1];
-    n = std::max(n, k);
-    k = std::min(n, k);
-    size_t countElement = data[1] * data[0];
-    medium_n = n%2?(n/2+1):(n/2);
-    medium_k = k%2?(k/2+1):(k/2);
-    if (argv[1] == 1)
+    int array[count];
+    for (int i = 0; i < count; ++i)
     {
-      int array[countElement];
-      for (size_t i = 2; i < countElement; ++i)
-      {
-        array[i - 2] = data[i];
-      }
-      for (size_t i = 0; i < k; ++i)
-      {
-	int p = 0;
-        for (size_t j = 0; j < n; ++i)
-	{
-          size_t n1 = j, k1 = i;
-
-          if (n1 > medium_n)
-	  {
-	    n1 = medium_n%2?(n1-(n1-medium_n)*2):(medium_n-(n1-medium_n+1)); 
-	  }
-          else if (k1 > medium_k)
-	  {
-	    k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
-	  }	  	
-	  p = std::min(k1, n1);
-	  array[i*j] += p;
-	}
-      }
-    std::cout << n << " " << k << " ";
-    for (size_t i = 0; i < countElement;++i)
+      array[i] == data[i+2];
+    }
+    muh::fll_inc_wav(array, argv[3], count, n, k);
+    muh::max_sum_mdg(array, argv[3], count, n, k);
+  }
+  else
+  {
+    int* arr = static_cast<int>malloc(count * sizeof(int));
+    if (arr == nullptr)
     {
-      std::cout << array[i] << ' ';
+      throw;
     }
-    std::cout << "\n";
-    }
-    else
+    int* begin = arr;
+    for (size_t i = 0; i < count; ++i)
     {
-      int* array = static_cast<int>malloc(countElement * sizeof(int));
-      if (array == nullptr)
-      {
-        throw;
-      }
-      int* ptr = array;
-      size_t n = 1, k = 1;
-      for (size_t i = 0; i < countElement; ++i)
-      {
-	size_t n1 = n, k1 = k;
-
-        if (n1 > medium_n)
-	{
-	  n1 = medium_n%2?(n1-(n1-medium_n)*2):(medium_n-(n1-medium_n+1)); 
-	}
-        else if (k1 > medium_k)
-        {
-	  k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
-        }	  	
-        p = std::min(k1, n1);
-
-        *(ptr+i) = data[i] + p;
-        if (i % n == 0)
-	{
-	  ++k;
-	  n = 1;
-	}
-	++n;
-      }
-      for (size_t i = 0; i < countElement; ++i)
-      {
-        std::cout << array[i] << " ";
-      }
-      std::cout << "\n";
-      free(array); 
+      *(begin+i) = data[i+2];
     }
-
-
-
+    muh::fll_inc_wav(arr, argv[3], count, n, k);
+    muh::max_sum_mdg(arr, argv[3], count, n, k);
+    free(arr);
   }
 }
+
+
+
+
+
+void muf::fll_inc_wav(int array[], char output, size_t count, int n, int k)
+{
+  medium_n = n%2?(n/2+1):(n/2);
+  medium_k = k%2?(k/2+1):(k/2);
+  for (size_t i = 0; i < k; ++i)
+  {
+    int p = 0;
+    for (size_t j = 0; j < n; ++i)
+    {
+      size_t n1 = j, k1 = i;
+      if (n1 > medium_n)
+      {
+        n1 = medium_n%2?(n1-(n1-medium_n)*2):(medium_n-(n1-medium_n+1));
+      }
+      if (k1 > medium_k)
+      {
+        k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
+      }
+      p = std::min(k1, n1);
+      array[i*j] += p;
+    }
+  }
+  out(array, output, count, n, k);
+}
+
+void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
+{
+  medium_n = n%2?(n/2+1):(n/2);
+  medium_k = k%2?(k/2+1):(k/2);
+  size_t n1 = 1, k1 = 1;
+  for (size_t i = 0; i < countElement; ++i)
+  {
+    n1 += 1;
+    if (n1 > n)
+    {
+      k1 += 1;
+      n1 = 1;
+    }
+    if (n1 > medium_n)
+    {
+      n1 = medium_n%2?(n1-(n1-medium_n)*2):(medium_n-(n1-medium_n+1));
+    }
+    else if (k1 > medium_k)
+    {
+      k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
+    }
+    p = std::min(k1, n1);
+
+    *(ptr+i) = data[i] + p;
+    if (i % n == 0)
+    {
+      ++k;
+      n = 1;
+    }
+    ++n;
+  }
+  out(array, output, count, n, k);
+}
+void muf::max_sum_mdg(int array[], char output, int n, int k)
+{
+}
+
