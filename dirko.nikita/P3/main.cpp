@@ -49,13 +49,6 @@ namespace dirko
     size_t line = 0;
     for (size_t i = 0; i < min; ++i)
     {
-      for (size_t j = line; j < line + i + 1; ++j)
-      {
-        if (arr[i + j] == 0)
-        {
-          return false;
-        }
-      }
       for (size_t j = line + i + 1; j < line + min; j++)
       {
         if (arr[i + j] != 0)
