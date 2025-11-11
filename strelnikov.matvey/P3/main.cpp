@@ -60,19 +60,6 @@ int ** dynamicmtx(std::ifstream& out, size_t r, size_t c){
   return a;
 }
 
-int ** create(int pr, std::ifstream& out, int ** mtx, size_t r, size_t c){
-  out >> r >> c;
-  if(std::cin.fail()){
-    throw std::logic_error("Wrong format");
-  }
-  if(pr == 1){
-    staticmtx(out,mtx,r,c);
-  }else{
-    mtx = dynamicmtx(out,r,c);
-  }
-  return mtx;
-}
-
 void doall(int pr, const char * outf, const char * inf){
   std::ifstream out;
   out.open(outf);
@@ -82,8 +69,26 @@ void doall(int pr, const char * outf, const char * inf){
   out.clear();
   out.seekg(0);
   int ** mtx = nullptr;
+  size_t r, c;
+  out >> r >> c;
+  if(std::cin.fail()){
+    throw std::logic_error("Wrong format");
+  }
+  try{
+    if(pr == 1){
+      staticmtx(out,mtx,r,c);
+    }else{
+      mtx = dynamicmtx(out,r,c);
+    }
+  }catch(const std::logic_error &e){
+    rm(mtx, r);
+    throw;
+  }
+
+
+  
   /*
-  dosmth
+    dosmth
   */
   out.close();
   std::ofstream in;
