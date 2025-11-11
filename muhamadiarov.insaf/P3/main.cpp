@@ -5,6 +5,7 @@
 #include <limits>
 #include <string>
 #include <algorithm>
+#include <typeinfo>
 
 namespace muhamadiarov
 {
@@ -14,18 +15,30 @@ namespace muhamadiarov
   long long muf::toFindMaxRight(int* ptr, int order); //done
   long long muh::toFindMaxinLeft(int* ptr, int order); //done
   long long muf::max_sum_mdg(int* ptr, char output, int order); //done
+  void tocoutargv(int argc, char * argv[]); //done
+  void tocouterror(int argc, char * argv[], bool check2, bool check3); //done
 }
 
 bool isOutfileOpened = true;
 
 int main(int argc, char *argv[]) 
 {
+  bool check1 = (argc != 2) || (argc != argv.size() - 2);
+  bool check2 = (argv.size() != 4);
+  bool check3 = typeid(argc).name() != typeid(int).name();
+  if (check1 || check2 || check3)
+  {
+    muh::tocoutargv(argc, argv);
+    int size = argv.size();
+    muh::tocouterror(argc, argv, check2, check3);
+    return 1;
+  }
   namespace muh = muhamadiarov;
   std::ifstream input(argv[2]);
   if (!input)
   {
     std::cerr << "Error opening file\n";
-    return 1;
+    return 2;
   }
   std::vector<int> data;
   std::string line;
@@ -33,14 +46,8 @@ int main(int argc, char *argv[])
   size_t c = 0;
   while (std::getline(input, line))
   {
-    isNumberisInt = muh::checkonTypeData(number);
-    if (!isnumberisInt)
-    {
-      cerr << "Error in data stream\n";
-      return 2;
-    }
     c = 0;
-    while (line >> number)
+    while (number << line)
     {
       ++c;
       if (c <= 2)
@@ -61,14 +68,14 @@ int main(int argc, char *argv[])
     {
       if (data[0] == data[1] && data[0] == 0)
       {
-        std::cout << "0 0\n";
-	std::cout << "0\n";
+	int* ptr = data;
+        out(ptr, argv[3], 0, 0, 0, ptr, 0);
       }
       else
       {
 	try
 	{
-          muf::toChoiseMemmory(data, argv)
+          muh::toChoiseMemmory(data, argv)
 	}
 	catch (const std::block_alloc e)
 	{
@@ -85,12 +92,12 @@ int main(int argc, char *argv[])
     return 1; 
   }
   input.close();
-  return 0;
+  return 2;
 }
 
 namespace muh = muhamadiarov;
 
-void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
+void muh::toChoiseMemmory(std::vector<int> data, char* argv[])
 {
   int n = data[0], k = data[1];
   size_t count = data[0]*data[1];
@@ -141,10 +148,10 @@ void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
     free(arr);
     free(resultFirstTask);
   }
-  muf::out(begin, count, n, k, resultFirstTask, resultSecondTask);
+  muh::out(begin, count, n, k, resultFirstTask, resultSecondTask);
 }
 
-void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
+void muh::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
 {
   medium_n = n%2?(n/2+1):(n/2);
   medium_k = k%2?(k/2+1):(k/2);
@@ -170,7 +177,7 @@ void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
 }
 
 
-long long muf::max_sum_mdg(int* ptr, char output, int order)
+long long muh::max_sum_mdg(int* ptr, char output, int order)
 {
   long long max_result = 0ll;
   long long par_branch_right = muh::toFindMaxinRight(ptr, order);
@@ -197,7 +204,7 @@ long long muh::toFindMaxinLeft(int* ptr, int order)
   return max_r;
 }
 
-long long muf::toFindMaxRight(int* ptr, int order)
+long long muh::toFindMaxRight(int* ptr, int order)
 {
   long long max_r = 0ll;
   long long result = 0ll;
@@ -216,7 +223,7 @@ long long muf::toFindMaxRight(int* ptr, int order)
   return max_r;
 }
 
-void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2)
+void muh::out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2)
 {
   std::ofstream outfile(output);
   if (!outfile)
@@ -247,5 +254,36 @@ void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long 
       }
     }
     outfile.close();
+  }
+}
+
+
+void muh::tocoutargv(int argc, char * argv[])
+{
+  for (size_t i = 0; i < argc; ++i)
+  {
+    std::cout << argv[i] << " ";
+  }
+}
+
+void muh::tocouterror(int argc, char * argv[], bool check2, bool chek3)
+{
+ 
+  int size = argv.size();
+  if (check2)
+  {
+    std::cout << "//Not enough arguments\n";
+  }
+  else if (size - 2 > argc)
+  {
+    std::cout << "//Too many arguments\n";
+  }
+  else if (size - 2 != argc)
+  {
+    std::cout << "//First parameter is out of range\n";
+  }
+  else if (check3)
+  {
+    std::cout << "//First parameter is not a number\n";
   }
 }
