@@ -9,13 +9,10 @@
 namespace muhamadiarov
 {
   void toChoiseMemmory(std::vector<int> data, char* argv[]); //done
-  void fll_inc_wav(int* begin, char output, size_t count, int n, int k); // done
-  void max_sum_mdg(int* begin, char* argv[]);
-  void fll_inc_wav(int array[], char output, size_t count, int n, int k); //done
-  void max_sum_mdg(int array[], char* argv[]);
+  void fll_inc_wav(int* ptr, char output, size_t count, int n, int k); // done
   bool checkonTypeData(int number);
-  void output(int array[], char out);
-  void output(int* begin, char out);
+  void out(int* ptr,char output, size_t count, int n, int k);
+  void max_sum_mdg(int* ptr, char output, int n, int k);
 }
 
 int main(int argc, char *argv[]) 
@@ -96,8 +93,9 @@ void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
     {
       array[i] == data[i+2];
     }
-    muh::fll_inc_wav(array, argv[3], count, n, k);
-    muh::max_sum_mdg(array, argv[3], count, n, k);
+    int* begin = array;
+    muh::fll_inc_wav(begin, argv[3], count, n, k);
+    muh::max_sum_mdg(begin, argv[3], count, n, k);
   }
   else
   {
@@ -111,17 +109,13 @@ void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
     {
       *(begin+i) = data[i+2];
     }
-    muh::fll_inc_wav(arr, argv[3], count, n, k);
-    muh::max_sum_mdg(arr, argv[3], count, n, k);
+    muh::fll_inc_wav(begin, argv[3], count, n, k);
+    muh::max_sum_mdg(begin, argv[3], count, n, k);
     free(arr);
   }
 }
 
-
-
-
-
-void muf::fll_inc_wav(int array[], char output, size_t count, int n, int k)
+void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
 {
   medium_n = n%2?(n/2+1):(n/2);
   medium_k = k%2?(k/2+1):(k/2);
@@ -140,46 +134,26 @@ void muf::fll_inc_wav(int array[], char output, size_t count, int n, int k)
         k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
       }
       p = std::min(k1, n1);
-      array[i*j] += p;
+      *(ptr + i*j) += p;
     }
   }
-  out(array, output, count, n, k);
+  muf::out(ptr, output, count, n, k);
 }
 
-void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
+
+void muf::max_sum_mdg(int* ptr, char output, int n, int k)
 {
-  medium_n = n%2?(n/2+1):(n/2);
-  medium_k = k%2?(k/2+1):(k/2);
-  size_t n1 = 1, k1 = 1;
-  for (size_t i = 0; i < countElement; ++i)
+  size_t coll_branch = colculation(n, k);
+  size_t max_result = 0;
+  size_t par_branch_left = 0;
+  int n1 = n - 1, n2 = n;
+  size_t par_branch_right = 0;
+  while (n1 > 0 && k > 0)
   {
-    n1 += 1;
-    if (n1 > n)
-    {
-      k1 += 1;
-      n1 = 1;
-    }
-    if (n1 > medium_n)
-    {
-      n1 = medium_n%2?(n1-(n1-medium_n)*2):(medium_n-(n1-medium_n+1));
-    }
-    else if (k1 > medium_k)
-    {
-      k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
-    }
-    p = std::min(k1, n1);
+    n1
+    par_branch_right = colculation(n, k - 1);
+    par
 
-    *(ptr+i) = data[i] + p;
-    if (i % n == 0)
-    {
-      ++k;
-      n = 1;
-    }
-    ++n;
-  }
-  out(array, output, count, n, k);
-}
-void muf::max_sum_mdg(int array[], char output, int n, int k)
-{
+  } 
 }
 
