@@ -1,12 +1,33 @@
 #include <iostream>
 #include <fstream>
 
+void staticmtx(std::ifstream& out, int ** a, size_t r, size_t c);
+int ** dynamicmtx(std::ifstream& out, int ** a, size_t r, size_t c);
+
+int ** create(int pr, std::ifstream& out){
+  size_t r, c;
+  out >> r >> c;
+  if(std::cin.fail()){
+    throw std::logic_error("Wrong format");
+  }
+  int ** mtx = nullptr;
+  if(pr == 1){
+    staticmtx(out,mtx,r,c);
+  }else{
+    mtx = dynamicmtx(out,mtx,r,c);
+  }
+
+  return mtx;
+}
+
 void doall(int pr, const char * outf, const char * inf){
   std::ifstream out;
   out.open(outf);
   if(!out.is_open()){
     throw std::logic_error("Cannot open out file\n");
   }
+  out.clear();
+  out.seekg(0);
   /*
   dosmth
   */
