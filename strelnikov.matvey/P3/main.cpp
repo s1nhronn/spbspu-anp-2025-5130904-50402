@@ -1,7 +1,26 @@
 #include <iostream>
-#include <string>
+#include <fstream>
 
-void doall(int pr, const char * outf, const char * inf);
+void doall(int pr, const char * outf, const char * inf){
+  std::ifstream out;
+  out.open(outf);
+  if(!out.is_open()){
+    throw std::logic_error("Cannot open out file\n");
+  }
+  /*
+  dosmth
+  */
+  out.close();
+  std::ofstream in;
+  in.open(inf);
+  if(!in.is_open()){
+    throw std::logic_error("Cannot open in file\n");
+  }
+  in.close();
+  /*
+  все созданное удаляется здесь
+  */
+}
 
 int main(int argc, char const *argv[]){
   int ex_code = 0;
