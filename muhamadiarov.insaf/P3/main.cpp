@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   size_t c = 0;
   while (std::getline(input, line))
   {
-    isNumberisInt = muf::checkonTypeData(number);
+    isNumberisInt = muh::checkonTypeData(number);
     if (!isnumberisInt)
     {
       cerr << "Error in data stream\n";
@@ -94,8 +94,11 @@ void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
       array[i] == data[i+2];
     }
     int* begin = array;
-    muh::fll_inc_wav(begin, argv[3], count, n, k);
-    muh::max_sum_mdg(begin, argv[3], count, n, k);
+    long long resultFirstTask = 0ll;
+    order = std::min(n, k);
+    int* resultSecondTask[order];
+    resultFirstTask = muh::fll_inc_wav(begin, argv[3], count, n, k);
+    resultSecondTask = muh::max_sum_mdg(begin, argv[3], count, order);
   }
   else
   {
@@ -109,10 +112,28 @@ void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
     {
       *(begin+i) = data[i+2];
     }
-    muh::fll_inc_wav(begin, argv[3], count, n, k);
-    muh::max_sum_mdg(begin, argv[3], count, n, k);
+    long long resultFirstTask = 0ll;
+    if (n != k)
+    {
+      order = std::min(n, k);
+      int* resultSecondTask[] = static_cast<int>malloc(order * sizeof(int));
+      begin = resultSecondTask;
+      if (resultSecondTask == nullptr)
+      {
+        free(arr);
+        throw;
+      }
+      for (size_t i = 1; i <= order; ++1)
+      {
+        *(begin + i*i) = arr[i*i];
+      }
+    }
+    resultFirstTask = muh::fll_inc_wav(begin, argv[3], count, n, k);
+    resultSecondTask = muh::max_sum_mdg(begin, argv[3], count, order);
     free(arr);
+    free(resultFirstTask);
   }
+  muf::out()
 }
 
 void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
@@ -141,19 +162,48 @@ void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
 }
 
 
-void muf::max_sum_mdg(int* ptr, char output, int n, int k)
+long long muf::max_sum_mdg(int* ptr, char output, int order)
 {
-  size_t coll_branch = colculation(n, k);
-  size_t max_result = 0;
-  size_t par_branch_left = 0;
-  int n1 = n - 1, n2 = n;
-  size_t par_branch_right = 0;
-  while (n1 > 0 && k > 0)
-  {
-    n1
-    par_branch_right = colculation(n, k - 1);
-    par
-
-  } 
+  long long max_result = 0ll;
+  long long par_branch_right = muh::toFindMaxinRight(ptr, order);
+  long long par_branch_left = muh::toFindMaxinLeft(ptr, order);
+  max_result = std::max(par_branch_right, par_branch_left);
+  return max_result;
 }
 
+long long muh::toFindMaxinLeft(int* ptr, int order)
+{
+  long long max_r = 0ll;
+  long long result = 0ll;
+  int n = order, k = order;
+  while (n > 0 && k > 0)
+  {
+    order -= 1;
+    for (int i = n, int j = 1; j <= k && i > 0; --i, ++j)
+    {
+      result += *(ptr + i*j);
+    }
+    max_r = std::max(result, max_r);
+    result = 0;
+  }
+  return max_r;
+}
+
+long long muf::toFindMaxRight(int* ptr, int order)
+{
+  long long max_r = 0ll;
+  long long result = 0ll;
+  int n = order, k = order;
+  int k1 = 2;
+  while (k >= k1)
+  {
+    k1 += 1;
+    for (int i = n, int j = 2; j <= k1 && i > 1; --i, ++j)
+    {
+      result += *(ptr + i*j);
+    }
+    max_r = std::max(result, max_r);
+    result = 0;
+  }
+  return max_r;
+}
