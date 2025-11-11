@@ -10,10 +10,13 @@ namespace muhamadiarov
 {
   void toChoiseMemmory(std::vector<int> data, char* argv[]); //done
   void fll_inc_wav(int* ptr, char output, size_t count, int n, int k); // done
-  bool checkonTypeData(int number);
-  void out(int* ptr,char output, size_t count, int n, int k);
-  void max_sum_mdg(int* ptr, char output, int n, int k);
+  void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2); //done
+  long long muf::toFindMaxRight(int* ptr, int order); //done
+  long long muh::toFindMaxinLeft(int* ptr, int order); //done
+  long long muf::max_sum_mdg(int* ptr, char output, int order); //done
 }
+
+bool isOutfileOpened = true;
 
 int main(int argc, char *argv[]) 
 {
@@ -76,6 +79,11 @@ int main(int argc, char *argv[])
     }
     data.clear();
   }
+  if (!isOutfileOpened)
+  {
+    std::cerr << "Error openning file\n";
+    return 1; 
+  }
   input.close();
   return 0;
 }
@@ -133,7 +141,7 @@ void muf::toChoiseMemmory(std::vector<int> data, char* argv[])
     free(arr);
     free(resultFirstTask);
   }
-  muf::out()
+  muf::out(begin, count, n, k, resultFirstTask, resultSecondTask);
 }
 
 void muf::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
@@ -206,4 +214,38 @@ long long muf::toFindMaxRight(int* ptr, int order)
     result = 0;
   }
   return max_r;
+}
+
+void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2)
+{
+  std::ofstream outfile(output);
+  if (!outfile)
+  {
+    isOutfileOpened = false;
+  }
+  else
+  {
+    for (size_t j = 0; j < 2; ++j)
+    {
+      outfile << n << " " << k << " ";
+      for (size_t i = 0; i < count; ++i)
+      {
+        outfile << *(ptr + i) << " ";
+      }
+      outfile << "//Expect output (return code 0): ";
+      if (j == 0)
+      {
+        for (size_t i; i < n*n; ++i)
+        {
+          output << *(res1 + i) << " ";
+        }
+        outfile << "\n";
+      }
+      else
+      {
+        output << res2 << "\n";
+      }
+    }
+    outfile.close();
+  }
 }
