@@ -33,7 +33,31 @@ void lftBotCnt(int** mtx, int r, int c){
 }
 
 size_t cntNzrDig(int ** mtx, size_t r, size_t c){
-
+  size_t min = (r < c)?r:c;
+  int cnt = 0;
+  for (size_t i = 1; i < min; ++i) {
+    int tr = 1;
+    size_t ecri = i;
+    for (size_t j = 0; j < min - i; ++j) {
+      if (mtx[j][ecri] == 0) {
+        tr = 0;
+      }
+      ++ecri;
+    }
+    cnt += tr;
+  }
+  for (size_t i = 1; i < min; ++i) {
+    size_t ecri = i;
+    int tr = 1;
+    for (size_t j = 0; j < min - i; ++j) {
+      if (mtx[ecri][j] == 0) {
+        tr = 0;
+      }
+      ++ecri;
+    }
+    cnt += tr;
+  }
+  return cnt;
 }
 
 int ** dynamicmtx(std::ifstream& out, size_t r, size_t c){
