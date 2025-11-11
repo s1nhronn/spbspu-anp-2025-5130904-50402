@@ -1,22 +1,75 @@
 #include <iostream>
 #include <fstream>
 
-void staticmtx(std::ifstream& out, int ** a, size_t r, size_t c);
-int ** dynamicmtx(std::ifstream& out, int ** a, size_t r, size_t c);
+void rm(int ** a, size_t r){
+  if(!a){
+    return;
+  }
+  for(size_t i = 0; i < r; ++i){
+    delete[] a[i];
+  }
+  delete[] a;
+}
 
-int ** create(int pr, std::ifstream& out){
-  size_t r, c;
+void staticmtx(std::ifstream& out, int ** a, size_t r, size_t c){
+  size_t cnt = 0;
+  for(size_t i = 0; i < r; ++i){
+    for(size_t j = 0; j < c; ++j){
+      out >> a[i][j];
+      if(out.eof() || out.fail()){
+        throw std::logic_error("bad input");
+      }
+      ++cnt;
+    }
+  }
+
+  if(cnt/r != c){
+    throw std::logic_error("Wrong format");
+  }
+}
+
+int ** dynamicmtx(std::ifstream& out, size_t r, size_t c){
+  int ** a = nullptr;
+  size_t cnt = 0;
+  try{
+    a = new int*[r];
+  }catch(const std::bad_alloc &e){
+    throw;
+  }
+  for(size_t i = 0; i < r; ++i){
+      try{
+        a[i] = new int[c];
+      }catch(const std::bad_alloc &e){
+        rm(a,i);
+        throw;
+      }
+    }
+  for(size_t i = 0; i < r; ++i){
+    for(size_t j = 0; j < c; ++j){
+      out >> a[i][j];
+      if(out.fail()){
+        rm(a, r);
+        throw std::logic_error("bad input");
+      }
+      ++cnt;
+    }
+  }
+  if(cnt/r != c){
+    throw std::logic_error("wrong format");
+  }
+  return a;
+}
+
+int ** create(int pr, std::ifstream& out, int ** mtx, size_t r, size_t c){
   out >> r >> c;
   if(std::cin.fail()){
     throw std::logic_error("Wrong format");
   }
-  int ** mtx = nullptr;
   if(pr == 1){
     staticmtx(out,mtx,r,c);
   }else{
-    mtx = dynamicmtx(out,mtx,r,c);
+    mtx = dynamicmtx(out,r,c);
   }
-
   return mtx;
 }
 
@@ -28,6 +81,7 @@ void doall(int pr, const char * outf, const char * inf){
   }
   out.clear();
   out.seekg(0);
+  int ** mtx = nullptr;
   /*
   dosmth
   */
@@ -35,6 +89,7 @@ void doall(int pr, const char * outf, const char * inf){
   std::ofstream in;
   in.open(inf);
   if(!in.is_open()){
+    
     throw std::logic_error("Cannot open in file\n");
   }
   in.close();
