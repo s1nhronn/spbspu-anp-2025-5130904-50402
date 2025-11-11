@@ -28,6 +28,14 @@ void staticmtx(std::ifstream& out, int ** a, size_t r, size_t c){
   }
 }
 
+void lftBotCnt(int** mtx, int r, int c){
+
+}
+
+size_t cntNzrDig(int ** mtx, size_t r, size_t c){
+
+}
+
 int ** dynamicmtx(std::ifstream& out, size_t r, size_t c){
   int ** a = nullptr;
   size_t cnt = 0;
@@ -84,23 +92,23 @@ void doall(int pr, const char * outf, const char * inf){
     rm(mtx, r);
     throw;
   }
-
-
-  
-  /*
-    dosmth
-  */
   out.close();
   std::ofstream in;
   in.open(inf);
   if(!in.is_open()){
-    
     throw std::logic_error("Cannot open in file\n");
   }
+  size_t dig = cntNzrDig(mtx, r, c);
+  in << dig;
+  lftBotCnt(mtx, r, c);
+  for(size_t i = 0; i < r; ++i){
+    for(size_t j = 0; j < r; ++j){
+      in << mtx[i][j] << ' ';
+    }
+    std::cout << '\n';
+  }
   in.close();
-  /*
-  все созданное удаляется здесь
-  */
+  rm(mtx, r);
 }
 
 int main(int argc, char const *argv[]){
