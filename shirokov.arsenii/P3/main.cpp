@@ -75,6 +75,10 @@ int main(int argc, char **argv)
   } catch (const std::logic_error &e)
   {
     std::cerr << e.what() << '\n';
+    if (num == 2)
+    {
+      delete[] massive;
+    }
     return 2;
   }
   std::ofstream out(argv[3]);
