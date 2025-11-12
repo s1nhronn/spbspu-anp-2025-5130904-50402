@@ -1,0 +1,6 @@
+namespace dirko
+{
+}
+int main()
+{
+}
