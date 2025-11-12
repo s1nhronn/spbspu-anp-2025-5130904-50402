@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <cstream>
 #include <vector>
 #include <limits>
 #include <string>
@@ -15,9 +14,9 @@ namespace muhamadiarov
   void toChoiseMemmory(std::vector<int> data, char* argv[]); 
   void fll_inc_wav(int* ptr, char output, size_t count, int n, int k); 
   void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2); 
-  long long muf::toFindMaxRight(int* ptr, int order); 
-  long long muh::toFindMaxinLeft(int* ptr, int order); 
-  long long muf::max_sum_mdg(int* ptr, char output, int order); 
+  long long toFindMaxRight(int* ptr, int order); 
+  long long toFindMaxinLeft(int* ptr, int order); 
+  long long max_sum_mdg(int* ptr, char output, int order); 
   void tocoutargv(int argc, char * argv[]); 
   void tocouterror(int argc, char * argv[], bool check2, bool check3); 
 }
@@ -26,7 +25,7 @@ bool isOutfileOpened = true;
 
 int main(int argc, char *argv[]) 
 {
-  bool check1 = (argc != 2) || (argc != argv.size() - 2);
+  bool check1 = (argc != 2) || (argc != argv.size() - 2); // проверка параметров main
   bool check2 = (argv.size() != 4);
   bool check3 = typeid(argc).name() != typeid(int).name();
   if (check1 || check2 || check3)
@@ -37,71 +36,73 @@ int main(int argc, char *argv[])
     return 1;
   }
   namespace muh = muhamadiarov;
-  std::ifstream input(argv[2]);
-  if (!input)
+  std::ifstream input(argv[2]); // открытие файла
+  if (!input) // открылся ли файл?
   {
     std::cerr << "Error is openning file\n";
     return 2;
   }
-  std::vector<int> data;
+  std::vector<int> data; // вектор как временное хранилище
   std::string line;
   int number = 0;
   size_t c = 0;
-  if (!std::getline(input, line))
+  if (!std::getline(input, line)) // не пустой ли файл?
   {
     std::cerr << "Error in standart stream error\n";
     return 2;
   }
-  while (std::getline(input, line))
+  while (std::getline(input, line)) // читаем построчно
   {
-    c = 0;
-    while (number << line)
+    try
     {
-      bool ch1 =  typeid(number).name() != typeid(int).name();
-      bool ch2 = number < min_int || number > max_int;
-      if (ch1 || ch2)
+      while (line >> number) // считываем числа из строки
       {
-        std::cerr << "Error in standart stream of error\n";
-        return 2;	
-      }
-      ++c;
-      if (c <= 2)
-      {
-        data.push_front(number);
-      }
-      else
-      {
+        bool ch1 =  typeid(number).name() != typeid(int).name();
+        bool ch2 = number < min_int || number > max_int;
+        if (ch1 || ch2) // проверка number
+        {
+          std::cerr << "Error in standart stream of error\n";
+          return 2;	
+        }
         data.push_back(number);
       }
     }
-    if (data[0] * data[1] != data.size() - 2)
+    catch(std::bad_alloc &e) // если произошло ошибка при работе vector
+    {
+      std::cerr << "Failed to allocate memory\n";
+      data.clear();
+      return 1;
+    }
+    if (data[0] * data[1] != data.size() - 2) // правильно ли даны размеры матрицы?
     {
       std::cerr << "Error in standart stream of error\n";
+      data.clear();
       return 2;
     }
     else
     {
-      if (data[0] == data[1] && data[0] == 0)
+      if (data[0] == data[1] && data[0] == 0) // если матрица размера 0 0
       {
 	int* ptr = data;
         out(ptr, argv[3], 0, 0, 0, ptr, 0);
       }
       else
       {
-	try
+        try
 	{
-          muh::toChoiseMemmory(data, argv)
+          muh::toChoiseMemmory(data, argv) // все дальнейшие действия находятся там
 	}
-	catch (const std::block_alloc e)
+	catch(...) // Если malloc не смог выделить память
 	{
-	  std::cerr << "Dynamic memory generation error\n";
+	  std::cerr << "Failed to allocate memory\n";
+	  data.clear();
 	  return 1;
 	}
       }
     }
     data.clear();
   }
-  if (!isOutfileOpened)
+  if (!isOutfileOpened) // если файл output не открылся
   {
     std::cerr << "Error openning file\n";
     return 1; 
@@ -132,7 +133,7 @@ void muh::toChoiseMemmory(std::vector<int> data, char* argv[])
   }
   else
   {
-    int* arr = static_cast<int>malloc(count * sizeof(int));
+    int* arr = static_cast<int*>(malloc(count * sizeof(int)));
     if (arr == nullptr)
     {
       throw;
