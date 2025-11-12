@@ -4,7 +4,7 @@ namespace petrov
 {
   void rm(int** mtx, size_t rows)
   {
-    for (size_t i = 0; i < rows, i++){
+    for (size_t i = 0; i < rows; i++){
       delete[] a[i];
     }
     delete[] a;
@@ -37,12 +37,13 @@ namespace petrov
         out >> a[i][j];
       }
     }
-    if (qnt_numb != rows*cols))
+    if (qnt_numb != rows*cols)
     {
-      throw std::lenght_error("Too many/few arguments for array\n");
+      throw std::logic_error("Too many/few arguments for array\n");
+    }
   }
 
-  size_t LFT_BOT_CNT(int** a, size_t r, size_t c)
+  int  LFT_BOT_CNT(int** a, size_t r, size_t c)
   {
     size_t counter = 0;
     size_t up = 0, down = --r, left = 0, right = --c;
