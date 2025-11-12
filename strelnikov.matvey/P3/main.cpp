@@ -1,100 +1,119 @@
 #include <iostream>
 #include <fstream>
 
-void rm(int ** a, size_t r){
-  if(!a){
+void rm(int** a, size_t r)
+{
+  if (!a) {
     return;
   }
-  for(size_t i = 0; i < r; ++i){
+  for (size_t i = 0; i < r; ++i) {
     delete[] a[i];
   }
   delete[] a;
 }
 
-void staticmtx(std::ifstream& out, int ** a, size_t r, size_t c){
+void staticmtx(std::ifstream& out, int** a, size_t r, size_t c)
+{
   size_t cnt = 0;
-  for(size_t i = 0; i < r; ++i){
-    for(size_t j = 0; j < c; ++j){
+  for (size_t i = 0; i < r; ++i) {
+    for (size_t j = 0; j < c; ++j) {
       out >> a[i][j];
-      if(out.eof() || out.fail()){
-        throw std::logic_error("bad input");
+      if (out.eof() || out.fail()) {
+        throw std::logic_error("Bad input\n");
       }
       ++cnt;
     }
   }
 
-  if(cnt/r != c){
-    throw std::logic_error("Wrong format");
+  if (cnt != c * r) {
+    throw std::logic_error("Wrong format\n");
   }
 }
 
-int ** dynamicmtx(std::ifstream& out, size_t r, size_t c){
-  int ** a = nullptr;
+int** dynamicmtx(std::ifstream& out, size_t r, size_t c)
+{
+  int** a = nullptr;
   size_t cnt = 0;
-  try{
+  try {
     a = new int*[r];
-  }catch(const std::bad_alloc &e){
+    for (size_t i = 0; i < r; ++i) {
+      a[i] = new int[c];
+    }
+  } catch (const std::bad_alloc& e) {
+    rm(a, r);
     throw;
   }
-  for(size_t i = 0; i < r; ++i){
-      try{
-        a[i] = new int[c];
-      }catch(const std::bad_alloc &e){
-        rm(a,i);
-        throw;
-      }
-    }
-  for(size_t i = 0; i < r; ++i){
-    for(size_t j = 0; j < c; ++j){
+
+  for (size_t i = 0; i < r; ++i) {
+    for (size_t j = 0; j < c; ++j) {
       out >> a[i][j];
-      if(out.fail()){
+      if (out.fail()) {
         rm(a, r);
-        throw std::logic_error("bad input");
+        throw std::logic_error("Bad input\n");
       }
       ++cnt;
     }
   }
-  if(cnt/r != c){
-    throw std::logic_error("wrong format");
+  if (cnt != c * r) {
+    throw std::logic_error("Wrong format\n");
   }
   return a;
 }
 
-void lftBotCnt(int** mtx, int r, int c){
-  size_t t = 0, l = 0;
-  size_t b = r - 1, ri = c - 1;
+void lftBotCnt(int** mtx, size_t r, size_t c)
+{
+  if (r == 0 || c == 0) {
+    return;
+  }
+  size_t top = 0, left = 0;
+  size_t bot = r - 1, right = c - 1;
   int cnt = 1;
 
-  while (l <= ri && t <= b) {
-    for (int j = l; j <= r; ++j) {
-      mtx[b][j] += cnt++;
+  while (left <= right && top <= bot) {
+    for (size_t j = left; j <= right; ++j) {
+      mtx[bot][j] += cnt++;
     }
-    --b;
-
-    for (int i = b; i >= t; --i) {
-      mtx[i][r] += cnt++;
+    if (bot == 0) {
+      break;
     }
-    --ri;
+    --bot;
 
-    if (t <= b) {
-      for (int j = ri; j >= l; --j) {
-        mtx[t][j] += cnt++;
+    if (left <= right) {
+      for (size_t i = bot + 1; i-- > top;) {
+        mtx[i][right] += cnt++;
+        if (i == 0) {
+          break;
+        }
       }
-      ++t;
+      if (right == 0) {
+        break;
+      }
+      --right;
     }
 
-    if (l <= ri) {
-      for (int i = t; i <= b; ++i) {
-        mtx[i][l] += cnt++;
+    if (top <= bot && left <= right) {
+      for (size_t j = right + 1; j-- > left;) {
+        mtx[top][j] += cnt++;
+        if (j == 0) {
+          break;
+        }
       }
-      ++l;
+      ++top;
+    }
+
+    if (left <= right && top <= bot) {
+      for (size_t i = top; i <= bot; ++i) {
+        mtx[i][left] += cnt++;
+      }
+      ++left;
     }
   }
 }
 
-size_t cntNzrDig(int ** mtx, size_t r, size_t c){
-  size_t min = (r < c)?r:c;
-  int cnt = 0;
+size_t cntNzrDig(int** mtx, size_t r, size_t c)
+{
+  size_t min = (r < c) ? r : c;
+  size_t cnt = 0;
   for (size_t i = 1; i < min; ++i) {
     int tr = 1;
     size_t ecri = i;
@@ -120,72 +139,92 @@ size_t cntNzrDig(int ** mtx, size_t r, size_t c){
   return cnt;
 }
 
-void doall(int pr, const char * outf, const char * inf){
-  std::ifstream out;
-  out.open(outf);
-  if(!out.is_open()){
-    throw std::logic_error("Cannot open out file\n");
+void doall(int pr, const char* outf, const char* inf)
+{
+  std::ifstream out(outf);
+  if (!out.is_open()) {
+    throw std::logic_error("Cannot open input file\n");
   }
-  out.clear();
-  out.seekg(0);
-  int ** mtx = nullptr;
+
   size_t r, c;
   out >> r >> c;
-  std::cout << "get r and c\n";
-  if(out.fail()){
-    throw std::logic_error("Wrong format");
+  if (out.fail()) {
+    throw std::logic_error("Bad rows and cols file input\n");
   }
-  try{
-    if(pr == 1){
-      int * mtx[10000];
-      staticmtx(out,mtx,r,c);
-    }else{
-      mtx = dynamicmtx(out,r,c);
+
+  int** mtx = 0;
+
+  try {
+    if (pr == 1) {
+      static int static_mtx[1000][1000];
+      if (r > 1000 || c > 1000) {
+        throw std::logic_error("Matrix too large\n");
+      }
+      int* rows[1000];
+      for (size_t i = 0; i < r; ++i) {
+        rows[i] = static_mtx[i];
+      }
+
+      staticmtx(out, rows, r, c);
+      mtx = rows;
+      out.close();
+
+      std::ofstream in(inf);
+      if (!in.is_open()) {
+        throw std::logic_error("Cannot open output file");
+      }
+
+      size_t dig = cntNzrDig(rows, r, c);
+      in << dig << '\n';
+      lftBotCnt(rows, r, c);
+      for (size_t i = 0; i < r; ++i) {
+        for (size_t j = 0; j < c; ++j)
+          in << rows[i][j] << ' ';
+        in << '\n';
+      }
+      in.close();
+      return;
+    } else {
+      mtx = dynamicmtx(out, r, c);
+      out.close();
+
+      std::ofstream in(inf);
+      if (!in.is_open()) {
+        throw std::logic_error("Cannot open output file");
+      }
+      size_t dig = cntNzrDig(mtx, r, c);
+      in << dig << '\n';
+      lftBotCnt(mtx, r, c);
+      for (size_t i = 0; i < r; ++i) {
+        for (size_t j = 0; j < c; ++j) {
+          in << mtx[i][j] << ' ';
+        }
+        in << '\n';
+      }
+      in.close();
+      rm(mtx, r);
     }
-  }catch(const std::logic_error &e){
-    throw;
-  }catch(const std::bad_alloc &e){
-    throw;
-  }
-  std::cout << "get mtx";
-  out.close();
-  std::ofstream in;
-  in.open(inf);
-  if(!in.is_open()){
-    if(pr == 2){rm(mtx, r);}
-    throw std::logic_error("Cannot open in file\n");
-  }
-  size_t dig = cntNzrDig(mtx, r, c);
-  std::cout << dig;
-  in << dig;
-  lftBotCnt(mtx, r, c);
-  for(size_t i = 0; i < r; ++i){
-    for(size_t j = 0; j < r; ++j){
-      in << mtx[i][j] << ' ';
-      std::cout << mtx[i][j] << ' ';
+  } catch (const std::exception& e) {
+    if (pr == 2) {
+      rm(mtx, r);
     }
-    in << '\n';
-    std::cout << '\n';
+    throw;
   }
-  std::cout << "do tasks\n";
-  in.close();
-  if(pr == 2){rm(mtx, r);}
 }
 
-int main(int argc, char const *argv[]){
+int main(int argc, char const* argv[])
+{
   int ex_code = 0;
-  if(argc != 4){
-    if(argc > 4){
-
-    }else{
+  if (argc != 4) {
+    if (argc > 4) {
+    } else {
       std::cerr << "Too few arguments\n";
     }
     ex_code = 1;
-  }else{
+  } else {
     int pr;
-    try{
+    try {
       pr = std::stoi(argv[1]);
-      std::cout << pr;
     } catch (const std::invalid_argument& e) {
       std::cerr << "First argument is not a number\n";
       ex_code = 1;
@@ -193,17 +232,18 @@ int main(int argc, char const *argv[]){
       std::cerr << "First argument is out of range\n";
       ex_code = 1;
     }
-    if(ex_code == 0){
-      if( pr != 1 && pr != 2){
+    if (ex_code == 0) {
+      if (pr != 1 && pr != 2) {
         std::cerr << "First argument is out of range\n";
         ex_code = 1;
       }
     }
-    if(ex_code == 0){
-      try{
+    if (ex_code == 0) {
+      try {
         doall(pr, argv[2], argv[3]);
-      }catch(...){
-        ex_code = 3;
+      } catch (const std::exception& e) {
+        std::cerr << e.what();
+        ex_code = 2;
       }
     }
   }
