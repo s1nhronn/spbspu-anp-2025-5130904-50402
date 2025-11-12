@@ -6,17 +6,20 @@
 #include <string>
 #include <algorithm>
 #include <typeinfo>
+#include <cstddef>
 
 namespace muhamadiarov
 {
-  void toChoiseMemmory(std::vector<int> data, char* argv[]); //done
-  void fll_inc_wav(int* ptr, char output, size_t count, int n, int k); // done
-  void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2); //done
-  long long muf::toFindMaxRight(int* ptr, int order); //done
-  long long muh::toFindMaxinLeft(int* ptr, int order); //done
-  long long muf::max_sum_mdg(int* ptr, char output, int order); //done
-  void tocoutargv(int argc, char * argv[]); //done
-  void tocouterror(int argc, char * argv[], bool check2, bool check3); //done
+  int max_int(); 
+  int min_int(); 
+  void toChoiseMemmory(std::vector<int> data, char* argv[]); 
+  void fll_inc_wav(int* ptr, char output, size_t count, int n, int k); 
+  void out(int* ptr,char output, size_t count, int n, int k, int* res1, long long res2); 
+  long long muf::toFindMaxRight(int* ptr, int order); 
+  long long muh::toFindMaxinLeft(int* ptr, int order); 
+  long long muf::max_sum_mdg(int* ptr, char output, int order); 
+  void tocoutargv(int argc, char * argv[]); 
+  void tocouterror(int argc, char * argv[], bool check2, bool check3); 
 }
 
 bool isOutfileOpened = true;
@@ -37,18 +40,30 @@ int main(int argc, char *argv[])
   std::ifstream input(argv[2]);
   if (!input)
   {
-    std::cerr << "Error opening file\n";
+    std::cerr << "Error is openning file\n";
     return 2;
   }
   std::vector<int> data;
   std::string line;
   int number = 0;
   size_t c = 0;
+  if (!std::getline(input, line))
+  {
+    std::cerr << "Error in standart stream error\n";
+    return 2;
+  }
   while (std::getline(input, line))
   {
     c = 0;
     while (number << line)
     {
+      bool ch1 =  typeid(number).name() != typeid(int).name();
+      bool ch2 = number < min_int || number > max_int;
+      if (ch1 || ch2)
+      {
+        std::cerr << "Error in standart stream of error\n";
+        return 2;	
+      }
       ++c;
       if (c <= 2)
       {
@@ -61,7 +76,7 @@ int main(int argc, char *argv[])
     }
     if (data[0] * data[1] != data.size() - 2)
     {
-      std::cerr << "Error in data stream\n";
+      std::cerr << "Error in standart stream of error\n";
       return 2;
     }
     else
@@ -278,7 +293,7 @@ void muh::tocouterror(int argc, char * argv[], bool check2, bool chek3)
   {
     std::cout << "//Too many arguments\n";
   }
-  else if (size - 2 != argc)
+  else if (size - 2 != argc || argc != 2)
   {
     std::cout << "//First parameter is out of range\n";
   }
@@ -287,3 +302,16 @@ void muh::tocouterror(int argc, char * argv[], bool check2, bool chek3)
     std::cout << "//First parameter is not a number\n";
   }
 }
+
+int muh::max_int()
+{
+  using namespace std;
+  return numeric_limits<int>::max();
+}
+
+int muh::min_int()
+{
+  using namespace std;
+  return numeric_limits<int>::min();
+}
+
