@@ -17,22 +17,17 @@ namespace muhamadiarov
   long long toFindMaxRight(int* ptr, int order); 
   long long toFindMaxinLeft(int* ptr, int order); 
   long long max_sum_mdg(int* ptr, char output, int order); 
-  void tocoutargv(int argc, char * argv[]); 
-  void tocouterror(int argc, char * argv[], bool check2, bool check3); 
+  bool tocheckparam(int argc, char* argv[]); 
+  void tocoutargv(int argc, char * argv[]);
 }
 
 bool isOutfileOpened = true;
 
 int main(int argc, char *argv[]) 
 {
-  bool check1 = (argc != 2) || (argc != argv.size() - 2); // проверка параметров main
-  bool check2 = (argv.size() != 4);
-  bool check3 = typeid(argc).name() != typeid(int).name();
-  if (check1 || check2 || check3)
+  bool checkparam = muh::tocheckparam(argc, argv); //проверка параметров main
+  if (!checkparam)
   {
-    muh::tocoutargv(argc, argv);
-    int size = argv.size();
-    muh::tocouterror(argc, argv, check2, check3);
     return 1;
   }
   namespace muh = muhamadiarov;
@@ -53,9 +48,10 @@ int main(int argc, char *argv[])
   }
   while (std::getline(input, line)) // читаем построчно
   {
+    std::stringstream iss(line);
     try
     {
-      while (line >> number) // считываем числа из строки
+      while (iss >> number) // считываем числа из строки
       {
         bool ch1 =  typeid(number).name() != typeid(int).name();
         bool ch2 = number < min_int || number > max_int;
@@ -108,7 +104,7 @@ int main(int argc, char *argv[])
     return 1; 
   }
   input.close();
-  return 2;
+  return 0;
 }
 
 namespace muh = muhamadiarov;
@@ -156,7 +152,7 @@ void muh::toChoiseMemmory(std::vector<int> data, char* argv[])
       }
       for (size_t i = 1; i <= order; ++1)
       {
-        *(begin + i*i) = arr[i*i];
+        *(begin + i * order + i) = arr[i*order + i];
       }
     }
     resultFirstTask = muh::fll_inc_wav(begin, argv[3], count, n, k);
@@ -169,8 +165,8 @@ void muh::toChoiseMemmory(std::vector<int> data, char* argv[])
 
 void muh::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
 {
-  medium_n = n%2?(n/2+1):(n/2);
-  medium_k = k%2?(k/2+1):(k/2);
+  int medium_n = n%2?(n/2+1):(n/2);
+  int medium_k = k%2?(k/2+1):(k/2);
   for (size_t i = 0; i < k; ++i)
   {
     int p = 0;
@@ -186,7 +182,7 @@ void muh::fll_inc_wav(int* ptr, char output, size_t count, int n, int k)
         k1 = medium_k%2?(k1-(k1-medium_k)*2):(medium_k-(k1-medium_k+1));
       }
       p = std::min(k1, n1);
-      *(ptr + i*j) += p;
+      *(ptr + i*n + j) += p;
     }
   }
   muf::out(ptr, output, count, n, k);
@@ -212,7 +208,7 @@ long long muh::toFindMaxinLeft(int* ptr, int order)
     order -= 1;
     for (int i = n, int j = 1; j <= k && i > 0; --i, ++j)
     {
-      result += *(ptr + i*j);
+      result += *(ptr + i*order + j);
     }
     max_r = std::max(result, max_r);
     result = 0;
@@ -231,7 +227,7 @@ long long muh::toFindMaxRight(int* ptr, int order)
     k1 += 1;
     for (int i = n, int j = 2; j <= k1 && i > 1; --i, ++j)
     {
-      result += *(ptr + i*j);
+      result += *(ptr + i*order + j);
     }
     max_r = std::max(result, max_r);
     result = 0;
@@ -274,7 +270,7 @@ void muh::out(int* ptr,char output, size_t count, int n, int k, int* res1, long 
 }
 
 
-void muh::tocoutargv(int argc, char * argv[])
+void muh::tocoutargv(int argc, char* argv[])
 {
   for (size_t i = 0; i < argc; ++i)
   {
@@ -282,27 +278,35 @@ void muh::tocoutargv(int argc, char * argv[])
   }
 }
 
-void muh::tocouterror(int argc, char * argv[], bool check2, bool chek3)
+bool muh::tocheckparam(int argc, char* argv[])
 {
- 
-  int size = argv.size();
-  if (check2)
+  if (argc < 4)
   {
-    std::cout << "//Not enough arguments\n";
+    muh::tocoutargv(int argv, char* argv[]);
+    std::cerr << "//Not enough arguments\n";
+    return false;
   }
-  else if (size - 2 > argc)
+  else if (argc > 4)
+  { 
+    muh::tocoutargv(int argv, char* argv[]);
+    std::cerr << "//Too many arguments\n";
+    return false;
+  }
+  else if (argv[1] > 2)
   {
-    std::cout << "//Too many arguments\n";
+    muh::tocoutargv(int argv, char* argv[]);
+    std::cerr << "//First parameter is out of range\n";
+    return false;
   }
-  else if (size - 2 != argc || argc != 2)
+  else if (typeid(argv[1]).name() != typeid(argv[1]).name())
   {
-    std::cout << "//First parameter is out of range\n";
+    muh::tocoutargv(int argv, char* argv[]);
+    std::cerr << "//First parameter is not a number\n";
+    return false;
   }
-  else if (check3)
-  {
-    std::cout << "//First parameter is not a number\n";
-  }
+  return true;
 }
+
 
 int muh::max_int()
 {
