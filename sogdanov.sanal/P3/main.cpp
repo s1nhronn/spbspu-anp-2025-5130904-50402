@@ -43,6 +43,19 @@ namespace sogdanov
       }
       colMax[i] = maxVal;
     }
+    int count = 0;
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        int value = mtx[i * cols + j];
+        if ( value == rowMin[i] && value == colMax[j]) {
+          count++;
+        }
+      }
+    }
+    free(rowMin);
+    free(colsMax);
+    return count;
+  }
   size_t max_sum_sgd(int * a, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
