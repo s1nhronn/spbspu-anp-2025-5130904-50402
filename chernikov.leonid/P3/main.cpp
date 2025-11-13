@@ -27,14 +27,16 @@ int main (int argc, char ** argv)
   if (!input.is_open())
   {
     std::cerr << "Failed to read file\n";
-    return 2;
+    return 1;
   }
+  if (input.peek() == std::ifstream::traits_type::eof())
+  {
+    std::cerr << "Empty input file" << std::endl;  // magic!
+    input.close();
+    return 2;
+    }
   int rows, cols;
   input >> rows >> cols;
-  /*if (rows < 0 || cols < 0) {
-    std::cerr << "Invalid matrix dimensions\n";
-    return 2;
-  }*/
 
   bool isDynamic = false;
   int* a = nullptr;
