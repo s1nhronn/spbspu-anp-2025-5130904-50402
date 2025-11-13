@@ -56,32 +56,33 @@ namespace sogdanov
     free(colsMax);
     return count;
   }
-  size_t max_sum_sgd(int * a, size_t rows, size_t cols)
+  size_t max_sum_sgd(int * a, int rows, int cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
     }
-    long long maxSum = -1000000;
-    size_t n = rows;
+    int n = rows < cols ? rows : cols;
+    long long maxSum = 0;
+    for (int i = 1; i < n; ++i) {
+      long long sum = 0;
+      for (int j = 0; j < n - i; ++j) {
+        sum += a[j * cols + j + i];
+      }
+      if (!hasDiag || sum > maxSum) {
+        maxSum = sum;
+      }
+    }
     for (size_t i = 1; i < n; i++) {
       long long sum = 0;
       for (size_t j = 0; j < n - i; j++) {
-        sum += a[j * n + j + i];
+        sum += a[cols * (j + i) + j];
       }
       if (sum > maxSum) {
         maxSum = sum;
       }
-   }
-   for (size_t i = 1; i < n; i++) {
-      long long sum = 0;
-      for (size_t j = 0; j < n - i; j++) {
-        sum += a[(j + i) * n + j ];
-      }
-      if (sum > maxSum) {
-        maxSum = sum;
-      }
-   }
-   return maxSum;
+    }
+    return maxSum;
+  }
 }
 int main(int argc, char ** argv)
 {
@@ -102,8 +103,8 @@ int main(int argc, char ** argv)
     std::cerr << "Cannot open input file\n";
     input.close();
     return 2;
-  size_t rows = 0;
-  size_t cols = 0;
+  int rows = 0;
+  int cols = 0;
   input >> rows >> cols;
   if ( input.fail() || rows < 0 || cols < 0) {
     std::cerr << "Incorrect Matrix Sizes\n";
