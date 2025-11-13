@@ -36,7 +36,7 @@ int main (int argc, char ** argv)
   }
   int rows, cols;
   input >> rows >> cols;
-  if (rows <= 0 || cols <= 0)
+  if (rows < 0 || cols < 0)
   {
     std::cerr << "Invalid matrix dimensions\n";
     input.close();
