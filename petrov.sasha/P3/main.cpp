@@ -3,6 +3,10 @@
 
 namespace petrov
 {
+  void LFT_BOT_CNT(int** a, size_t r, size_t c);
+  void FLL_INC_WAV(int** a, size_t rows, size_t cols);
+  void rm(int** mtx, size_t rows);
+
   void rm(int** mtx, size_t rows)
   {
     for (size_t i = 0; i < rows; i++){
