@@ -4,10 +4,14 @@
 
 namespace bukreev
 {
+  const size_t initialSize = 4;
+
   char* inputString();
   void deleteString(const char* str);
 
   char* growString(const char* oldStr, size_t* capacity);
+
+  char* excsnd(const char* first, const char* second);
 }
 
 int main()
@@ -20,17 +24,32 @@ int main()
   }
   catch(const std::bad_alloc& e)
   {
-    std::cerr << "Not enough memory.\n";
+    std::cerr << "Not enough memory for string input.\n";
+    return 1;
+  }
+
+  char* res1 = nullptr;//, *res2 = nullptr;
+
+  try
+  {
+    res1 = bukreev::excsnd(str, "abc");
+  }
+  catch(const std::bad_alloc& e)
+  {
+    std::cerr << "Not enought memory for EXC_SND.\n";
+    bukreev::deleteString(str);
     return 1;
   }
 
   bukreev::deleteString(str);
+
+  std::cout << res1;
+
+  free(res1);
 }
 
 char* bukreev::inputString()
 {
-  const size_t initialSize = 4;
-
   size_t capacity = initialSize;
 
   char* buffer = reinterpret_cast<char*>(malloc(initialSize * sizeof(char)));
@@ -94,4 +113,52 @@ char* bukreev::growString(const char* oldStr, size_t* capacity)
   deleteString(oldStr);
 
   return newStr;
+}
+
+char* bukreev::excsnd(const char* first, const char* second)
+{
+  size_t resCapacity = initialSize;
+
+  char* resStr = reinterpret_cast<char*>(malloc(initialSize * sizeof(char)));
+  if (!resStr)
+  {
+    throw std::bad_alloc();
+  }
+
+  size_t resIndex = 0;
+
+  for (size_t i = 0; i < std::strlen(first); i++)
+  {
+    char c = first[i];
+    bool exclude = false;
+
+    for (size_t j = 0; j < std::strlen(second); j++)
+    {
+      if (second[j] == c)
+      {
+        exclude = true;
+        break;
+      }
+    }
+
+    if (!exclude)
+    {
+      if (resIndex == resCapacity)
+      {
+        resStr = growString(resStr, &resCapacity);
+      }
+
+      resStr[resIndex] = c;
+      resIndex++;
+    }
+  }
+
+  if (resIndex == resCapacity)
+  {
+    resStr = growString(resStr, &resCapacity);
+  }
+
+  resStr[resIndex] = 0;
+
+  return resStr;
 }
