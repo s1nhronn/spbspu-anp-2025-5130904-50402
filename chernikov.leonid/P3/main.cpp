@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
+#include <limits>
 namespace chernikov
 {
     bool is_down_triangle_matrix (const int * a, int rows, int cols);
@@ -35,7 +36,18 @@ int main (int argc, char ** argv)
   }
   int rows, cols;
   input >> rows >> cols;
-
+  if (rows <= 0 || cols <= 0)
+  {
+    std::cerr << "Invalid matrix dimensions\n";
+    input.close();
+    return 2;
+  }
+  if (rows > std::numeric_limits<int>::max() / cols)
+  {
+    std::cerr << "Matrix size would cause integer overflow" << std::endl;
+    input.close();
+    return 2;
+  }
   bool isDynamic = false;
   int* a = nullptr;
   const int MAX_SIZE = 10000;
