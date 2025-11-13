@@ -1,7 +1,37 @@
 #include <iostream>
 #include <fstream>
+#include <memory>
 
-bool isErr(int argc, char ** argv)
+bool isErr1(int argc, char ** argv);
+bool isErr2(std::ifstream & input);
+
+int main(int argc, char ** argv)
+{
+  if(isErr1(argc, argv)){
+    return 1;
+  }
+  std::ifstream input(argv[2]);
+  std::ofstream output(argv[3]);
+  if(isErr2(input)){
+    return 2;
+  }
+  int n = 0, m = 0;
+  input >> n >> m;
+  if(argv[1][0] == '1'){
+    int arr[n * m] = {};
+    (void) arr;
+  } else {
+    int * arr = reinterpret_cast< int * >(
+     malloc(sizeof(int) * n * m));
+    if(arr == nullptr){
+      std::cerr << "Failure to allocate memory";
+      return 3;
+    }
+  }
+  return 0;
+}
+
+bool isErr1(int argc, char ** argv)
 {
   if(argc < 4){
     std::cerr << "Not enough arguments\n";
@@ -21,17 +51,18 @@ bool isErr(int argc, char ** argv)
     return true;
   }
   std::ifstream output(argv[3]);
-  if(input.fail()){
+  if(output.fail()){
     std::cerr << "Third argument does not exist between files\n";
     return true;
   }
   return false;
 }
 
-int main(int argc, char ** argv)
-{
-  if(isErr(argc, argv)){
-    return 1;
+bool isErr2(std::ifstream & input)
+{//файл пуст. не придумал как по другому сделать
+  if(input.peek() == std::ifstream::traits_type::eof()){
+    std::cerr << "Input file is empty\n";
+    return true;
   }
-  return 0;
+  return false;
 }
