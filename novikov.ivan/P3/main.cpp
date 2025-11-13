@@ -2,6 +2,7 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <new>
 #include <stdexcept>
 #include <string>
@@ -12,6 +13,28 @@ void remove(int ** mtx, size_t r)
     delete[] mtx[i];
   }
   delete[] mtx;
+}
+
+int minSum(int ** mtx, size_t r, size_t c)
+{
+  int sum;
+  int min = std::numeric_limits<int>::max();
+  for (int i = 0; i < c; ++i) {
+    sum = 0;
+    for (int j = 0; j < r; ++j) {
+      if (i - j < 0) {
+        break;
+      }
+      sum += mtx[j][i - j];
+    }
+    min = (sum < min) ? sum : min;
+  }
+  return min;
+}
+
+void addPeripheral(int ** mtx, size_t r, size_t c)
+{
+
 }
 
 int main(int argc, char ** argv)
@@ -43,15 +66,15 @@ int main(int argc, char ** argv)
   size_t rows, cols;
   input >> rows >> cols;
 
-  if (rows * cols > 10000) {
-    std::cerr << "Matrix is too large\n";
-    return 2;
-  }
-
   try {
     if (firstarg == 1) {
       size_t count = 0;
       int mtx[10000][10000];
+
+      if (rows * cols > 10000) {
+        std::cerr << "Matrix is too large\n";
+        return 2;
+      }
 
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
