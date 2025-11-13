@@ -13,11 +13,6 @@ namespace chernikov
 
 int main (int argc, char ** argv)
 {
-  /*char** end = argv + argc;
-  for (char** i = argv; i < end; ++i)
-  {
-    std::cout << *i << "\n";
-  }*/
   if (argc < 4 || argc > 4)
   {
     std::cerr << "Mismatch in the number of parameters\n";
@@ -52,8 +47,8 @@ int main (int argc, char ** argv)
   }
   bool isDynamic = false;
   int* a = nullptr;
-  const int MAX_SIZE = 10000;
-  int nums[MAX_SIZE] = {};
+  const int max_size = 10000;
+  int nums[max_size] = {};
   if (!chernikov::is_par_num(argv[1]))
   {
     std::cerr << "memory parameter is not a number\n";
@@ -170,7 +165,7 @@ size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
   {
     for (int j = 1; j < (cols - 1); ++j)
     {
-      bool t = a[j + i * cols];
+      int t = a[j + i * cols];
       bool l1 = t > a[(j - 1) + (i - 1) * cols];
       bool l2 = t > a[j + (i - 1) * cols];
       bool l3 = t > a[(j + 1) + (i - 1) * cols];
