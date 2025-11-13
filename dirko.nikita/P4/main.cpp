@@ -47,7 +47,11 @@ namespace dirko
     }
     return distention;
   }
-  std::ostream &output(std::ostream &out, const size_t res1, const char *res2);
+  std::ostream &output(std::ostream &out, const size_t result1, const char *result2)
+  {
+    out << result1 << '\n';
+    return out << result2;
+  }
 }
 int main()
 {
