@@ -87,16 +87,6 @@ bool isErr1(int argc, char ** argv)
     std::cerr << "First argument is not correct\n";
     return true;
   }
-  std::ifstream input(argv[2]);
-  if(input.fail()){
-    std::cerr << "Second argument does not exist between files\n";
-    return true;
-  }
-  std::ifstream output(argv[3]);
-  if(output.fail()){
-    std::cerr << "Third argument does not exist between files\n";
-    return true;
-  }
   return false;
 }
 
