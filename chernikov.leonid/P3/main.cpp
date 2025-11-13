@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 namespace chernikov
 {
     void output (const int * a, size_t c, size_t r);
@@ -31,13 +31,10 @@ int main (int argc, char ** argv)
     return 2;
   }
   int rows, cols;
+  input >> rows >> cols;
   if (!(input >> rows >> cols))
   {
     std::cerr << "Failed to read matrix dimensions\n";
-    return 2;
-  }
-  if (rows == 0 && cols == 0) {
-    std::cerr << "Empty matrix\n";
     return 2;
   }
   if (rows < 0 || cols < 0) {
@@ -57,7 +54,7 @@ int main (int argc, char ** argv)
   }
   else if (std::string(argv[1]) == "2")
   {
-    a = reinterpret_cast<int*>(malloc(sizeof(int) * (rows * cols)));
+    a = static_cast<int*>(malloc(sizeof(int) * (rows * cols)));
     isDynamic = true;
     if (a == nullptr)
     {
@@ -67,15 +64,35 @@ int main (int argc, char ** argv)
   }
   else
   {
-    std::cerr << "parameter 2 is set incorrectly";
-    return 2;
+    std::cerr << "Parameter 2 is set incorrectly\n";
+    return 1;
   }
 
   // reading file_2: filling the matrix
+  int col = 0;
   for (int i = 0; i < (rows * cols); ++i)
   {
     input >> a[i];
+    col++;
+    if (!(input >> a[i]))
+    {
+      std::cerr << "Failed to count element\n";
+      return 2;
+    }
 
+  }
+  if (col != (rows * cols))
+  {
+    std::cerr << "Not enough data";
+    if (isDynamic == true && a != nullptr)
+    {
+      free(a);
+      return 2;
+    }
+    else
+    {
+      return 2;
+    }
   }
   input.close();
 
@@ -90,7 +107,7 @@ int main (int argc, char ** argv)
 
   output.close();
 
-  if (isDynamic && a != nullptr)
+  if (isDynamic == true && a != nullptr)
   {
     free(a);
     a = nullptr;
