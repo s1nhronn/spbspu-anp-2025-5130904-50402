@@ -3,18 +3,10 @@
 #include <memory>
 
 bool isErr1(int argc, char ** argv);
-bool isErr2(int sizeArr, int size);
+bool isErr2(size_t sizeArr, size_t size);
 bool isEmptyFile(std::ifstream & input);
-void changeArrVar1(int * & arr, int n);
-void changeArrVar2(int * & arr, int n);
-
-void coutArr(int * a, int s)
-{
-  for(int i = 0; i < s; ++i){
-    std::cout << a[i] << " ";
-  }
-  std:: cout << "\n";
-}
+int * changeArrVar1(const int * arr, size_t n);
+int * changeArrVar2(const int * arr, size_t n);
 
 int main(int argc, char ** argv)
 {
@@ -26,7 +18,7 @@ int main(int argc, char ** argv)
   if(isEmptyFile(input)){
     return 2;
   }
-  int n = 0, m = 0;
+  size_t n = 0, m = 0;
   input >> n >> m;
   if(input.fail()){
     if(input.eof()){
@@ -36,41 +28,70 @@ int main(int argc, char ** argv)
     }
     return 2;
   }
-
-  int * arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-  if(arr == nullptr){
-    std::cerr << "Failure to allocate memory\n";
-    return 3;
-  }
-
-  int s = 0;
-  for(int n = 0; input >> n; ++s){
-    arr[s] = n;
-  }
-  if(!input.eof()){
-    std::cerr << "Invalid array format\n";
-    free(arr);
-    return 2;
-  }
-  input.close();
-  if(isErr2(s, n * m)){
-    free(arr);
-    return 2;
-  }
-
+  int * arr1 = nullptr;
+  int * arr2 = nullptr;
+  size_t s = 0;
   if(argv[1][0] == '1'){
-    changeArrVar1(arr, n);
+    int arr[10000]{};
+    for(size_t num = 0; input >> num; ++s){
+      arr[s] = num;
+    }
+    if(!input.eof()){
+      std::cerr << "Invalid array format\n";
+      return 2;
+    }
+    input.close();
+    if(isErr2(s, n * m)){
+      return 2;
+    }
+    try{
+      arr1 = changeArrVar1(arr, n);
+      arr2 = changeArrVar2(arr, n);
+    } catch(std::bad_alloc()){
+      std::cerr << "Failure to allocate memoty\n";
+      return 3;
+    }
   } else {
-    changeArrVar2(arr, n);
+    int * d_arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
+    if(d_arr == nullptr){
+      std::cerr << "Failure to allocate memory\n";
+      return 3;
+    }
+    for(size_t num = 0; input >> num; ++s){
+      d_arr[s] = num;
+    }
+    if(!input.eof()){
+      std::cerr << "Invalid array format\n";
+      free(d_arr);
+      return 2;
+    }
+    input.close();
+    if(isErr2(s, n * m)){
+      free(d_arr);
+      return 2;
+    }
+    try{
+      arr1 = changeArrVar1(d_arr, n);
+      arr2 = changeArrVar2(d_arr, n);
+    } catch(std::bad_alloc()){
+      std::cerr << "Failure to allocate memoty\n";
+      free(d_arr);
+      return 3;
+    }
+    free(d_arr);
   }
-
   std::ofstream output(argv[3]);
   output << n << " " << m << " ";
-  for(int i = 0; i < n * m; ++i){
-    output << arr[i] << " ";
+  for(size_t i = 0; i < n * m; ++i){
+    output << arr1[i] << " ";
+  }
+  output << "\n" << n << " " << m << " ";
+  for(size_t i = 0; i < n * m; ++i){
+    output << arr2[i] << " ";
   }
   output.close();
-  free(arr);
+  free(arr1);
+  free(arr2);
 }
 
 bool isErr1(int argc, char ** argv)
@@ -90,7 +111,7 @@ bool isErr1(int argc, char ** argv)
   return false;
 }
 
-bool isErr2(int sizeArr, int size)
+bool isErr2(size_t sizeArr, size_t size)
 {
   if(sizeArr < size){
     std::cerr << "Not enough numbers to create array\n";
@@ -112,70 +133,84 @@ bool isEmptyFile(std::ifstream & input)
   return false;
 }
 
-void changeArrVar1(int * & arr, int n)
+int * changeArrVar1(const int * arr, size_t n)
 {
-  int cnt = 1;
-  int lef = 0, rig = n - 1, top = 0, bot = n - 1;
-  int i = 0, j = 0;
+  int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
+  if(arr1 == nullptr){
+    throw std::bad_alloc();
+  }
+  for(size_t i = 0; i < n * n; ++i){
+    arr1[i] = arr[i];
+  }
+  size_t lef = 0, rig = n - 1, top = 0, bot = n - 1;
+  size_t cnt = 1, i = 0, j = 0;
   while(cnt < n * n){
     while(j < rig){
-      arr[i * n + j] -= cnt;
+      arr1[i * n + j] -= cnt;
       cnt++;
       j++;
     }
     top++;
     while(i < bot){
-      arr[i * n + j] -= cnt;
+      arr1[i * n + j] -= cnt;
       cnt++;
       i++;
     }
     rig--;
     while(j > lef){
-      arr[i * n + j] -= cnt;
+      arr1[i * n + j] -= cnt;
       cnt++;
       j--;
     }
     bot--;
     while(i > top){
-      arr[i * n + j] -= cnt;
+      arr1[i * n + j] -= cnt;
       cnt++;
       i--;
     }
     lef++;
   }
-  arr[i * n + j] -= cnt;
+  arr1[i * n + j] -= cnt;
+  return arr1;
 }
 
-void changeArrVar2(int * & arr, int n)
+int * changeArrVar2(const int * arr, size_t n)
 {
-  int cnt = 1;
-  int lef = 0, rig = n - 1, top = 0, bot = n - 1;
-  int i = n - 1, j = 0;
+  int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
+  if(arr2 == nullptr){
+    throw std::bad_alloc();
+  }
+  for(size_t i = 0; i < n * n; ++i){
+    arr2[i] = arr[i];
+  }
+  size_t lef = 0, rig = n - 1, top = 0, bot = n - 1;
+  size_t cnt = 1, i = n - 1, j = 0;
   while(cnt < n * n){
     while(j < rig){
-      arr[i * n + j] += cnt;
+      arr2[i * n + j] += cnt;
       cnt++;
       j++;
     }
     bot--;
     while(i > top){
-      arr[i * n + j] += cnt;
+      arr2[i * n + j] += cnt;
       cnt++;
       i--;
     }
     rig--;
     while(j > lef){
-      arr[i * n + j] += cnt;
+      arr2[i * n + j] += cnt;
       cnt++;
       j--;
     }
     top++;
     while(i < bot){
-      arr[i * n + j] += cnt;
+      arr2[i * n + j] += cnt;
       cnt++;
       i++;
     }
     lef++;
   }
-  arr[i * n + j] += cnt;
+  arr2[i * n + j] += cnt;
+  return arr2;
 }
