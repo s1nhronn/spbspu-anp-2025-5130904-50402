@@ -12,7 +12,7 @@ namespace petrov
 
   void stat(std::ifstream& out, int** a, size_t rows, size_t cols)
   {
-
+    
   }
 
   void dyn(std::ifstream& out, size_t rows, size_t cols)
@@ -86,8 +86,49 @@ namespace petrov
   }
 }
 
-int main(int argc, char const* argv[])
+int main(int argc, char const** argv)
 {
-
+  if (argc < 4)
+  {
+    std::cerr << "Not enough arguments\n";
+  } else if ( argc > 4)
+  {
+    std::cerr << "Too many arguments\n";
+  }
+  std::ifstream input(argv[2]);
+  int cols = 0, rows = 0;
+  try{
+    input >> rows >> cols;
+  } catch (...) {
+    std::cerr << "Invalid matrix data\n";
+    return 2;
+  }
+  std::ofstream output(argv[3]);
+  if (!(input && output))
+  {
+    std::cerr << "Error in file\n";
+    return 2;
+  }
+  if (argv[2] == '1')
+  {
+    const int max_size_arr = 10000;
+    long long arr[max_size_arr];
+    
+  } else if ( argv[2] == '2')
+  {
+    
+    petrov::rm(a, rows);
+  } else
+  {
+    int error_variant = 0;
+    try {
+      error_variant = std::stoi(argv[1]);
+    } catch(const std::invalid_argument& e) {
+      std::cerr << "First parameter is not a number\n";
+      return 1;
+    }
+    std::cerr << "First parameter is out of range\n";
+    return 1;
+  }
+  return 0;
 }
-
