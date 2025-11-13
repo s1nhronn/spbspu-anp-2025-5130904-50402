@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     std::cerr << e.what() << '\n';
     if (num == 2)
     {
-      delete[] massive;
+      delete[] b;
     }
     return 2;
   }
