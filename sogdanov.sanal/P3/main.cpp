@@ -86,17 +86,20 @@ namespace sogdanov
 }
 int main(int argc, char ** argv)
 {
-  int num = 0;
   if (argc < 4) {
     std::cerr << "Not enough arguments\n";
     return 1;
   } else if (argc > 4) {
     std::cerr << "Too many arguments\n";
     return 1;
-  } else if (*argv[1] == '1') {
-    num = 1;
-  } else if (*argv[1] == '2') {
-    num = 2;
+  char num = *argv[1];
+  if (num != '1' && num != '2') {
+    if (num <= '9' && num >= '0') {
+      std::cerr << "First argument is out of range\n";
+    } else {
+      std::cerr << "First argument is not a number\n";
+    }
+    return 1;
   }
   std::ifstream input(argv[2]);
   if (!input) {
@@ -112,6 +115,8 @@ int main(int argc, char ** argv)
     return 2;
   }
   int * mtx = nullptr;
+  long long res1 = 0;
+  long long res2 = 0;
   if (*argv[1] == '1') {
     int mtx[10000] = {};
     if (!(inputCases(input, mtx, rows, cols) {
