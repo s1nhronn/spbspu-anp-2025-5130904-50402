@@ -29,6 +29,14 @@ int main (int argc, char ** argv)
     std::cerr << "Cannot open input file\n";
     return 1;
   }
+  input.seekg(0, std::ios::end);
+  if (input.tellg() == 0)
+  {
+    std::cerr << "Empty input file" << std::endl;
+    input.close();
+    return 2;
+  }
+  input.seekg(0, std::ios::beg);
   if (input.peek() == std::ifstream::traits_type::eof())
   {
     std::cerr << "Empty input file" << std::endl;  // magic!
