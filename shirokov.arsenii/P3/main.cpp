@@ -6,10 +6,13 @@
 
 size_t lengthInput(char *file);
 void input(std::istream &in, int *m, size_t lng);
-std::ostream &output(std::ostream &out, const int *m, size_t a, size_t b);
+void output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2);
 bool isDigit(char *str);
 int strToInt(char *str);
 int myPow(int a, int b);
+int *copy(const int *a, size_t k);
+int *spiral(int *matrix, size_t m, size_t n);
+bool isTriangularMatrix(int *matrix, size_t m, size_t n);
 
 int main(int argc, char **argv)
 {
@@ -58,19 +61,19 @@ int main(int argc, char **argv)
   size_t m, n;
   in >> m >> n;
 
-  int *massive = nullptr;
+  int *matrix = nullptr;
   try
   {
     if (num == 1)
     {
       input(in, a, lng);
-      massive = a;
+      matrix = a;
       delete[] b;
     }
     else
     {
       input(in, b, lng);
-      massive = b;
+      matrix = b;
     }
   } catch (const std::logic_error &e)
   {
@@ -79,10 +82,13 @@ int main(int argc, char **argv)
     return 2;
   }
   std::ofstream out(argv[3]);
-  output(out, massive, m, n) << '\n';
+  int *res1 = spiral(matrix, m, n);
+  bool res2 = isTriangularMatrix(matrix, m, n);
+  output(out, res1, m, n, res2);
   if (num == 2)
   {
-    delete[] massive;
+    delete[] matrix;
+    delete[] res1;
   }
 }
 
@@ -93,7 +99,7 @@ size_t lengthInput(char *file)
   in >> a >> b;
   if (in.fail())
   {
-    throw std::logic_error("Couldn't read the size of massive");
+    throw std::logic_error("Couldn't read the size of matrix");
   }
   return a * b;
 }
@@ -105,7 +111,7 @@ void input(std::istream &in, int *m, size_t lng)
     in >> m[i];
     if (in.fail())
     {
-      throw std::logic_error("Couldn't read the massive");
+      throw std::logic_error("Couldn't read the matrix");
     }
   }
 }
@@ -160,14 +166,25 @@ int myPow(int a, int b)
   return res;
 }
 
-std::ostream &output(std::ostream &out, const int *m, size_t a, size_t b)
+void output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2)
 {
-  for (size_t i = 0; i < a; i++)
+  out << "Решение варианта 1:\n";
+  for (size_t i = 0; i < m; i++)
   {
-    for (size_t j = 0; j < b; j++)
+    for (size_t j = 0; j < n; j++)
     {
-      out << m[i * b + j] << ' ';
+      out << res1[i * n + j] << ' ';
     }
   }
-  return out;
+  out << "\nРешение варианта 2:\n" << res2;
+}
+
+int *copy(const int *a, size_t k)
+{
+  int *b = new int[k];
+  for (size_t i = 0; i < k; ++i)
+  {
+    b[i] = a[i];
+  }
+  return b;
 }
