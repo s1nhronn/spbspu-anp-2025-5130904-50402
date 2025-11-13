@@ -3,7 +3,7 @@
 
 namespace dirko
 {
-  void staticInput(std::istream &input, int *matrix, size_t rows, size_t cols)
+  void staticInput(std::istream &input, int *matrix, const size_t rows, const size_t cols)
   {
     for (size_t i = 0; i < rows * cols; ++i)
     {
@@ -18,7 +18,7 @@ namespace dirko
       }
     }
   }
-  int *dinamicInput(std::istream &input, size_t rows, size_t cols)
+  int *dinamicInput(std::istream &input, const size_t rows, const size_t cols)
   {
     try
     {
@@ -44,9 +44,9 @@ namespace dirko
       throw;
     }
   }
-  int *LFT_BOT_CLK(const int *matrix, size_t rows, size_t cols)
+  int *LFT_BOT_CLK(const int *matrix, const size_t rows, const size_t cols)
   {
-    size_t elements = rows * cols;
+    const size_t elements = rows * cols;
     if (elements == 0)
     {
       return nullptr;
@@ -98,9 +98,9 @@ namespace dirko
     }
     return result;
   }
-  bool LWR_TRI_MTX(const int *matrix, size_t rows, size_t cols)
+  bool LWR_TRI_MTX(const int *matrix, const size_t rows, const size_t cols)
   {
-    size_t min = (rows > cols) ? cols : rows;
+    const size_t min = (rows > cols) ? cols : rows;
     if (min < 2)
     {
       return false;
@@ -119,7 +119,7 @@ namespace dirko
     }
     return true;
   }
-  std::ostream &output(std::ostream &output, const int *matrix, size_t rows, size_t cols, bool result2)
+  std::ostream &output(std::ostream &output, const int *matrix, const size_t rows, const size_t cols, const bool result2)
   {
     output << rows << ' ' << cols << ' ';
     for (size_t i = 0; i < rows * cols; ++i)
