@@ -10,6 +10,9 @@ int * changeArrVar2(const int * arr, size_t n);
 
 int main(int argc, char ** argv)
 {
+  if(argc == 0){
+    return 0;
+  }
   if(isErr1(argc, argv)){
     return 1;
   }
