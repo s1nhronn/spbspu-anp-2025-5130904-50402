@@ -144,5 +144,13 @@ int main(int argc, char ** argv)
     free(mtx);
   }
   input.close();
-
+  std::ofstream output(argv[3]);
+  if (!output) {
+    std::cerr << "Cannot open output file\n";
+    if (num == '2') {
+      free(mtx);
+    }
+    return 2;
+  }
+  output << res1 << " " << res2;
 }
