@@ -24,6 +24,10 @@ namespace sogdanov
       return 0;
     }
     int* rowMin = static_cast<int*>(malloc(rows * sizeof(int)));
+    if (rowMin == nullptr) {
+      std::cerr << "Memory allocation failed\n";
+      return 2;
+    }
     for (int i = 0; i < rows; ++i) {
       int minValue = mtx[i * cols];
       for (int j = 1; j < cols; ++j) {
@@ -34,6 +38,12 @@ namespace sogdanov
       rowMin[i] = minValue;
     }
     int* colMax = static_cast<int*>(malloc(cols * sizeof(int)));
+    if (rowMin == nullptr) {
+      free(rowMin);
+      std::cerr << "Memory allocation failed\n";
+      return 2;
+    }
+
     for (int i = 0; i < cols; ++i) {
       int maxVal = mtx[i];
       for (int j = 1; j < rows; ++j) {
@@ -126,7 +136,11 @@ int main(int argc, char ** argv)
       return 2;
     }
     int mtx[10000] = {};
-    sogdanov::readMatrix(input, mtx, rows, cols);
+    int r = sogdanov::readMatrix(input, mtx, rows, cols);
+    if (r != 0) {
+      input.close();
+      return r;
+    }
     res1 = sogdanov::max_sum_sdg(mtx, rows, cols);
     res2 = sogdanov::cnt_sdl_pnt(mtx, rows, cols);
   }
@@ -137,10 +151,12 @@ int main(int argc, char ** argv)
       input.close();
       return 2;
     }
-    if (sogdanov::readMatrix(input, mtx, rows, cols) != 0) {
+    int r = sogdanov::readMatrix(input, mtx, rows, cols);
+    if (r != 0) {
       free(mtx);
+      input.close();
+      return r;
     }
-    sogdanov::readMatrix(input, mtx, rows, cols);
     res1 = sogdanov::max_sum_sdg(mtx, rows, cols);
     res2 = sogdanov::cnt_sdl_pnt(mtx, rows, cols);
     free(mtx);
@@ -149,10 +165,6 @@ int main(int argc, char ** argv)
   std::ofstream output(argv[3]);
   if (!output) {
     std::cerr << "Cannot open output file\n";
-    if (num == '2') {
-      free(mtx);
-    }
-    return 2;
   }
   output << res1 << " " << res2;
 }
