@@ -48,13 +48,16 @@ int main (int argc, char ** argv)
   // memory allocation
   bool isDynamic = false;
   int* a = nullptr;
-  if (argv[1] == "1")
+  const int MAX_SIZE = 10000;
+  int nums[MAX_SIZE] = {};
+  if (std::string(argv[1]) == "1")
   {
-    int a[10000] = {};
+    a = nums;
+    isDynamic = false;
   }
-  else if (argv[1] == "2")
+  else if (std::string(argv[1]) == "2")
   {
-    int* nums = reinterpret_cast<int*>(malloc(sizeof(int) * (rows * cols)));
+    a = reinterpret_cast<int*>(malloc(sizeof(int) * (rows * cols)));
     isDynamic = true;
     if (nums == nullptr)
     {
@@ -102,10 +105,10 @@ bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
     if (a[0] == 0)
     {
       int k = 0;
-      for (size_t i = 0; i < (rows - 1); ++i)
+      for (int i = 0; i < (rows - 1); ++i)
       {
         int line = rows * i;
-        for (size_t j = 0; j < (cols - k); ++j)
+        for (int j = 0; j < (cols - k); ++j)
         {
           if (a[j + line] != 0)
           {
@@ -119,10 +122,10 @@ bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
     if (a[cols - 1] == 0)
     {
       int k = 0;
-      for (size_t i = 0; i < (rows - 1); ++i)
+      for (int i = 0; i < (rows - 1); ++i)
       {
         int line = rows * i;
-        for (size_t j = (cols); j > k; --j)
+        for (int j = (cols); j > k; --j)
         {
           if (a[j - line] != 0)
           {
@@ -151,9 +154,9 @@ size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
     return 0;
   }
   size_t count = 0;
-  for (size_t i = 1; i < (rows - 1); ++i)
+  for (int i = 1; i < (rows - 1); ++i)
   {
-    for (size_t j = 1; j < (cols - 1); ++j)
+    for (int j = 1; j < (cols - 1); ++j)
     {
       bool t = a[j + i * cols];
       bool l1 = t > a[(j - 1) + (i - 1) * cols];
