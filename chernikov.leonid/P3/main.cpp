@@ -8,6 +8,7 @@ namespace chernikov
 {
     bool is_down_triangle_matrix (const int * a, int rows, int cols);
     size_t local_max_quantity(const int* a, int rows, int cols);
+    bool is_par_num(char* a);
 }
 
 int main (int argc, char ** argv)
@@ -22,33 +23,23 @@ int main (int argc, char ** argv)
     std::cerr << "Mismatch in the number of parameters\n";
     return 1;
   }
-
-  std::ifstream input(argv[2]);
-  if (!input.is_open())
-  {
-    std::cerr << "Cannot open input file\n";
-    return 1;
-  }
-  input.seekg(0, std::ios::end);
-  if (input.tellg() == 0)
-  {
-    std::cerr << "Empty input file" << std::endl;
-    input.close();
-    return 2;
-  }
-  input.seekg(0, std::ios::beg);
-  if (input.peek() == std::ifstream::traits_type::eof())
-  {
-    std::cerr << "Empty input file" << std::endl;  // magic!
-    return 2;
-  }
   int rows = 0, cols = 0;
-  input >> rows >> cols;
+  std::ifstream input(argv[2]);
+  if (!input || !(input >> rows >> cols))
+  {
+    std::cerr << "Array cannot exist\n";
+    return 2;
+  }
+  if ((rows * cols)>10000)
+  {
+    std::cerr << "Array incorect\n";
+    return 2;
+  }
   if (rows == 0 && cols == 0)
   {
     std::ofstream output(argv[3]);
-    output << "0" << std::endl;
-    output << "0" << std::endl;
+    output << "0\n" << std::endl;
+    output << "0\n" << std::endl;
     output.close();
     input.close();
     return 0;
@@ -59,16 +50,15 @@ int main (int argc, char ** argv)
     input.close();
     return 2;
   }
-  if (rows > std::numeric_limits<int>::max() / cols)
-  {
-    std::cerr << "Matrix size would cause integer overflow" << std::endl;
-    input.close();
-    return 2;
-  }
   bool isDynamic = false;
   int* a = nullptr;
   const int MAX_SIZE = 10000;
   int nums[MAX_SIZE] = {};
+  if (!chernikov::is_par_num(argv[1]))
+  {
+    std::cerr << "memory parameter is not a number\n";
+    return 1;
+  }
   if (std::string(argv[1]) == "1")
   {
     memset(nums, 0, sizeof(nums));
@@ -91,7 +81,6 @@ int main (int argc, char ** argv)
     return 2;
   }
   memset(a, 0, sizeof(int) * rows * cols);
-  // reading file_2: filling the matrix
   int col = 0;
   for (int i = 0; i < (rows * cols); ++i)
   {
@@ -122,15 +111,11 @@ int main (int argc, char ** argv)
   }
   input.close();
 
-  //LWR-TRI-MTX
   bool LWR_TRI_MTX = chernikov::is_down_triangle_matrix (a, rows, cols);
   std::ofstream output(argv[3]);
   output << "LWR_TRI_MTX = " << LWR_TRI_MTX << "\n";
-
-  //MAX
   size_t CNT_LOC_MAX = chernikov::local_max_quantity (a, rows, cols);
   output << "CNT_LOC_MAX = " << CNT_LOC_MAX << "\n";
-
   output.close();
 
   if (isDynamic == true && a != nullptr)
@@ -138,6 +123,7 @@ int main (int argc, char ** argv)
     free(a);
     a = nullptr;
   }
+
   return 0;
 }
 
@@ -200,4 +186,14 @@ size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
     }
   }
   return count;
+}
+
+bool chernikov::is_par_num(char* p)
+{
+  for (size_t i = 0; i < std::strlen(p); ++i) {
+    if (!std::isdigit(static_cast<unsigned char>(p[i]))) {
+      return 0;
+    }
+  }
+  return 1;
 }
