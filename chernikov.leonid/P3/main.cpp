@@ -32,15 +32,10 @@ int main (int argc, char ** argv)
   }
   int rows, cols;
   input >> rows >> cols;
-  if (!(input >> rows >> cols))
-  {
-    std::cerr << "Failed to read matrix dimensions\n";
-    return 2;
-  }
-  if (rows < 0 || cols < 0) {
+  /*if (rows < 0 || cols < 0) {
     std::cerr << "Invalid matrix dimensions\n";
     return 2;
-  }
+  }*/
 
   // memory allocation
   bool isDynamic = false;
@@ -65,26 +60,25 @@ int main (int argc, char ** argv)
   else
   {
     std::cerr << "Parameter 2 is set incorrectly\n";
-    return 1;
+    return 2;
   }
 
   // reading file_2: filling the matrix
   int col = 0;
   for (int i = 0; i < (rows * cols); ++i)
   {
-    input >> a[i];
-    col++;
     if (!(input >> a[i]))
     {
       std::cerr << "Failed to count element\n";
       return 2;
     }
+    ++col;
 
   }
   if (col != (rows * cols))
   {
     std::cerr << "Not enough data";
-    if (isDynamic == true && a != nullptr)
+    if (isDynamic && a != nullptr)
     {
       free(a);
       return 2;
