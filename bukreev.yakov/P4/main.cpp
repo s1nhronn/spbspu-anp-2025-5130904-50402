@@ -9,7 +9,18 @@ namespace bukreev
 
 int main()
 {
-  char* str = bukreev::inputString();
+  char* str = nullptr;
+  
+  try
+  {
+    str = bukreev::inputString();
+  }
+  catch(const std::bad_alloc& e)
+  {
+    std::cerr << "No memory" << '\n';
+    return 1;
+  }
+
   bukreev::deleteString(str);
 }
 
@@ -20,6 +31,10 @@ char* bukreev::inputString()
   size_t capacity = initialSize;
 
   char* buffer = reinterpret_cast<char*>(malloc(initialSize * sizeof(char)));
+  if (!buffer)
+  {
+    throw std::bad_alloc();
+  }
 
   std::cin >> std::noskipws;
 
