@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cctype>
+#include <algorithm>
 
 namespace dirko
 {
@@ -22,7 +23,8 @@ namespace dirko
         throw std::bad_alloc();
       }
       str = temp;
-      str[size++] = ch;
+      str[size] = ch;
+      ++size;
     }
     if (in.fail())
     {
@@ -35,8 +37,24 @@ namespace dirko
     }
     return str;
   }
-  size_t DIF_LAT(const char *str);
-  char *UPP_LOW(const char *source, char *distention, size_t size)
+  size_t DIF_LAT(const char *str, size_t size)
+  {
+    size_t count = 0;
+    char seen[26] = {};
+    for (size_t i = 0; i < size; ++i)
+    {
+      if (std::isalpha(str[i]))
+      {
+        if (std::find(seen, seen + count, str[i]) == seen + count)
+        {
+          seen[count] = str[i];
+          ++count;
+        }
+      }
+    }
+    return count;
+  }
+  char *UPP_LOW(const char *source, char *distention, const size_t size)
   {
     for (size_t i = 0; i < size; ++i)
     {
@@ -68,9 +86,7 @@ int main()
     std::cerr << e.what() << "\n";
     return 1;
   }
-  size_t result1 = dirko::DIF_LAT(str);
-  char *result2 = nullptr;
-  result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
+  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
     free(str);
@@ -78,6 +94,7 @@ int main()
     return 1;
   }
   dirko::UPP_LOW(str, result2, size);
+  size_t result1 = dirko::DIF_LAT(result2, size);
   dirko::output(std::cout, result1, result2) << '\n';
   free(str);
   free(result2);
