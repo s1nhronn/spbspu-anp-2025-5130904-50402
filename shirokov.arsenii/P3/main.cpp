@@ -13,6 +13,7 @@ int myPow(int a, int b);
 int *copy(const int *a, size_t k);
 int *spiral(int *matrix, size_t m, size_t n);
 bool isTriangularMatrix(int *matrix, size_t m, size_t n);
+size_t transformIndexes(size_t i, size_t j);
 
 int main(int argc, char **argv)
 {
@@ -187,4 +188,80 @@ int *copy(const int *a, size_t k)
     b[i] = a[i];
   }
   return b;
+}
+
+size_t transformIndexes(size_t i, size_t j, size_t n)
+{
+  return i * n + j;
+}
+
+void printMtx(int *matrix, size_t m, size_t n)
+{
+  for (size_t i = 0; i < m; i++)
+  {
+    for (size_t j = 0; j < n; j++)
+    {
+      std::cout << matrix[transformIndexes(i, j, n)] << ' ';
+    }
+    std::cout << '\n';
+  }
+  std::cout << '\n';
+}
+
+int *spiral(int *matrix, size_t m, size_t n)
+{
+  int *mtx = copy(matrix, m * n);
+  size_t ptr = mtx[transformIndexes(m - 1, 0, n)];
+  size_t leftBorder = 0;
+  size_t rightBorder = n - 1;
+  size_t upperBorder = 0;
+  size_t lowerBorder = m - 1;
+
+  size_t deductible = 1;
+  while (leftBorder != ptr || rightBorder != ptr || upperBorder != ptr ||
+         lowerBorder != ptr)
+  {
+    printMtx(mtx, m, n);
+    for (size_t i = lowerBorder--; i + 1 >= upperBorder + 1; i--)
+    {
+      ptr = transformIndexes(i, leftBorder, n);
+      mtx[ptr] -= deductible++;
+      std::cout << ptr << '\n';
+    }
+    printMtx(mtx, m, n);
+
+    for (size_t j = leftBorder++; j <= rightBorder; j++)
+    {
+      ptr = transformIndexes(upperBorder, j, n);
+      mtx[ptr] -= deductible++;
+      std::cout << ptr << '\n';
+    }
+    printMtx(mtx, m, n);
+
+    for (size_t i = upperBorder++; i <= lowerBorder; i++)
+    {
+      ptr = transformIndexes(i, rightBorder, n);
+      mtx[ptr] -= deductible++;
+      std::cout << ptr << '\n';
+    }
+    printMtx(mtx, m, n);
+
+    for (size_t j = rightBorder--; j + 1 >= leftBorder + 1; j--)
+    {
+      ptr = transformIndexes(lowerBorder, j, n);
+      mtx[ptr] -= deductible++;
+      std::cout << ptr << '\n';
+    }
+    printMtx(mtx, m, n);
+    break;
+  }
+  return mtx;
+}
+
+bool isTriangularMatrix(int *matrix, size_t m, size_t n)
+{
+  (void)matrix;
+  (void)m;
+  (void)n;
+  return false;
 }
