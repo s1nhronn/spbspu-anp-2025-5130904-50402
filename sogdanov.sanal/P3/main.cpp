@@ -132,7 +132,7 @@ int main(int argc, char ** argv)
   }
   if (num == '2') {
     mtx = static_cast<int*>(malloc(rows * cols * sizeof(int)));
-    if (!mtx) {
+    if (mtx == nullptr) {
       std::cerr << "Memory allocation failed\n";
       input.close();
       return 2;
