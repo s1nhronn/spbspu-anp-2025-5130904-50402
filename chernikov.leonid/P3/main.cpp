@@ -59,7 +59,7 @@ int main (int argc, char ** argv)
   {
     a = reinterpret_cast<int*>(malloc(sizeof(int) * (rows * cols)));
     isDynamic = true;
-    if (nums == nullptr)
+    if (a == nullptr)
     {
       std::cerr << "Memory allocation failed\n";
       return 2;
@@ -72,7 +72,7 @@ int main (int argc, char ** argv)
   }
 
   // reading file_2: filling the matrix
-  for (size_t i = 0; i < (rows * cols); ++i)
+  for (int i = 0; i < (rows * cols); ++i)
   {
     input >> a[i];
 
