@@ -9,10 +9,6 @@ namespace dirko
     bool isSkipWp = in.flags() & std::ios::skipws;
     char *str = nullptr;
     char ch = 0;
-    if (str == nullptr)
-    {
-      throw std::bad_alloc();
-    }
     if (isSkipWp)
     {
       in >> std::noskipws;
@@ -30,6 +26,7 @@ namespace dirko
     }
     if (in.fail())
     {
+      free(str);
       throw std::logic_error("Cant read");
     }
     if (isSkipWp)
@@ -74,6 +71,12 @@ int main()
   size_t result1 = dirko::DIF_LAT(str);
   char *result2 = nullptr;
   result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
+  if (result2 == nullptr)
+  {
+    free(str);
+    std::cerr << "Cant alloc\n";
+    return 1;
+  }
   dirko::UPP_LOW(str, result2, size);
   dirko::output(std::cout, result1, result2) << '\n';
   free(str);
