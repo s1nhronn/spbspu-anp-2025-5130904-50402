@@ -2,9 +2,9 @@
 #include <fstream>
 #include <cstdlib>
 #include <string>
+#include <cstring>
 namespace chernikov
 {
-    void output (const int * a, size_t c, size_t r);
     bool is_down_triangle_matrix (const int * a, int rows, int cols);
     size_t local_max_quantity(const int* a, int rows, int cols);
 }
@@ -23,7 +23,6 @@ int main (int argc, char ** argv)
     return 1;
   }
 
-  // reading file_1: memory allocation
   std::ifstream input(argv[2]);
   if (!input.is_open())
   {
@@ -37,13 +36,13 @@ int main (int argc, char ** argv)
     return 2;
   }*/
 
-  // memory allocation
   bool isDynamic = false;
   int* a = nullptr;
   const int MAX_SIZE = 10000;
   int nums[MAX_SIZE] = {};
   if (std::string(argv[1]) == "1")
   {
+    memset(nums, 0, sizeof(nums));
     a = nums;
     isDynamic = false;
   }
@@ -62,7 +61,7 @@ int main (int argc, char ** argv)
     std::cerr << "Parameter 2 is set incorrectly\n";
     return 2;
   }
-
+  memset(a, 0, sizeof(int) * rows * cols);
   // reading file_2: filling the matrix
   int col = 0;
   for (int i = 0; i < (rows * cols); ++i)
@@ -70,6 +69,10 @@ int main (int argc, char ** argv)
     if (!(input >> a[i]))
     {
       std::cerr << "Failed to count element\n";
+      if (isDynamic && a != nullptr)
+      {
+        free(a);
+      }
       return 2;
     }
     ++col;
@@ -111,51 +114,22 @@ int main (int argc, char ** argv)
 
 bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
 {
-  if (rows == cols)
+  if (rows != cols)
   {
-    if (a[0] == 0)
+    return false;
+  }
+  for (int i = 0; i < rows; ++i)
+  {
+    for (int j = i + 1; j < cols; ++j)
     {
-      int k = 0;
-      for (int i = 0; i < (rows - 1); ++i)
+      int index = i * cols + j;
+      if (a[index] != 0)
       {
-        int line = rows * i;
-        for (int j = 0; j < (cols - k); ++j)
-        {
-          if (a[j + line] != 0)
-          {
-              return false;
-          }
-        }
-        k++;
+        return false;
       }
-      return true;
-    }
-    if (a[cols - 1] == 0)
-    {
-      int k = 0;
-      for (int i = 0; i < (rows - 1); ++i)
-      {
-        int line = rows * i;
-        for (int j = (cols); j > k; --j)
-        {
-          if (a[j - line] != 0)
-          {
-            return false;
-          }
-        }
-        k++;
-      }
-      return true;
-    }
-    else
-    {
-      return false;
     }
   }
-  else
-  {
-      return false;
-  }
+  return true;
 }
 
 size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
