@@ -2,7 +2,7 @@
 #include <fstream>
 namespace sogdanov
 {
-  int readMatrix(std::ifstream & input, int * mtxm int rows, int cols)
+  int readMatrix(std::ifstream & input, int * mtx, int rows, int cols)
   {
     for (int i = 0; i < rows * cols ; i++) {
       input >> mtx[i];
@@ -23,7 +23,7 @@ namespace sogdanov
     if (rows == 0 || cols == 0) {
       return 0;
     }
-    int * rowMin = (int*)malloc(rows * sizeof(int));
+    int* rowMin = static_cast<int*>(malloc(rows * sizeof(int)));
     for (int i = 0; i < rows; ++i) {
       int minValue = mtx[i * cols];
       for (int j = 1; j < cols; ++j) {
@@ -33,9 +33,9 @@ namespace sogdanov
       }
       rowMin[i] = minValue;
     }
-    int * colMax = (int*)malloc(cols * sizeof(int));
+    int* colMax = static_cast<int*>(malloc(cols * sizeof(int)));
     for (int i = 0; i < cols; ++i) {
-      int maxValue = mtx[i];
+      int maxVal = mtx[i];
       for (int j = 1; j < rows; ++j) {
         if (mtx[j * cols + i] > maxVal) {
           maxVal = mtx[j * cols + i];
@@ -53,10 +53,10 @@ namespace sogdanov
       }
     }
     free(rowMin);
-    free(colsMax);
+    free(colMax);
     return count;
   }
-  int max_sum_sgd(int * a, int rows, int cols)
+  int max_sum_sdg(int * a, int rows, int cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
@@ -68,13 +68,13 @@ namespace sogdanov
       for (int j = 0; j < n - i; ++j) {
         sum += a[j * cols + j + i];
       }
-      if (!hasDiag || sum > maxSum) {
+      if (sum > maxSum) {
         maxSum = sum;
       }
     }
-    for (size_t i = 1; i < n; i++) {
+    for (int i = 1; i < n; i++) {
       long long sum = 0;
-      for (size_t j = 0; j < n - i; j++) {
+      for (int j = 0; j < n - i; j++) {
         sum += a[cols * (j + i) + j];
       }
       if (sum > maxSum) {
@@ -92,6 +92,7 @@ int main(int argc, char ** argv)
   } else if (argc > 4) {
     std::cerr << "Too many arguments\n";
     return 1;
+  }
   char num = *argv[1];
   if (num != '1' && num != '2') {
     if (num <= '9' && num >= '0') {
@@ -106,6 +107,7 @@ int main(int argc, char ** argv)
     std::cerr << "Cannot open input file\n";
     input.close();
     return 2;
+  }
   int rows = 0;
   int cols = 0;
   input >> rows >> cols;
@@ -126,16 +128,16 @@ int main(int argc, char ** argv)
     int mtx[10000] = {};
     sogdanov::readMatrix(input, mtx, rows, cols);
     res1 = sogdanov::max_sum_sdg(mtx, rows, cols);
-    res2 = sogdanov::cnt_sdl_pnt(mtx, rows, cols); 
+    res2 = sogdanov::cnt_sdl_pnt(mtx, rows, cols);
   }
   if (num == '2') {
-    *mtx = (int *)malloc(rows * cols * sizeof(int));
+    mtx = static_cast<int*>(malloc(rows * cols * sizeof(int)));
     if (!mtx) {
       std::cerr << "Memory allocation failed\n";
       input.close();
       return 2;
     }
-    if ((sogdanov::readMatrix(input, mtx, rows, cols) != 0) {
+    if (sogdanov::readMatrix(input, mtx, rows, cols) != 0) {
       free(mtx);
     }
     sogdanov::readMatrix(input, mtx, rows, cols);
