@@ -59,15 +59,10 @@ int main(int argc, char ** argv)
   }
   coutArr(arr, n * m);
 
-  try{
   if(argv[1][0] == '1'){
     changeArrVar1(arr, n);
   } else {
-    //changeArrVar2(arr. n);
-  }
-  } catch(...){
-    free(arr);
-    return 3;
+    changeArrVar2(arr, n);
   }
   coutArr(arr, n * m);
   return 0;
@@ -129,15 +124,49 @@ void changeArrVar1(int * & arr, int n)
   int i = 0, j = 0;
   while(cnt < n * n){
     while(j < rig){
-      arr[i * n + j] += cnt;
+      arr[i * n + j] -= cnt;
       cnt++;
       j++;
     }
     top++;
     while(i < bot){
-      arr[i * n + j] += cnt;
+      arr[i * n + j] -= cnt;
       cnt++;
       i++;
+    }
+    rig--;
+    while(j > lef){
+      arr[i * n + j] -= cnt;
+      cnt++;
+      j--;
+    }
+    bot--;
+    while(i > top){
+      arr[i * n + j] -= cnt;
+      cnt++;
+      i--;
+    }
+    lef++;
+  }
+  arr[i * n + j] -= cnt;
+}
+
+void changeArrVar2(int * & arr, int n)
+{
+  int cnt = 1;
+  int lef = 0, rig = n - 1, top = 0, bot = n - 1;
+  int i = n - 1, j = 0;
+  while(cnt < n * n){
+    while(j < rig){
+      arr[i * n + j] += cnt;
+      cnt++;
+      j++;
+    }
+    bot--;
+    while(i > top){
+      arr[i * n + j] += cnt;
+      cnt++;
+      i--;
     }
     rig--;
     while(j > lef){
@@ -145,11 +174,11 @@ void changeArrVar1(int * & arr, int n)
       cnt++;
       j--;
     }
-    bot--;
-    while(i > top){
+    top++;
+    while(i < bot){
       arr[i * n + j] += cnt;
       cnt++;
-      i--;
+      i++;
     }
     lef++;
   }
