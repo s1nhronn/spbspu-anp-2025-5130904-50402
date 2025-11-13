@@ -19,10 +19,10 @@ int minSum(int ** mtx, size_t r, size_t c)
 {
   int sum;
   int min = std::numeric_limits<int>::max();
-  for (int i = 0; i < c; ++i) {
+  for (size_t i = 0; i < c; ++i) {
     sum = 0;
-    for (int j = 0; j < r; ++j) {
-      if (i - j < 0) {
+    for (size_t j = 0; j < r; ++j) {
+      if (i < j) {
         break;
       }
       sum += mtx[j][i - j];
