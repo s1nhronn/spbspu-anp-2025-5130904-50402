@@ -56,7 +56,7 @@ namespace sogdanov
     free(colsMax);
     return count;
   }
-  size_t max_sum_sgd(int * a, int rows, int cols)
+  int max_sum_sgd(int * a, int rows, int cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
@@ -115,25 +115,34 @@ int main(int argc, char ** argv)
     return 2;
   }
   int * mtx = nullptr;
-  long long res1 = 0;
-  long long res2 = 0;
-  if (*argv[1] == '1') {
-    int mtx[10000] = {};
-    if (!(inputCases(input, mtx, rows, cols) {
-      std::cerr << "Cannot read input data\n";
+  int res1 = 0;
+  int res2 = 0;
+  if (num  == '1') {
+    if (rows > 10000 || cols > 10000 || rows * cols > 10000) {
+      std::cerr << "Matrix sizes are too large\n";
       input.close();
       return 2;
-  if (*argv[1] == '2') {
-    int *mtx = (int *)malloc(rows * cols * sizeof(int));
+    }
+    int mtx[10000] = {};
+    sogdanov::readMatrix(input, mtx, rows, cols);
+    res1 = sogdanov::max_sum_sdg(mtx, rows, cols);
+    res2 = sogdanov::cnt_sdl_pnt(mtx, rows, cols); 
+  }
+  if (num == '2') {
+    *mtx = (int *)malloc(rows * cols * sizeof(int));
     if (!mtx) {
       std::cerr << "Memory allocation failed\n";
       input.close();
       return 2;
     }
-    for (size_t i = 0; i < rows * cols; ++i) {
-      input >> mtx[i];
+    if ((sogdanov::readMatrix(input, mtx, rows, cols) != 0) {
+      free(mtx);
     }
-    long long res = sogdanov::max_sum_sdg(mtx, rows, cols);
+    sogdanov::readMatrix(input, mtx, rows, cols);
+    res1 = sogdanov::max_sum_sdg(mtx, rows, cols);
+    res2 = sogdanov::cnt_sdl_pnt(mtx, rows, cols);
+    free(mtx);
   }
-
   input.close();
+
+}
