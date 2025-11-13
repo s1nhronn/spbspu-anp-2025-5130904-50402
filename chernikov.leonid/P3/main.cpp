@@ -1,9 +1,12 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+#include <cstring>
 namespace chernikov
 {
     void output (const int * a, size_t c, size_t r);
     bool is_down_triangle_matrix (const int * a, int rows, int cols);
+    size_t local_max_quantity(const int* a, int rows, int cols);
 }
 
 int main (int argc, char ** argv)
@@ -14,14 +17,14 @@ int main (int argc, char ** argv)
     std::cout << *i << "\n";
   }
   // checking the number of parameters
-  if (argc < 4)
+  if (argc < 4 || argc > 4)
   {
     std::cerr << "Mismatch in the number of parameters\n";
     return 1;
-  {
+  }
 
   // reading file_1: memory allocation
-    std::ifstream input(argv[2]);
+  std::ifstream input(argv[2]);
   if (!input.is_open())
   {
     std::cerr << "Failed to read file\n";
@@ -43,18 +46,21 @@ int main (int argc, char ** argv)
   }
 
   // memory allocation
+  bool isDynamic = false;
+  int* a = nullptr;
   if (argv[1] == "1")
   {
     int a[10000] = {};
   }
   else if (argv[1] == "2")
   {
-      int* nums = reinterpret_cast<int*>(malloc(sizeof(int) * (rows * cols)));
-      if (nums == nullptr)
-      {
-        std::cerr << "Memory allocation failed\n";
-        return 2;
-      }
+    int* nums = reinterpret_cast<int*>(malloc(sizeof(int) * (rows * cols)));
+    isDynamic = true;
+    if (nums == nullptr)
+    {
+      std::cerr << "Memory allocation failed\n";
+      return 2;
+    }
   }
   else
   {
@@ -71,30 +77,25 @@ int main (int argc, char ** argv)
   input.close();
 
   //LWR-TRI-MTX
-  namespace cher = chernikov;
-  bool LWR_TRI_MTX = is_down_triangle_matrix (a, rows, cols);
+  bool LWR_TRI_MTX = chernikov::is_down_triangle_matrix (a, rows, cols);
   std::ofstream output(argv[3]);
   output << "LWR_TRI_MTX = " << LWR_TRI_MTX << "\n";
 
   //MAX
-  size_t CNT_LOC_MAX = local_max_quantity (a, rows, cols);
+  size_t CNT_LOC_MAX = chernikov::local_max_quantity (a, rows, cols);
   output << "CNT_LOC_MAX = " << CNT_LOC_MAX << "\n";
 
-  std::ofstream output(argv[3]);
-  output(output, ... ) << "\n"
-  if (std::ofstream.fail())
+  output.close();
+
+  if (isDynamic && a != nullptr)
   {
-    return 1;
+    free(a);
+    a = nullptr;
   }
-  //output << a;
+  return 0;
 }
 
-void output (std::ostream & out, const int * a, size_t c, size_t r)
-{
-  return out << ... ;
-}
-
-bool is_down_triangle_matrix(const int* a, int rows, int cols)
+bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
 {
   if (rows == cols)
   {
@@ -143,7 +144,7 @@ bool is_down_triangle_matrix(const int* a, int rows, int cols)
   }
 }
 
-size_t local_max_quantity(const int* a, int rows, int cols)
+size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
 {
   if (rows < 3 || cols < 3)
   {
@@ -154,15 +155,15 @@ size_t local_max_quantity(const int* a, int rows, int cols)
   {
     for (size_t j = 1; j < (cols - 1); ++j)
     {
-      t = a[j + i * cols];
-      l1 = t > a[(j - 1) + (i - 1) * cols];
-      l2 = t > a[j + (i - 1) * cols];
-      l3 = t > a[(j + 1) + (i - 1) * cols];
-      l4 = t > a[(j - 1) + i * cols];
-      l5 = t > a[(j + 1) + i * cols];
-      l6 = t > a[(j - 1) + (i + 1) * cols];
-      l7 = t > a[j + (i + 1) * cols];
-      l1 = t > a[(j + 1) + (i + 1) * cols];
+      bool t = a[j + i * cols];
+      bool l1 = t > a[(j - 1) + (i - 1) * cols];
+      bool l2 = t > a[j + (i - 1) * cols];
+      bool l3 = t > a[(j + 1) + (i - 1) * cols];
+      bool l4 = t > a[(j - 1) + i * cols];
+      bool l5 = t > a[(j + 1) + i * cols];
+      bool l6 = t > a[(j - 1) + (i + 1) * cols];
+      bool l7 = t > a[j + (i + 1) * cols];
+      bool l8 = t > a[(j + 1) + (i + 1) * cols];
       if (l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8 == 8)
       {
         count++;
