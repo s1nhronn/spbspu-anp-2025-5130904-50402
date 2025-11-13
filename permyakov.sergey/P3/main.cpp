@@ -182,8 +182,10 @@ int * changeArrVar1(int * arr, size_t n)
       i--;
     }
     lef++;
+    if(cnt == n * n){
+      arr1[i * n + j] -= cnt;
+    }
   }
-  arr1[i * n + j] -= cnt;
   return arr1;
 }
 
@@ -223,7 +225,9 @@ int * changeArrVar2(int * arr, size_t n)
       i++;
     }
     lef++;
+    if(cnt == n * n){
+      arr2[i * n + j] += cnt;
+    }
   }
-  arr2[i * n + j] += cnt;
   return arr2;
 }
