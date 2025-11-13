@@ -18,6 +18,31 @@ namespace sogdanov
     }
     return 0;
   }
+  int cnt_sdl_pnt(const int * mtx, int rows, int cols)
+  {
+    if (rows == 0 || cols == 0) {
+      return 0;
+    }
+    int * rowMin = (int*)malloc(rows * sizeof(int));
+    for (int i = 0; i < rows; ++i) {
+      int minValue = mtx[i * cols];
+      for (int j = 1; j < cols; ++j) {
+        if (mtx[i * cols + j] < minValue) {
+          minValue = mtx[i * cols +j];
+        }
+      }
+      rowMin[i] = minValue;
+    }
+    int * colMax = (int*)malloc(cols * sizeof(int));
+    for (int i = 0; i < cols; ++i) {
+      int maxValue = mtx[i];
+      for (int j = 1; j < rows; ++j) {
+        if (mtx[j * cols + i] > maxVal) {
+          maxVal = mtx[j * cols + i];
+        }
+      }
+      colMax[i] = maxVal;
+    }
   size_t max_sum_sgd(int * a, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
