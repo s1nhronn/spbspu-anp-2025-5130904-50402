@@ -11,12 +11,11 @@ namespace chernikov
 
 int main (int argc, char ** argv)
 {
-  char** end = argv + argc;
+  /*char** end = argv + argc;
   for (char** i = argv; i < end; ++i)
   {
     std::cout << *i << "\n";
-  }
-  // checking the number of parameters
+  }*/
   if (argc < 4 || argc > 4)
   {
     std::cerr << "Mismatch in the number of parameters\n";
@@ -26,15 +25,14 @@ int main (int argc, char ** argv)
   std::ifstream input(argv[2]);
   if (!input.is_open())
   {
-    std::cerr << "Failed to read file\n";
+    std::cerr << "Cannot open input file\n";
     return 1;
   }
   if (input.peek() == std::ifstream::traits_type::eof())
   {
     std::cerr << "Empty input file" << std::endl;  // magic!
-    input.close();
     return 2;
-    }
+  }
   int rows, cols;
   input >> rows >> cols;
 
