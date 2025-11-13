@@ -4,16 +4,62 @@
 
 namespace dirko
 {
-  char *getLine(std::istream &in, size_t &size);
-  size_t DIF_LAT(char *str);
+  char *getLine(std::istream &in, size_t &size)
+  {
+    bool isSkipWp = in.flags() & std::ios::skipws;
+    char *str = nullptr;
+    char ch = 0;
+    if (str == nullptr)
+    {
+      throw std::bad_alloc();
+    }
+    if (isSkipWp)
+    {
+      in >> std::noskipws;
+    }
+    while (in >> ch && ch != '\n')
+    {
+      char *temp = reinterpret_cast<char *>(realloc(str, size + 1));
+      if (temp == nullptr)
+      {
+        free(str);
+        throw std::bad_alloc();
+      }
+      str = temp;
+      str[size++] = ch;
+    }
+    if (in.fail())
+    {
+      throw std::logic_error("Cant read");
+    }
+    if (isSkipWp)
+    {
+      in >> std::skipws;
+    }
+    return str;
+  }
+  size_t DIF_LAT(const char *str);
   char *UPP_LOW(const char *source, char *distention);
-  std::ostream &output(std::ostream &out, size_t res1, char *res2);
+  std::ostream &output(std::ostream &out, const size_t res1, const char *res2);
 }
 int main()
 {
   char *str = nullptr;
   size_t size = 0;
-  dirko::getLine(std::cin, size);
+  try
+  {
+    str = dirko::getLine(std::cin, size);
+  }
+  catch (const std::bad_alloc &e)
+  {
+    std::cerr << "Cant alloc\n";
+    return 1;
+  }
+  catch (const std::logic_error &e)
+  {
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
   size_t result1 = dirko::DIF_LAT(str);
   char *result2 = nullptr;
   result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
