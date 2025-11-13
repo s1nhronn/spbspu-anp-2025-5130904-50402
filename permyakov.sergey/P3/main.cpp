@@ -5,8 +5,8 @@
 bool isErr1(int argc, char ** argv);
 bool isErr2(size_t sizeArr, size_t size);
 bool isEmptyFile(std::ifstream & input);
-int * changeArrVar1(const int * arr, size_t n);
-int * changeArrVar2(const int * arr, size_t n);
+int * changeArrVar1(int * arr, size_t n);
+int * changeArrVar2(int * arr, size_t n);
 
 int main(int argc, char ** argv)
 {
@@ -16,7 +16,7 @@ int main(int argc, char ** argv)
 
   std::ifstream input(argv[2]);
   if(isEmptyFile(input)){
-    return 0;
+    return 2;
   }
   size_t n = 0, m = 0;
   input >> n >> m;
@@ -46,9 +46,15 @@ int main(int argc, char ** argv)
     }
     try{
       arr1 = changeArrVar1(arr, n);
+    } catch(std::bad_alloc()){
+      std::cerr << "Failure to allocate memoty\n";
+      return 3;
+    }
+    try{
       arr2 = changeArrVar2(arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
+      free(arr1);
       return 3;
     }
   } else {
@@ -72,9 +78,16 @@ int main(int argc, char ** argv)
     }
     try{
       arr1 = changeArrVar1(d_arr, n);
+    } catch(std::bad_alloc()){
+      std::cerr << "Failure to allocate memoty\n";
+      free(d_arr);
+      return 3;
+    }
+    try{
       arr2 = changeArrVar2(d_arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
+      free(arr1);
       free(d_arr);
       return 3;
     }
@@ -133,7 +146,7 @@ bool isEmptyFile(std::ifstream & input)
   return false;
 }
 
-int * changeArrVar1(const int * arr, size_t n)
+int * changeArrVar1(int * arr, size_t n)
 {
   int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
   if(arr1 == nullptr){
@@ -174,7 +187,7 @@ int * changeArrVar1(const int * arr, size_t n)
   return arr1;
 }
 
-int * changeArrVar2(const int * arr, size_t n)
+int * changeArrVar2(int * arr, size_t n)
 {
   int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
   if(arr2 == nullptr){
