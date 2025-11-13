@@ -23,7 +23,6 @@ int main(int argc, char ** argv)
   }
 
   std::ifstream input(argv[2]);
-  std::ofstream output(argv[3]);
   if(isEmptyFile(input)){
     return 2;
   }
@@ -53,19 +52,25 @@ int main(int argc, char ** argv)
     free(arr);
     return 2;
   }
+  input.close();
   if(isErr2(s, n * m)){
     free(arr);
     return 2;
   }
-  coutArr(arr, n * m);
 
   if(argv[1][0] == '1'){
     changeArrVar1(arr, n);
   } else {
     changeArrVar2(arr, n);
   }
-  coutArr(arr, n * m);
-  return 0;
+
+  std::ofstream output(argv[3]);
+  output << n << " " << m << " ";
+  for(int i = 0; i < n * m; ++i){
+    output << arr[i] << " ";
+  }
+  output.close();
+  free(arr);
 }
 
 bool isErr1(int argc, char ** argv)
