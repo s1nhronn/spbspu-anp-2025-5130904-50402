@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <typeinfo>
 #include <cstddef>
+#include <cstdlib>
 
 namespace muhamadiarov
 {
@@ -14,16 +15,19 @@ namespace muhamadiarov
     int* start;
     int rows;
     int colons;
-  }
+  };
 
   int max_int(); 
   int min_int();
  
   int* fll_inc_wav(matric_info matrix); 
+
   void out(matric_info matrix, const char* output, int* res1, long long int res2); 
+
   long long toFindMaxRight(int* ptr, int order); 
   long long toFindMaxinLeft(int* ptr, int order); 
   long long max_sum_mdg(matric_info matrix, int order); 
+
   bool tocheckparam(int argc, char* argv[]); 
   void tocoutargv(int argc, char * argv[]);
 }
@@ -51,6 +55,7 @@ int main(int argc, char *argv[])
     return 2;
   }
   size_t count = 0;
+  int number = 0;
   while (input >> number)
   {
     ++count;
@@ -70,12 +75,12 @@ int main(int argc, char *argv[])
   input.clear();
   input.seekg(0);
 
-  if (argv[1] == '1')
+  if (argv[1][0] == '1')
   {
-    int array[count];
-    int* ptr = &array[0];
+    int arr[count];
+    int* ptr = &arr[0];
   }
-  else if (argv[1] == '2')
+  else if (argv[1][0] == '2')
   {
     int* ptr = static_cast<int*>(malloc(count * sizeof(int)));
     if (ptr == nullptr)
@@ -88,17 +93,17 @@ int main(int argc, char *argv[])
   int number = 0;
   size_t k = 0;
   size_t k1 = 0;
-  int r = 0, int c = 0;
+  int r = 0, c = 0;
   while (input >> number)
   {
     bool ch1 =  typeid(number).name() != typeid(int).name();
-    bool ch2 = ch1 || number < min_int || number > max_int;
+    bool ch2 = ch1 || number < muh::min_int || number > muh::max_int;
     if (ch2) // проверка number
     {
       std::cerr << "Incorrect type for number\n";
-      if (argv[1] == '2')
+      if (argv[1][0] == '2')
       {
-        free(array);
+        free(ptr);
       }
       return 2;	
     }
@@ -117,9 +122,9 @@ int main(int argc, char *argv[])
       if (k1 - 1 != r * c)
       {
         std::cerr << "Wrong size matric\n";
-	if (argv[1] == 1)
+	if (argv[1][0] == '2')
 	{
-	  free(array);
+	  free(ptr);
 	}
 	return 2;
       }
@@ -133,6 +138,7 @@ int main(int argc, char *argv[])
   // c - count elements in file
   // r  - rows
   // c - colons
+
   int* result_1 = nullptr;
   long long int result_2 = 0;
   muh::matric_info matrix;
@@ -147,22 +153,31 @@ int main(int argc, char *argv[])
     else if (r == 0 && c == 0)
     {
       matrix{ptr + i, 0, 0};
-      muf::out(matrix, argv[3], result_1, result_2);
+      muh::out(matrix, argv[3], result_1, result_2);
     } 
-    result_1 = muf::fll_inc_wav(matrix);
+    result_1 = muh::fll_inc_wav(matrix);
     int order = std::min(r, c);
-    result_2 = muf::max_sum_mdg(matrix, order); 
-    muf::out(matrix, argv[3], result_1, result_2);
+    result_2 = muh::max_sum_mdg(matrix, order); 
+    muh::out(matrix, argv[3], result_1, result_2);
+    if (isOutfileOpened = false)
+    {
+      std::cerr << "Error in openning file\n";
+      if (argv[1][0] == '2')
+      {
+        free(ptr);
+      }
+      return 1;
+    }
     i += r * c + 2; 
   }
-  if (argv[3] == '2')
+  if (argv[1][0] == '2')
   {
-    free(array);
+    free(ptr);
   }
   return 0;
 }
 
-int* muhamadiarov::fll_inc_wav(muhamadiarov::matric_info matrix, char output)
+int* muhamadiarov::fll_inc_wav(muhamadiarov::matric_info matrix)
 {
   namespace muh = muhamadiarov;
   int n = matrix.rows;
@@ -172,7 +187,7 @@ int* muhamadiarov::fll_inc_wav(muhamadiarov::matric_info matrix, char output)
   for (size_t i = 0; i < k; ++i)
   {
     int p = 0;
-    for (size_t j = 0; j < n; ++i)
+    for (size_t j = 0; j < n; ++j)
     {
       size_t n1 = j, k1 = i;
       if (n1 > medium_n)
@@ -187,7 +202,7 @@ int* muhamadiarov::fll_inc_wav(muhamadiarov::matric_info matrix, char output)
       *(ptr + j*n + i) += p;
     }
   }
-  muh::out(ptr, output, count, n, k);
+  return ptr;
 }
 
 
@@ -260,6 +275,7 @@ void muhamadiarov::out(muhamadiarov::matric_info matrix,char output, int* res1, 
       outfile << "//Expect output (return code 0): ";
       if (j == 0)
       {
+	n = std::min(n, k);
         for (size_t i; i < n*n; ++i)
         {
           outfile << *(res1 + i) << " ";
@@ -287,28 +303,33 @@ void muhamadiarov::tocoutargv(int argc, char* argv[])
 bool muhamadiarov::tocheckparam(int argc, char* argv[])
 {
   namespace muh = muhamadiarov;
+  bool flag = true;
   if (argc < 4)
   {
-    muh::tocoutargv(int argv, char* argv[]);
+    muh::tocoutargv(argc, argv);
     std::cerr << "//Not enough arguments\n";
-    return false;
+    flag = false;
   }
-  else if (argc > 4)
+  if (argc > 4)
   { 
-    muh::tocoutargv(int argv, char* argv[]);
+    muh::tocoutargv(argc, argv);
     std::cerr << "//Too many arguments\n";
-    return false;
-  }
-  else if (argv[1] > 2)
+    flag = false;
+  } 
+  if (argv[1][0] < '0' || argv[1][0] > '9')
   {
-    muh::tocoutargv(int argv, char* argv[]);
-    std::cerr << "//First parameter is out of range\n";
-    return false;
-  }
-  else if (typeid(argv[1]).name() != typeid(argv[1]).name())
-  {
-    muh::tocoutargv(int argv, char* argv[]);
+    muh::tocoutargv(argc, argv);
     std::cerr << "//First parameter is not a number\n";
+    flag = false;
+  }
+  else if (argv[1][0] > 2)
+  {
+    muh::tocoutargv(argc, argv);
+    std::cerr << "//First parameter is out of range\n";
+    flag = false;
+  }
+  if (!flag)
+  {
     return false;
   }
   return true;
