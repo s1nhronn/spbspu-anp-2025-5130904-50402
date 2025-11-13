@@ -34,8 +34,17 @@ int main (int argc, char ** argv)
     std::cerr << "Empty input file" << std::endl;  // magic!
     return 2;
   }
-  int rows, cols;
+  int rows = 0, cols = 0;
   input >> rows >> cols;
+  if (rows == 0 && cols == 0)
+  {
+    std::ofstream output(argv[3]);
+    output << "0" << std::endl;
+    output << "0" << std::endl;
+    output.close();
+    input.close();
+    return 0;
+  }
   if (rows < 0 || cols < 0)
   {
     std::cerr << "Invalid matrix dimensions\n";
@@ -126,6 +135,14 @@ int main (int argc, char ** argv)
 
 bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
 {
+  if (rows == 0 && cols == 0)
+  {
+    return false;
+  }
+  if (a == nullptr)
+  {
+    return false;
+  }
   if (rows != cols)
   {
     return false;
@@ -147,6 +164,10 @@ bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
 size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
 {
   if (rows < 3 || cols < 3)
+  {
+    return 0;
+  }
+  if (a == nullptr)
   {
     return 0;
   }
