@@ -2,6 +2,22 @@
 #include <fstream>
 namespace sogdanov
 {
+  int readMatrix(std::ifstream & input, int * mtxm int rows, int cols)
+  {
+    for (int i = 0; i < rows * cols ; i++) {
+      input >> mtx[i];
+      if (input.fail()) {
+        std::cerr << "Input error\n";
+        return 2;
+      }
+    }
+    int extra;
+    if (input >> extra) {
+      std::cerr << "Too many elements in input file\n";
+      return 2;
+    }
+    return 0;
+  }
   size_t max_sum_sgd(int * a, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
