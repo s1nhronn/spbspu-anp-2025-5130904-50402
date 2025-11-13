@@ -39,7 +39,14 @@ namespace dirko
     return str;
   }
   size_t DIF_LAT(const char *str);
-  char *UPP_LOW(const char *source, char *distention);
+  char *UPP_LOW(const char *source, char *distention, size_t size)
+  {
+    for (size_t i = 0; i < size; ++i)
+    {
+      distention[i] = std::tolower(source[i]);
+    }
+    return distention;
+  }
   std::ostream &output(std::ostream &out, const size_t res1, const char *res2);
 }
 int main()
@@ -63,7 +70,7 @@ int main()
   size_t result1 = dirko::DIF_LAT(str);
   char *result2 = nullptr;
   result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
-  dirko::UPP_LOW(str, result2);
+  dirko::UPP_LOW(str, result2, size);
   dirko::output(std::cout, result1, result2) << '\n';
   free(str);
   free(result2);
