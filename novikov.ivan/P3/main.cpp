@@ -77,6 +77,11 @@ int main(int argc, char ** argv)
 
   std::ifstream input(argv[2]);
   std::ofstream output(argv[3]);
+
+  if (input.peek() == std::ifstream::traits_type::eof()) {
+    std::cerr << "Input file is empty\n";
+  }
+
   size_t rows, cols;
   input >> rows >> cols;
   if (input.eof()) {
