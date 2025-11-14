@@ -32,6 +32,18 @@ int minSum(int ** mtx, size_t r, size_t c)
   return min;
 }
 
+void addPeripheral(int ** mtx, size_t r, size_t c)
+{
+  size_t center_row = (r % 2) ? r + 1 : r;
+  for (size_t current_row = 0; current_row < center_row; ++current_row) {
+    for (size_t i = current_row; i < r - current_row; ++i) {
+      for (size_t j = current_row; j < c - current_row; ++j) {
+        ++mtx[i][j];
+      }
+    }
+  }
+}
+
 int main(int argc, char ** argv)
 {
   if (argc < 4) {
