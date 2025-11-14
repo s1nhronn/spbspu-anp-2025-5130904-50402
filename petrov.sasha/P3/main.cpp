@@ -9,6 +9,7 @@ namespace petrov
 
   void rm(int** mtx, size_t rows)
   {
+    if (!mtx) return;
     for (size_t i = 0; i < rows; i++){
       delete[] mtx[i];
     }
@@ -22,7 +23,10 @@ namespace petrov
       std::cerr << "Too large for array\n";
       return;
     }
-    int arr[100][100];
+    if (rows == 0 || cols == 0) {
+      return;
+    }
+    int arr[100][100] = {0};
     for(size_t i = 0; i < rows; ++i)
     {
       for(size_t j = 0; j < cols; ++j)
@@ -39,41 +43,49 @@ namespace petrov
     {
       arr_ptr[i] = arr[i];
     }
-    LFT_BOT_CNT(arr_ptr,rows,cols);
+    LFT_BOT_CNT(arr_ptr, rows, cols);
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
         out << " " << arr[i][j];
       }
     }
-    out << "\n";
   }
 
   void dyn(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
   {
+    if (rows == 0 || cols == 0) {
+      return;
+    }
     int** a = nullptr;
     size_t qnt_numb = 0;
-    a = new int*[rows];
-    for (size_t i = 0; i < rows; ++i)
-    {
-      a[i] = new int[cols];
+    try {
+      a = new int*[rows];
+      for (size_t i = 0; i < rows; ++i) {
+        a[i] = new int[cols]();
+      }
+    } catch (...) {
+      rm(a, rows);
+      std::cerr << "Memory allocation failed\n";
+      return;
     }
     for (size_t i = 0; i < rows; ++i)
     {
       for (size_t j = 0; j < cols; ++j)
       {
-        qnt_numb++;
         if (!(in >> a[i][j]))
         {
-          rm(a,rows);
+          rm(a, rows);
           std::cerr << "Invalid matrix numbers\n";
           return;
         }
+        qnt_numb++;
       }
     }
-    if (qnt_numb != rows*cols)
+    int temp;
+    if (in >> temp)
     {
-      rm(a,rows);
-      std::cerr << "Too many/few arguments for array\n";
+      rm(a, rows);
+      std::cerr << "Too many arguments for array\n";
       return;
     }
     FLL_INC_WAV(a, rows, cols);
@@ -82,50 +94,73 @@ namespace petrov
         out << " " << a[i][j];
       }
     }
-    out << "\n";
-    rm(a,rows);
+    rm(a, rows);
   }
 
   void LFT_BOT_CNT(int** a, size_t r, size_t c)
   {
-    size_t counter = 0;
+    if (r == 0 || c == 0)
+    {
+      return;
+    }
+    size_t counter = 1;
     size_t up = 0, down = r-1, left = 0, right = c-1;
     while (up <= down && left <= right)
     {
-      for (size_t i = left; i < right; ++i)
+      if (down >= r || left >= c)
       {
-        counter++;
-        a[down][i]+=counter;
+        break;
       }
-      down--;
-      if (left<=right){
-        for (size_t i = down; i >= up; --i)
-        {
+      for (size_t i = left; i < right && i < c; ++i)
+      {
+        if (down < r) {
           counter++;
-          a[i][right]+=counter;
+          a[down][i] += counter;
+        }
+      }
+      if (down == 0) break;
+      down--;
+      if (left <= right && right < c) {
+        for (size_t i = down; i >= up && i < r; --i)
+        {
+          if (right < c) {
+            counter++;
+            a[i][right] += counter;
+          }
+          if (i == 0) break;
         }
         right--;
       }
-      if (up<=down)
-      {
-        for (size_t i = right; i>=left; --i)
+      if (up <= down && up < r) {
+        for (size_t i = right; i >= left && i < c; --i)
         {
-          counter++;
-          a[up][i]+=counter;
+          if (up < r) {
+            counter++;
+            a[up][i] += counter;
+          }
+          if (i == 0) break;
         }
         up++;
       }
-      for (size_t i = up; i <= down; ++i)
-      {
-        counter++;
-        a[i][left]+=counter;
+      if (left < c) {
+        for (size_t i = up; i <= down && i < r; ++i)
+        {
+          if (left < c) {
+            counter++;
+            a[i][left] += counter;
+          }
+        }
+        left++;
       }
-      left++;
     }
   }
 
   void FLL_INC_WAV(int** a, size_t rows, size_t cols)
   {
+    if (rows == 0 || cols == 0)
+    {
+      return;
+    }
     size_t min_data = (rows < cols) ? rows : cols;
     size_t borders = (min_data + 1) / 2;
     for (size_t border =  0; border < borders; ++border)
@@ -165,58 +200,53 @@ namespace petrov
 
 int main(int argc, char const** argv)
 {
-    if (argc < 4)
-  {
-    std::cerr << "Not enough arguments\n";
+  if (argc != 4) {
+    std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
-  if (argc > 4)
-  {
-    std::cerr << "Too many arguments\n";
-    return 1;
-  }
-  int variant = 0;
+  int mode = 0;
   try {
-    variant = std::stoi(argv[1]);
+    mode = std::stoi(argv[1]);
   }
-  catch (std::out_of_range &e)
-  {
+  catch (...) {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-    if (variant < 1 || variant > 2)
-  {
+  if (mode != 1 && mode != 2) {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
   std::ifstream input(argv[2]);
-  if (input.eof())
-  {
-    std::cerr << "Small data\n";
+  if (!input.is_open()) {
+    std::cerr << "Cannot open input file\n";
     return 2;
   }
-  else if (input.fail())
-  {
-    std::cerr << "Invalid read\n";
-    return 2;
-  }
-  int cols = 0, rows = 0;
+  int rows = 0, cols = 0;
   if (!(input >> rows >> cols)) {
     std::cerr << "Invalid matrix data\n";
     return 2;
   }
   std::ofstream output(argv[3]);
-  if (!input || !output) {
-    std::cerr << "Error in reading file\n";
+  if (!output.is_open()) {
+    std::cerr << "Cannot open output file\n";
     return 2;
   }
   output << rows << " " << cols;
-  if (variant == 1) {
+  bool errors = false;
+  if (mode == 1) {
     petrov::stat(input, output, rows, cols);
-    input.close();
+    if (input.fail() && !input.eof()) {
+      errors = true;
+    }
   } else {
     petrov::dyn(input, output, rows, cols);
-    input.close();
+    if (input.fail() && !input.eof()) {
+      errors = true;
+    }
+  }
+  input.close();
+  if (errors) {
+    return 2;
   }
   return 0;
 }
