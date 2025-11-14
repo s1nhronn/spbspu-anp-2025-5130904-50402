@@ -70,6 +70,7 @@ int main(int argc, char ** argv)
   }
 
   std::ifstream input(argv[2]);
+  std::ofstream output(argv[3]);
   size_t rows, cols;
   input >> rows >> cols;
 
@@ -81,18 +82,33 @@ int main(int argc, char ** argv)
       }
 
       size_t count = 0;
-      int mtx[rows][cols];
+      int static_mtx[rows][cols];
+      int * mtx[rows];
 
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
-          input >> mtx[i][j];
+          input >> static_mtx[i][j];
           ++count;
         }
+      }
+
+      for (size_t i = 0; i < rows; ++i) {
+        mtx[i] = static_mtx[i];
       }
 
       if (rows * cols != count) {
         std::cerr << "Wrong matrix format\n";
         return 2;
+      }
+
+      int min = minSum(mtx, rows, cols);
+      addPeripheral(mtx, rows, cols);
+
+      output << min << " ";
+      for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+          output << mtx[i][j] << " ";
+        }
       }
     } else if (firstarg == 2) {
       int ** mtx = new int * [rows];
@@ -117,14 +133,31 @@ int main(int argc, char ** argv)
 
       if (rows * cols != count) {
         std::cerr << "Wrong matrix format\n";
+        remove(mtx, rows);
         return 2;
       }
+
+      int min = minSum(mtx, rows, cols);
+      addPeripheral(mtx, rows, cols);
+
+      output << min << " ";
+      for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+          output << mtx[i][j] << " ";
+        }
+      }
+      remove(mtx, rows);
     }
   } catch (std::bad_alloc &) {
     std::cerr << "Memory can not be allocated\n";
     return 2;
   } catch (std::exception & e) {
     std::cerr << e.what() << "\n";
+    return 2;
+  }
+
+  if (input.fail()) {
+    std::cerr << "Invalid input\n";
     return 2;
   }
 }
