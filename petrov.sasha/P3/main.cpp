@@ -211,7 +211,7 @@ int main(int argc, char const** argv)
     return 2;
   }
   output << rows << " " << cols;
-  if (variant[0] == '1') {
+  if (variant == 1) {
     petrov::stat(input, output, rows, cols);
     input.close();
   } else {
