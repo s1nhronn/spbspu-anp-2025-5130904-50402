@@ -12,23 +12,18 @@ int main(int argc, char ** argv) {
   input >> m >> n;
 
   if (argv[0] == '1') {
-    loc_max_fixed(argv[2]);
-  } else if (argv[0] == '1') {
-    loc_max_dynamic(argv[2]);
+    int a[10000] = {};
   }
-return 0;
-}
-
-int loc_max_fixed() {
-
-  int m = 0;
-  int n = 0;
+  else if (argv[0] == '1') {
+    int * a = nullptr;
+    int * a = reinterpret_cast<int*>(malloc(sizeof(int) * n * m));
+    if (a == nullptr) {
+      std::cerr << "Bad alloc" << '\n';
+      return 2;
+    }
+  }
   int counter = 0;
   size_t i = 0;
-
-  std::ifstream input("input.txt");
-  input >> m >> n;
-
   while (input.good() && i < n*m) {
     input >> b;
     a[i] = b;
@@ -36,49 +31,14 @@ int loc_max_fixed() {
   }
   for (int i = 0; i < m; ++i) {
     for (int j = 0; j < n; ++j) {
-      if (i != 0 && j != 0) {
-        if (check_max(a, i, j, n, m)) {
-          counter++;
-        }
-      }
-    }
-  }
-  return counter;
-}
-
-int loc_max_dynamic() {
-  int m = 0;
-  int n = 0;
-  int counter = 0;
-  size_t i = 0;
-  int * a = nullptr;
-
-  std::ifstream input("input.txt");
-  input >> m >> n;
-
-  int * a = reinterpret_cast<int*>(malloc(sizeof(int) * n * m));
-
-  if (a == nullptr) {
-    std::cerr << "Bad alloc" << '\n';
-    return 2;
-  }
-
-  while (input.good() && i < n*m) {
-    input >> b;
-    a[i] = b;
-    ++i;
-  }
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < n; ++j) {
-      if (i != 0 && j != 0) {
-        if (check_max(a, i, j, n, m)) {
-          counter++;
-        }
+      if (i != 0 && j != 0 && check_max(a, i, j, n, m)) {
+        counter++;
       }
     }
   }
 }
 
+//функция для статической памяти
 bool check_max(int a[], size_t i, size_t j, size_t n, size_t m) {
   check_i = i-1;
   check_j = j-1;
@@ -92,6 +52,7 @@ bool check_max(int a[], size_t i, size_t j, size_t n, size_t m) {
   return true;
 }
 
+//функция для динамической памяти
 bool check_max(int * a, size_t i, size_t j, size_t n, size_t m) {
   check_i = i-1;
   check_j = j-1;
