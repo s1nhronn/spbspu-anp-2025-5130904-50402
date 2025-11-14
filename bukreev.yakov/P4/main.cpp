@@ -12,6 +12,7 @@ namespace bukreev
   char* growString(const char* oldStr, size_t* capacity);
 
   char* excsnd(const char* first, const char* second, char* resStr);
+  char* latrmv(const char* str, char* resStr);
 }
 
 int main()
@@ -28,7 +29,7 @@ int main()
     return 1;
   }
 
-  char* res1 = nullptr;//, *res2 = nullptr;
+  char* res1 = nullptr, *res2 = nullptr;
   res1 = reinterpret_cast<char*>(malloc((strlen(str) + 1) * sizeof(char)));
   if (!res1)
   {
@@ -37,11 +38,22 @@ int main()
     return 1;
   }
 
+  res2 = reinterpret_cast<char*>(malloc((strlen(str) + 1) * sizeof(char)));
+  if (!res2)
+  {
+    std::cerr << "Not enough memory for LAT_RMV.\n";
+    bukreev::deleteString(res1);
+    bukreev::deleteString(str);
+    return 1;
+  }
+
   res1 = bukreev::excsnd(str, "abc", res1);
+  res2 = bukreev::latrmv(str, res2);
 
   bukreev::deleteString(str);
 
   std::cout << res1;
+  std::cout << res2;
 
   free(res1);
 }
@@ -134,6 +146,24 @@ char* bukreev::excsnd(const char* first, const char* second, char* resStr)
     if (!exclude)
     {
       resStr[resIndex] = c;
+      resIndex++;
+    }
+  }
+
+  resStr[resIndex] = 0;
+
+  return resStr;
+}
+
+char* bukreev::latrmv(const char* str, char* resStr)
+{
+  size_t resIndex = 0;
+
+  for (size_t i = 0; i < std::strlen(str); i++)
+  {
+    if (!std::isalpha(str[i]))
+    {
+      resStr[resIndex] = str[i];
       resIndex++;
     }
   }
