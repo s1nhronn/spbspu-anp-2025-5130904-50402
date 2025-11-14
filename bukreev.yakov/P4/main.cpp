@@ -11,7 +11,7 @@ namespace bukreev
 
   char* growString(const char* oldStr, size_t* capacity);
 
-  char* excsnd(const char* first, const char* second);
+  char* excsnd(const char* first, const char* second, char* resStr);
 }
 
 int main()
@@ -29,17 +29,15 @@ int main()
   }
 
   char* res1 = nullptr;//, *res2 = nullptr;
-
-  try
+  res1 = reinterpret_cast<char*>(malloc((strlen(str) + 1) * sizeof(char)));
+  if (!res1)
   {
-    res1 = bukreev::excsnd(str, "abc");
-  }
-  catch(const std::bad_alloc& e)
-  {
-    std::cerr << "Not enought memory for EXC_SND.\n";
+    std::cerr << "Not enough memory for EXC_SND.\n";
     bukreev::deleteString(str);
     return 1;
   }
+
+  res1 = bukreev::excsnd(str, "abc", res1);
 
   bukreev::deleteString(str);
 
@@ -115,16 +113,8 @@ char* bukreev::growString(const char* oldStr, size_t* capacity)
   return newStr;
 }
 
-char* bukreev::excsnd(const char* first, const char* second)
+char* bukreev::excsnd(const char* first, const char* second, char* resStr)
 {
-  size_t resCapacity = initialSize;
-
-  char* resStr = reinterpret_cast<char*>(malloc(initialSize * sizeof(char)));
-  if (!resStr)
-  {
-    throw std::bad_alloc();
-  }
-
   size_t resIndex = 0;
 
   for (size_t i = 0; i < std::strlen(first); i++)
@@ -143,19 +133,9 @@ char* bukreev::excsnd(const char* first, const char* second)
 
     if (!exclude)
     {
-      if (resIndex == resCapacity)
-      {
-        resStr = growString(resStr, &resCapacity);
-      }
-
       resStr[resIndex] = c;
       resIndex++;
     }
-  }
-
-  if (resIndex == resCapacity)
-  {
-    resStr = growString(resStr, &resCapacity);
   }
 
   resStr[resIndex] = 0;
