@@ -188,7 +188,6 @@ int *copy(const int *a, size_t k)
   {
     b[i] = a[i];
   }
-  delete[] a;
   return b;
 }
 
