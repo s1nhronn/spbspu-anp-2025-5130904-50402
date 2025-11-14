@@ -79,6 +79,10 @@ int main(int argc, char ** argv)
   std::ofstream output(argv[3]);
   size_t rows, cols;
   input >> rows >> cols;
+  if (input.eof()) {
+    std::cerr << "Not enough data\n";
+    return 2;
+  }
 
   try {
     if (firstarg == 1) {
@@ -98,13 +102,13 @@ int main(int argc, char ** argv)
         }
       }
 
-      for (size_t i = 0; i < rows; ++i) {
-        mtx[i] = static_mtx[i];
-      }
-
       if (rows * cols != count) {
         std::cerr << "Wrong matrix format\n";
         return 2;
+      }
+
+      for (size_t i = 0; i < rows; ++i) {
+        mtx[i] = static_mtx[i];
       }
 
       int min = minSum(mtx, rows, cols);
