@@ -170,6 +170,7 @@ int myPow(int a, int b)
 void output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2)
 {
   out << "Решение варианта 1:\n";
+  out << m << ' ' << n << ' ';
   for (size_t i = 0; i < m; i++)
   {
     for (size_t j = 0; j < n; j++)
@@ -195,21 +196,12 @@ size_t transformIndexes(size_t i, size_t j, size_t n)
   return i * n + j;
 }
 
-void printMtx(int *matrix, size_t m, size_t n)
-{
-  for (size_t i = 0; i < m; i++)
-  {
-    for (size_t j = 0; j < n; j++)
-    {
-      std::cout << matrix[transformIndexes(i, j, n)] << ' ';
-    }
-    std::cout << '\n';
-  }
-  std::cout << '\n';
-}
-
 int *spiral(int *matrix, size_t m, size_t n)
 {
+  if (m == 0 || n == 0)
+  {
+    return {};
+  }
   int *mtx = copy(matrix, m * n);
   size_t ptr = mtx[transformIndexes(m - 1, 0, n)];
   size_t leftBorder = 0;
@@ -218,42 +210,48 @@ int *spiral(int *matrix, size_t m, size_t n)
   size_t lowerBorder = m - 1;
 
   size_t deductible = 1;
-  while (leftBorder != ptr || rightBorder != ptr || upperBorder != ptr ||
-         lowerBorder != ptr)
+  while (leftBorder < n || upperBorder < m || rightBorder > 0 ||
+         lowerBorder > 0)
   {
-    printMtx(mtx, m, n);
-    for (size_t i = lowerBorder--; i + 1 >= upperBorder + 1; i--)
+    for (size_t i = lowerBorder; i + 1 >= upperBorder + 1; i--)
     {
       ptr = transformIndexes(i, leftBorder, n);
       mtx[ptr] -= deductible++;
-      std::cout << ptr << '\n';
     }
-    printMtx(mtx, m, n);
+    if (leftBorder < n)
+    {
+      leftBorder++;
+    }
 
-    for (size_t j = leftBorder++; j <= rightBorder; j++)
+    for (size_t j = leftBorder; j <= rightBorder; j++)
     {
       ptr = transformIndexes(upperBorder, j, n);
       mtx[ptr] -= deductible++;
-      std::cout << ptr << '\n';
     }
-    printMtx(mtx, m, n);
+    if (upperBorder < m)
+    {
+      upperBorder++;
+    }
 
-    for (size_t i = upperBorder++; i <= lowerBorder; i++)
+    for (size_t i = upperBorder; i <= lowerBorder; i++)
     {
       ptr = transformIndexes(i, rightBorder, n);
       mtx[ptr] -= deductible++;
-      std::cout << ptr << '\n';
     }
-    printMtx(mtx, m, n);
+    if (rightBorder > 0)
+    {
+      rightBorder--;
+    }
 
-    for (size_t j = rightBorder--; j + 1 >= leftBorder + 1; j--)
+    for (size_t j = rightBorder; j + 1 >= leftBorder + 1; j--)
     {
       ptr = transformIndexes(lowerBorder, j, n);
       mtx[ptr] -= deductible++;
-      std::cout << ptr << '\n';
     }
-    printMtx(mtx, m, n);
-    break;
+    if (lowerBorder > 0)
+    {
+      lowerBorder--;
+    }
   }
   return mtx;
 }
