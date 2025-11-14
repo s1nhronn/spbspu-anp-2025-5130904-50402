@@ -5,16 +5,21 @@
 
 namespace dirko
 {
-  char *myRealloc(char *mem, size_t size)
+  char *myRealloc(char *mem, size_t oldSize, size_t newSize)
   {
-    char *temp = reinterpret_cast<char *>(malloc(size));
+    char *temp = reinterpret_cast<char *>(malloc(newSize));
     if (temp == nullptr)
     {
+      free(mem);
       return nullptr;
     }
-    for (size_t i = 0; i < size - 1; ++i)
+    for (size_t i = 0; i < oldSize; ++i)
     {
       temp[i] = mem[i];
+    }
+    for (size_t i = oldSize; i < newSize; ++i)
+    {
+      temp[i] = 0;
     }
     free(mem);
     return temp;
@@ -30,13 +35,11 @@ namespace dirko
     }
     while (in >> ch && ch != '\n')
     {
-      char *temp = myRealloc(str, size + 1);
-      if (temp == nullptr)
+      str = myRealloc(str, size, size + 1);
+      if (str == nullptr)
       {
-        free(str);
         throw std::bad_alloc();
       }
-      str = temp;
       str[size] = ch;
       ++size;
     }
