@@ -6,9 +6,9 @@
 #include <limits>
 namespace chernikov
 {
-    bool is_down_triangle_matrix (const int * a, int rows, int cols);
-    size_t local_max_quantity(const int* a, int rows, int cols);
-    bool is_par_num(char* a);
+  bool is_down_triangle_matrix (const int * a, int rows, int cols);
+  size_t local_max_quantity (const int* a, int rows, int cols);
+  bool is_par_num (char* a);
 }
 
 int main (int argc, char ** argv)
