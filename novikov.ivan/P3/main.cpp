@@ -7,36 +7,38 @@
 #include <stdexcept>
 #include <string>
 
-void remove(int ** mtx, size_t r)
-{
-  for (size_t i = 0; i < r; ++i) {
-    delete[] mtx[i];
-  }
-  delete[] mtx;
-}
-
-int minSum(int ** mtx, size_t r, size_t c)
-{
-  int min = std::numeric_limits<int>::max();
-  for (size_t k = 0; k <= r + c - 2; ++k) {
-    int sum = 0;
+namespace novikov {
+  void remove(int ** mtx, size_t r)
+  {
     for (size_t i = 0; i < r; ++i) {
-      if (k - i < c) {
-        sum += mtx[i][k - i];
-      }
+      delete[] mtx[i];
     }
-    min = (sum < min) ? sum : min;
+    delete[] mtx;
   }
-  return min;
-}
 
-void addPeripheral(int ** mtx, size_t r, size_t c)
-{
-  size_t center_row = (r % 2) ? r + 1 : r;
-  for (size_t current_row = 0; current_row < center_row; ++current_row) {
-    for (size_t i = current_row; i < r - current_row; ++i) {
-      for (size_t j = current_row; j < c - current_row; ++j) {
-        ++mtx[i][j];
+  int minSum(int ** mtx, size_t r, size_t c)
+  {
+    int min = std::numeric_limits<int>::max();
+    for (size_t k = 0; k <= r + c - 2; ++k) {
+      int sum = 0;
+      for (size_t i = 0; i < r; ++i) {
+        if (k - i < c) {
+          sum += mtx[i][k - i];
+        }
+      }
+      min = (sum < min) ? sum : min;
+    }
+    return min;
+  }
+
+  void addPeripheral(int ** mtx, size_t r, size_t c)
+  {
+    size_t center_row = (r % 2) ? r + 1 : r;
+    for (size_t current_row = 0; current_row < center_row; ++current_row) {
+      for (size_t i = current_row; i < r - current_row; ++i) {
+        for (size_t j = current_row; j < c - current_row; ++j) {
+          ++mtx[i][j];
+        }
       }
     }
   }
@@ -113,8 +115,8 @@ int main(int argc, char ** argv)
         mtx[i] = static_mtx[i];
       }
 
-      int min = minSum(mtx, rows, cols);
-      addPeripheral(mtx, rows, cols);
+      int min = novikov::minSum(mtx, rows, cols);
+      novikov::addPeripheral(mtx, rows, cols);
 
       output << min << " ";
       for (size_t i = 0; i < rows; ++i) {
@@ -129,7 +131,7 @@ int main(int argc, char ** argv)
         try {
           mtx[i] = new int[cols];
         } catch (std::bad_alloc &) {
-          remove(mtx, i);
+          novikov::remove(mtx, i);
           throw;
         }
       }
@@ -141,7 +143,7 @@ int main(int argc, char ** argv)
           input >> mtx[i][j];
           if (input.eof()) {
             std::cerr << "Wrong matrix format\n";
-            remove(mtx, rows);
+            novikov::remove(mtx, rows);
             return 2;
           }
           ++count;
@@ -150,12 +152,12 @@ int main(int argc, char ** argv)
 
       if (rows * cols != count) {
         std::cerr << "Wrong matrix format\n";
-        remove(mtx, rows);
+        novikov::remove(mtx, rows);
         return 2;
       }
 
-      int min = minSum(mtx, rows, cols);
-      addPeripheral(mtx, rows, cols);
+      int min = novikov::minSum(mtx, rows, cols);
+      novikov::addPeripheral(mtx, rows, cols);
 
       output << min << " ";
       for (size_t i = 0; i < rows; ++i) {
@@ -163,7 +165,7 @@ int main(int argc, char ** argv)
           output << mtx[i][j] << " ";
         }
       }
-      remove(mtx, rows);
+      novikov::remove(mtx, rows);
     }
   } catch (std::bad_alloc &) {
     std::cerr << "Memory can not be allocated\n";
