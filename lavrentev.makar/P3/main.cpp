@@ -1,6 +1,9 @@
+#include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <string>
+#include <stdexcept>
+#include <cstring>
+#include <limits>
 
 bool is_digit(char * str);
 int str_to_int(char * str);
