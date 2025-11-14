@@ -5,6 +5,20 @@
 
 namespace dirko
 {
+  char *myRealloc(char *mem, size_t size)
+  {
+    char *temp = reinterpret_cast<char *>(malloc(size));
+    if (temp == nullptr)
+    {
+      return nullptr;
+    }
+    for (size_t i = 0; i < size - 1; ++i)
+    {
+      temp[i] = mem[i];
+    }
+    free(mem);
+    return temp;
+  }
   char *getLine(std::istream &in, size_t &size)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
@@ -16,7 +30,7 @@ namespace dirko
     }
     while (in >> ch && ch != '\n')
     {
-      char *temp = reinterpret_cast<char *>(realloc(str, size + 1));
+      char *temp = myRealloc(str, size + 1);
       if (temp == nullptr)
       {
         free(str);
