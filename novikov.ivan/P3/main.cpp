@@ -98,6 +98,10 @@ int main(int argc, char ** argv)
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
           input >> static_mtx[i][j];
+          if (input.eof()) {
+            std::cerr << "Wrong matrix format\n";
+            return 2;
+          }
           ++count;
         }
       }
@@ -137,6 +141,11 @@ int main(int argc, char ** argv)
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
           input >> mtx[i][j];
+          if (input.eof()) {
+            std::cerr << "Wrong matrix format\n";
+            remove(mtx, rows);
+            return 2;
+          }
           ++count;
         }
       }
