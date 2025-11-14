@@ -17,15 +17,13 @@ void remove(int ** mtx, size_t r)
 
 int minSum(int ** mtx, size_t r, size_t c)
 {
-  int sum;
   int min = std::numeric_limits<int>::max();
-  for (size_t i = 0; i < c; ++i) {
-    sum = 0;
-    for (size_t j = 0; j < r; ++j) {
-      if (i < j) {
-        break;
+  for (size_t k = 0; k <= r + c - 2; ++k) {
+    int sum = 0;
+    for (size_t i = 0; i < r; ++i) {
+      if (k - i < c) {
+        sum += mtx[i][k - i];
       }
-      sum += mtx[j][i - j];
     }
     min = (sum < min) ? sum : min;
   }
