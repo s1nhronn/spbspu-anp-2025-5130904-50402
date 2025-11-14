@@ -29,12 +29,36 @@ int main(int argc, char ** argv) {
     a[i] = b;
     ++i;
   }
+
+  //задача №1 - CNT-LOC-MAX
   for (int i = 0; i < m; ++i) {
     for (int j = 0; j < n; ++j) {
       if (i != 0 && j != 0 && check_max(a, i, j, n, m)) {
         counter++;
       }
     }
+  }
+
+  //задача №2 LWR-TRI-MTX
+  bool isMtxTriangle_left = true;
+  bool isMtxTriangle_right = true;
+  if (n!=m) {
+    size_t mtx_size = min(n,m);
+  }
+  for (int i = 0; i < mtx_size; ++i) {
+    for (int j = 0; j < mtx_size-i; ++j) {
+      isMtxTriangle_right = a[j + i*m] == 0? true : false;
+      isMtxTriangle_left = a[(mtx_size - j) + (mtx_size - i)*m] == 0? true : false;
+    }
+  }
+  if (isMtxTriangle_left) {
+    std::cout << "Матрица левая нижняя треугольная";
+  }
+  if (isMtxTriangle_right) {
+    std::cout << "Матрица правая нижняя треугольная";
+  }
+  if (!isMtxTriangle_left && !isMtxTriangle_right) {
+    std::cout << "Матрица не нижняя треугольная";
   }
 }
 
@@ -65,3 +89,6 @@ bool check_max(int * a, size_t i, size_t j, size_t n, size_t m) {
   }
   return true;
 }
+
+
+
