@@ -32,11 +32,6 @@ int minSum(int ** mtx, size_t r, size_t c)
   return min;
 }
 
-void addPeripheral(int ** mtx, size_t r, size_t c)
-{
-
-}
-
 int main(int argc, char ** argv)
 {
   if (argc < 4) {
@@ -57,7 +52,7 @@ int main(int argc, char ** argv)
     std::cerr << "First parameter is out of range\n";
   }
 
-  if (firstarg != 1 || firstarg != 2) {
+  if (firstarg != 1 && firstarg != 2) {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
@@ -68,13 +63,13 @@ int main(int argc, char ** argv)
 
   try {
     if (firstarg == 1) {
-      size_t count = 0;
-      int mtx[10000][10000];
-
       if (rows * cols > 10000) {
         std::cerr << "Matrix is too large\n";
         return 2;
       }
+
+      size_t count = 0;
+      int mtx[rows][cols];
 
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
