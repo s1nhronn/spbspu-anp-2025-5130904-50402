@@ -27,15 +27,20 @@ namespace petrov
       return;
     }
     int arr[100][100] = {0};
+    size_t elements = 0;
     for(size_t i = 0; i < rows; ++i)
     {
       for(size_t j = 0; j < cols; ++j)
       {
         if (!(in >> arr[i][j]))
         {
-          std::cerr << "Invalid matrix data\n";
+          if (elements < rows * cols)
+          {
+            std::cerr << "Invalid matrix data\n";
+          }
           return;
         }
+        elements++;
       }
     }
     int* arr_ptr[100];
@@ -57,7 +62,6 @@ namespace petrov
       return;
     }
     int** a = nullptr;
-    size_t qnt_numb = 0;
     try {
       a = new int*[rows];
       for (size_t i = 0; i < rows; ++i) {
@@ -68,6 +72,7 @@ namespace petrov
       std::cerr << "Memory allocation failed\n";
       return;
     }
+    size_t elements = 0;
     for (size_t i = 0; i < rows; ++i)
     {
       for (size_t j = 0; j < cols; ++j)
@@ -75,10 +80,13 @@ namespace petrov
         if (!(in >> a[i][j]))
         {
           rm(a, rows);
-          std::cerr << "Invalid matrix numbers\n";
+          if (elements < rows * cols )
+          {
+            std::cerr << "Invalid matrix numbers\n";
+          }
           return;
         }
-        qnt_numb++;
+        elements++;
       }
     }
     int temp;
@@ -204,15 +212,15 @@ int main(int argc, char const** argv)
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
-  int mode = 0;
+  int var = 0;
   try {
-    mode = std::stoi(argv[1]);
+    var = std::stoi(argv[1]);
   }
   catch (...) {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-  if (mode != 1 && mode != 2) {
+  if (var != 1 && var != 2) {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
@@ -233,7 +241,7 @@ int main(int argc, char const** argv)
   }
   output << rows << " " << cols;
   bool errors = false;
-  if (mode == 1) {
+  if (var == 1) {
     petrov::stat(input, output, rows, cols);
     if (input.fail() && !input.eof()) {
       errors = true;
