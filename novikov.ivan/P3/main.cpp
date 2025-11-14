@@ -60,8 +60,10 @@ int main(int argc, char ** argv)
     firstarg = std::stoi(argv[1]);
   } catch (std::invalid_argument &) {
     std::cerr << "First parameter is not a number\n";
+    return 1;
   } catch (std::out_of_range &) {
     std::cerr << "First parameter is out of range\n";
+    return 1;
   }
 
   if (firstarg != 1 && firstarg != 2) {
