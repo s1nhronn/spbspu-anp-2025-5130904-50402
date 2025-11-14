@@ -2,20 +2,24 @@
 #include <fstream>
 #include <memory>
 
-bool isErr1(int argc, char ** argv);
-bool isErr2(size_t sizeArr, size_t size);
-bool isEmptyFile(std::ifstream & input);
-int * changeArrVar1(int * arr, size_t n);
-int * changeArrVar2(int * arr, size_t n);
+namespace permyakov
+{
+  bool isErr1(int argc, char ** argv);
+  bool isErr2(size_t sizeArr, size_t size);
+  bool isEmptyFile(std::ifstream & input);
+  int * changeArrVar1(int * arr, size_t n);
+  int * changeArrVar2(int * arr, size_t n);
+}
 
 int main(int argc, char ** argv)
 {
-  if(isErr1(argc, argv)){
+  namespace per = permyakov;
+  if(per::isErr1(argc, argv)){
     return 1;
   }
 
   std::ifstream input(argv[2]);
-  if(isEmptyFile(input)){
+  if(per::isEmptyFile(input)){
     return 2;
   }
   size_t n = 0, m = 0;
@@ -41,17 +45,17 @@ int main(int argc, char ** argv)
       return 2;
     }
     input.close();
-    if(isErr2(s, n * m)){
+    if(per::isErr2(s, n * m)){
       return 2;
     }
     try{
-      arr1 = changeArrVar1(arr, n);
+      arr1 = per::changeArrVar1(arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       return 3;
     }
     try{
-      arr2 = changeArrVar2(arr, n);
+      arr2 = per::changeArrVar2(arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(arr1);
@@ -72,19 +76,19 @@ int main(int argc, char ** argv)
       return 2;
     }
     input.close();
-    if(isErr2(s, n * m)){
+    if(per::isErr2(s, n * m)){
       free(d_arr);
       return 2;
     }
     try{
-      arr1 = changeArrVar1(d_arr, n);
+      arr1 = per::changeArrVar1(d_arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(d_arr);
       return 3;
     }
     try{
-      arr2 = changeArrVar2(d_arr, n);
+      arr2 = per::changeArrVar2(d_arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(arr1);
@@ -107,7 +111,7 @@ int main(int argc, char ** argv)
   free(arr2);
 }
 
-bool isErr1(int argc, char ** argv)
+bool permyakov::isErr1(int argc, char ** argv)
 {
   if(argc < 4){
     std::cerr << "Not enough arguments\n";
@@ -124,7 +128,7 @@ bool isErr1(int argc, char ** argv)
   return false;
 }
 
-bool isErr2(size_t sizeArr, size_t size)
+bool permyakov::isErr2(size_t sizeArr, size_t size)
 {
   if(sizeArr < size){
     std::cerr << "Not enough numbers to create array\n";
@@ -137,7 +141,7 @@ bool isErr2(size_t sizeArr, size_t size)
   return false;
 }
 
-bool isEmptyFile(std::ifstream & input)
+bool permyakov::isEmptyFile(std::ifstream & input)
 {
   if(input.peek() == std::ifstream::traits_type::eof()){
     std::cerr << "Input file is empty\n";
@@ -146,7 +150,7 @@ bool isEmptyFile(std::ifstream & input)
   return false;
 }
 
-int * changeArrVar1(int * arr, size_t n)
+int * permyakov::changeArrVar1(int * arr, size_t n)
 {
   int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
   if(arr1 == nullptr){
@@ -189,7 +193,7 @@ int * changeArrVar1(int * arr, size_t n)
   return arr1;
 }
 
-int * changeArrVar2(int * arr, size_t n)
+int * permyakov::changeArrVar2(int * arr, size_t n)
 {
   int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
   if(arr2 == nullptr){
