@@ -16,15 +16,15 @@ namespace petrov
     delete[] mtx;
   }
 
-  void stat(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
+  bool stat(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
   {
     const size_t max_size_arr = 10000;
     if (rows * cols > max_size_arr) {
       std::cerr << "Too large for array\n";
-      return;
+      return false;
     }
     if (rows == 0 || cols == 0) {
-      return;
+      return true;
     }
     int arr[100][100] = {0};
     size_t elements = 0;
@@ -38,10 +38,14 @@ namespace petrov
           {
             std::cerr << "Invalid matrix data\n";
           }
-          return;
+          return false;
         }
         elements++;
       }
+    }
+    if (elements < rows * cols) {
+      std::cerr << "Invalid matrix data\n";
+      return false;
     }
     int* arr_ptr[100];
     for (size_t i = 0; i < rows; ++i)
@@ -54,12 +58,13 @@ namespace petrov
         out << " " << arr[i][j];
       }
     }
+    return true;
   }
 
-  void dyn(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
+  bool dyn(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
-      return;
+      return true;
     }
     int** a = nullptr;
     try {
@@ -70,7 +75,7 @@ namespace petrov
     } catch (...) {
       rm(a, rows);
       std::cerr << "Memory allocation failed\n";
-      return;
+      return false;
     }
     size_t elements = 0;
     for (size_t i = 0; i < rows; ++i)
@@ -80,21 +85,26 @@ namespace petrov
         if (!(in >> a[i][j]))
         {
           rm(a, rows);
-          if (elements < rows * cols )
+          if (elements < rows * cols)
           {
             std::cerr << "Invalid matrix numbers\n";
           }
-          return;
+          return false;
         }
         elements++;
       }
+    }
+    if (elements < rows * cols) {
+      rm(a, rows);
+      std::cerr << "Invalid matrix numbers\n";
+      return false;
     }
     int temp;
     if (in >> temp)
     {
       rm(a, rows);
       std::cerr << "Too many arguments for array\n";
-      return;
+      return false;
     }
     FLL_INC_WAV(a, rows, cols);
     for (size_t i = 0; i < rows; i++) {
@@ -103,6 +113,7 @@ namespace petrov
       }
     }
     rm(a, rows);
+    return true;
   }
 
   void LFT_BOT_CNT(int** a, size_t r, size_t c)
@@ -240,21 +251,19 @@ int main(int argc, char const** argv)
     return 2;
   }
   output << rows << " " << cols;
-  bool errors = false;
+  
+  bool success = true;
   if (var == 1) {
-    petrov::stat(input, output, rows, cols);
-    if (input.fail() && !input.eof()) {
-      errors = true;
-    }
+    success = petrov::stat(input, output, rows, cols);
   } else {
-    petrov::dyn(input, output, rows, cols);
-    if (input.fail() && !input.eof()) {
-      errors = true;
-    }
+    success = petrov::dyn(input, output, rows, cols);
   }
+  
   input.close();
-  if (errors) {
+  
+  if (!success) {
     return 2;
   }
+  
   return 0;
 }
