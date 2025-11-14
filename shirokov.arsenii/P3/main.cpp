@@ -86,10 +86,10 @@ int main(int argc, char **argv)
   int *res1 = spiral(matrix, m, n);
   bool res2 = isTriangularMatrix(matrix, m, n);
   output(out, res1, m, n, res2);
+  delete[] res1;
   if (num == 2)
   {
     delete[] matrix;
-    delete[] res1;
   }
 }
 
@@ -188,6 +188,7 @@ int *copy(const int *a, size_t k)
   {
     b[i] = a[i];
   }
+  delete[] a;
   return b;
 }
 
