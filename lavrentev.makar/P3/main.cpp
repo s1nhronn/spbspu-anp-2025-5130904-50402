@@ -220,8 +220,6 @@ size_t num_col_lsr(int * arr, size_t x, size_t y)
     }
   }
 
-  
-
   for (size_t i = 0; i < y; ++i)
   {
     if (max_length < mas[i][1])
@@ -230,7 +228,7 @@ size_t num_col_lsr(int * arr, size_t x, size_t y)
       max_length = mas[i][1];
     }
   }
-  
+
   return ans_11;
 }
 
