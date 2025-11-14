@@ -58,6 +58,10 @@ int main(int argc, char ** argv)
 
   try {
     firstarg = std::stoi(argv[1]);
+    if (argv[1] != std::to_string(firstarg)) {
+      std::cerr << "First parameter is not a number\n";
+      return 1;
+    }
   } catch (std::invalid_argument &) {
     std::cerr << "First parameter is not a number\n";
     return 1;
