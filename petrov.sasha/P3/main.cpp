@@ -165,17 +165,41 @@ namespace petrov
 
 int main(int argc, char const** argv)
 {
-  if (argc != 4) {
-    std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
+    if (argc < 4)
+  {
+    std::cerr << "Not enough arguments\n";
     return 1;
   }
-  const char* variant = argv[1];
-  if (variant[0] != '1' || variant[0] != '2')
+  if (argc > 4)
   {
-    std::cerr << "First parameter is not a number";
+    std::cerr << "Too many arguments\n";
+    return 1;
+  }
+  int variant = 0;
+  try {
+    variant = std::stoi(argv[1]);
+  }
+  catch (std::out_of_range &e)
+  {
+    std::cerr << "First parameter is not a number\n";
+    return 1;
+  }
+    if (variant < 1 || variant > 2)
+  {
+    std::cerr << "First parameter is out of range\n";
     return 1;
   }
   std::ifstream input(argv[2]);
+  if (input.eof())
+  {
+    std::cerr << "Small data\n";
+    return 2;
+  }
+  else if (input.fail())
+  {
+    std::cerr << "Invalid read\n";
+    return 2;
+  }
   int cols = 0, rows = 0;
   if (!(input >> rows >> cols)) {
     std::cerr << "Invalid matrix data\n";
@@ -189,8 +213,10 @@ int main(int argc, char const** argv)
   output << rows << " " << cols;
   if (variant[0] == '1') {
     petrov::stat(input, output, rows, cols);
+    input.close();
   } else {
     petrov::dyn(input, output, rows, cols);
+    input.close();
   }
   return 0;
 }
