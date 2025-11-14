@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -14,6 +15,7 @@ int *copy(const int *a, size_t k);
 int *spiral(int *matrix, size_t m, size_t n);
 bool isTriangularMatrix(int *matrix, size_t m, size_t n);
 size_t transformIndexes(size_t i, size_t j);
+void cutMatrix(int *matrix, size_t m, size_t n);
 
 int main(int argc, char **argv)
 {
@@ -256,10 +258,43 @@ int *spiral(int *matrix, size_t m, size_t n)
   return mtx;
 }
 
+void cutMatrix(int *matrix, size_t m, size_t n)
+{
+  if (m == n)
+  {
+    return;
+  }
+  size_t minn = std::min(m, n);
+  int *temp = new int[minn * minn];
+  for (size_t i = 0; i < minn; ++i)
+  {
+    for (size_t j = 0; j < minn; ++j)
+    {
+      temp[transformIndexes(i, j, minn)] = matrix[transformIndexes(i, j, n)];
+    }
+  }
+  delete[] matrix;
+  matrix = copy(temp, minn * minn);
+}
+
 bool isTriangularMatrix(int *matrix, size_t m, size_t n)
 {
-  (void)matrix;
-  (void)m;
-  (void)n;
-  return false;
+  if (m == 0 || n == 0)
+  {
+    return false;
+  }
+  cutMatrix(matrix, m, n);
+  bool flag = true;
+  for (size_t i = 0; i < m - 1; ++i)
+  {
+    for (size_t j = i + 1; j < n; ++j)
+    {
+      if (matrix[transformIndexes(i, j, n)] != 0)
+      {
+        flag = false;
+        break;
+      }
+    }
+  }
+  return flag;
 }
