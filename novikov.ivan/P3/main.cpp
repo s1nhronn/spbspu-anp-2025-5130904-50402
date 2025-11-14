@@ -18,9 +18,13 @@ namespace novikov {
 
   int minSum(int ** mtx, size_t r, size_t c)
   {
+    int sum;
     int min = std::numeric_limits<int>::max();
+    if (r + c < 2) {
+      return 0;
+    }
     for (size_t k = 0; k <= r + c - 2; ++k) {
-      int sum = 0;
+      sum = 0;
       for (size_t i = 0; i < r; ++i) {
         if (k - i < c) {
           sum += mtx[i][k - i];
@@ -78,10 +82,6 @@ int main(int argc, char ** argv)
   std::ifstream input(argv[2]);
   std::ofstream output(argv[3]);
 
-  if (input.peek() == std::ifstream::traits_type::eof()) {
-    std::cerr << "Input file is empty\n";
-  }
-
   size_t rows, cols;
   input >> rows >> cols;
   if (input.eof()) {
@@ -123,7 +123,7 @@ int main(int argc, char ** argv)
       int min = novikov::minSum(mtx, rows, cols);
       novikov::addPeripheral(mtx, rows, cols);
 
-      output << min << " ";
+      output << min << " " << rows << " " << cols << " ";
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
           output << mtx[i][j] << " ";
@@ -164,7 +164,7 @@ int main(int argc, char ** argv)
       int min = novikov::minSum(mtx, rows, cols);
       novikov::addPeripheral(mtx, rows, cols);
 
-      output << min << " ";
+      output << min << " " << rows << " " << cols << " ";
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
           output << mtx[i][j] << " ";
