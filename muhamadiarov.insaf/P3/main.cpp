@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
-#include <string>
 #include <algorithm>
 #include <typeinfo>
 #include <cstddef>
@@ -16,24 +15,24 @@ namespace muhamadiarov
     int colons;
   };
 
-  int max_int(); 
+  int max_int();
   int min_int();
- 
-  int* fll_inc_wav(matric_info matrix); 
 
-  void out(int* begin, matric_info matrix, const char* output, int* res1, long long int res2); 
+  int* fll_inc_wav(matric_info matrix);
 
-  long long toFindMaxRight(int* ptr, int order); 
-  long long toFindMaxinLeft(int* ptr, int order); 
-  long long max_sum_mdg(matric_info matrix, int order); 
+  void out(int* begin, matric_info matrix, const char* output, int* res1, long long int res2);
 
-  bool tocheckparam(int argc, char* argv[]); 
+  long long toFindMaxRight(int* ptr, int order);
+  long long toFindMaxinLeft(int* ptr, int order);
+  long long max_sum_mdg(matric_info matrix, int order);
+
+  bool tocheckparam(int argc, char* argv[]);
   void tocoutargv(int argc, char * argv[]);
 }
 
 bool isOutfileOpened = true;
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
   namespace muh = muhamadiarov;
   bool checkparam = muh::tocheckparam(argc, argv); //проверка параметров main
@@ -88,7 +87,6 @@ int main(int argc, char *argv[])
       return 1;
     }
   }
-  
   // для вывода исходной матрицы
   int copy[count];
   int* beginCopy = copy;
@@ -109,7 +107,7 @@ int main(int argc, char *argv[])
       {
         free(ptr);
       }
-      return 2;	
+      return 2;
     }
 
 
@@ -164,10 +162,10 @@ int main(int argc, char *argv[])
       muh::out(beginCopy + i - 2, matrix, argv[3], result_1, result_2);
     }
     else
-    { 
+    {
       matrix = {ptr + i, r, c};
       int order = std::min(r, c);
-      result_2 = muh::max_sum_mdg(matrix, order); 
+      result_2 = muh::max_sum_mdg(matrix, order);
       result_1 = muh::fll_inc_wav(matrix);
       muh::out(beginCopy + i, matrix, argv[3], result_1, result_2);
       i += r * c;
@@ -204,7 +202,7 @@ int* muhamadiarov::fll_inc_wav(muhamadiarov::matric_info matrix)
       int top = j;
       int bottom = n - 1 - j;
       int left = i;
-      int right = k - 1 - i; 
+      int right = k - 1 - i;
       p = std::min(std::min(top, bottom), std::min(left, right)) + 1;
       *(ptr + j*k + i) += p;
     }
@@ -326,11 +324,11 @@ bool muhamadiarov::tocheckparam(int argc, char* argv[])
     flag = false;
   }
   if (argc > 4)
-  { 
+  {
     muh::tocoutargv(argc, argv);
     std::cerr << "//Too many arguments\n";
     flag = false;
-  } 
+  }
   if (argv[1][0] < '0' || argv[1][0] > '9')
   {
     muh::tocoutargv(argc, argv);
