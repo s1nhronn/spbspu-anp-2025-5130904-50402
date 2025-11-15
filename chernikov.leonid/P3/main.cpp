@@ -6,9 +6,9 @@
 #include <limits>
 namespace chernikov
 {
-  bool is_down_triangle_matrix (const int * a, int rows, int cols);
-  size_t local_max_quantity (const int* a, int rows, int cols);
-  bool is_par_num (char* a);
+  bool isDownTriangleMatrix (const int * a, size_t rows, size_t cols);
+  size_t localMaxQuantity (const int * a, size_t rows, size_t cols);
+  bool isParNum (char * a);
 }
 
 int main (int argc, char ** argv)
@@ -18,14 +18,20 @@ int main (int argc, char ** argv)
     std::cerr << "Mismatch in the number of parameters\n";
     return 1;
   }
-  int rows = 0, cols = 0;
+  if (!chernikov::isParNum(argv[1]))
+  {
+    std::cerr << "memory parameter is not a number\n";
+    return 1;
+  }
+  size_t rows = 0, cols = 0;
   std::ifstream input(argv[2]);
   if (!input || !(input >> rows >> cols))
   {
     std::cerr << "Array cannot exist\n";
     return 2;
   }
-  if ((rows * cols)>10000)
+  const int MAX_SIZE = 10000;
+  if ((rows * cols) > MAX_SIZE)
   {
     std::cerr << "Array incorect\n";
     return 2;
@@ -33,10 +39,8 @@ int main (int argc, char ** argv)
   if (rows == 0 && cols == 0)
   {
     std::ofstream output(argv[3]);
-    output << "0\n" << std::endl;
-    output << "0\n" << std::endl;
-    output.close();
-    input.close();
+    output << '0' << std::endl;
+    output << '0' << std::endl;
     return 0;
   }
   if (rows < 0 || cols < 0)
@@ -46,23 +50,16 @@ int main (int argc, char ** argv)
     return 2;
   }
   bool isDynamic = false;
-  int* a = nullptr;
-  const int max_size = 10000;
-  int nums[max_size] = {};
-  if (!chernikov::is_par_num(argv[1]))
+  int * a = nullptr;
+  int nums[MAX_SIZE] = {};
+  if (strcmp(argv[1], "1") == 0)
   {
-    std::cerr << "memory parameter is not a number\n";
-    return 1;
-  }
-  if (std::string(argv[1]) == "1")
-  {
-    memset(nums, 0, sizeof(nums));
     a = nums;
     isDynamic = false;
   }
-  else if (std::string(argv[1]) == "2")
+  else if (strcmp(argv[1], "2") == 0)
   {
-    a = static_cast<int*>(malloc(sizeof(int) * (rows * cols)));
+    a = reinterpret_cast< int * >(malloc(sizeof(int) * (rows * cols)));
     isDynamic = true;
     if (a == nullptr)
     {
@@ -75,9 +72,8 @@ int main (int argc, char ** argv)
     std::cerr << "Parameter 2 is set incorrectly\n";
     return 2;
   }
-  memset(a, 0, sizeof(int) * rows * cols);
   int col = 0;
-  for (int i = 0; i < (rows * cols); ++i)
+  for (size_t i = 0; i < (rows * cols); ++i)
   {
     if (!(input >> a[i]))
     {
@@ -89,12 +85,11 @@ int main (int argc, char ** argv)
       return 2;
     }
     ++col;
-
   }
-  if (col != (rows * cols))
+  if (col != ((rows * cols) - 1))
   {
     std::cerr << "Not enough data";
-    if (isDynamic && a != nullptr)
+    if (isDynamic == true)
     {
       free(a);
       return 2;
@@ -106,23 +101,22 @@ int main (int argc, char ** argv)
   }
   input.close();
 
-  bool LWR_TRI_MTX = chernikov::is_down_triangle_matrix (a, rows, cols);
+  bool lwr_tri_mtx = chernikov::isDownTriangleMatrix(a, rows, cols);
+  size_t cnt_loc_max = chernikov::localMaxQuantity(a, rows, cols);
   std::ofstream output(argv[3]);
-  output << "LWR_TRI_MTX = " << LWR_TRI_MTX << "\n";
-  size_t CNT_LOC_MAX = chernikov::local_max_quantity (a, rows, cols);
-  output << "CNT_LOC_MAX = " << CNT_LOC_MAX << "\n";
+  output << "cnt_loc_max = " << cnt_loc_max << '\n';
+  output << "lwr_tri_mtx = " << lwr_tri_mtx << '\n';
   output.close();
 
-  if (isDynamic == true && a != nullptr)
+  if (isDynamic == true)
   {
     free(a);
     a = nullptr;
   }
-
   return 0;
 }
 
-bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
+bool chernikov::isDownTriangleMatrix(const int * a, size_t rows, size_t cols)
 {
   if (rows == 0 && cols == 0)
   {
@@ -136,11 +130,11 @@ bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
   {
     return false;
   }
-  for (int i = 0; i < rows; ++i)
+  for (size_t i = 0; i < rows; ++i)
   {
-    for (int j = i + 1; j < cols; ++j)
+    for (size_t j = i + 1; j < cols; ++j)
     {
-      int index = i * cols + j;
+      size_t index = i * cols + j;
       if (a[index] != 0)
       {
         return false;
@@ -150,7 +144,7 @@ bool chernikov::is_down_triangle_matrix(const int* a, int rows, int cols)
   return true;
 }
 
-size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
+size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
 {
   if (rows < 3 || cols < 3)
   {
@@ -161,20 +155,20 @@ size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
     return 0;
   }
   size_t count = 0;
-  for (int i = 1; i < (rows - 1); ++i)
+  for (size_t i = 1; i < (rows - 1); ++i)
   {
-    for (int j = 1; j < (cols - 1); ++j)
+    for (size_t j = 1; j < (cols - 1); ++j)
     {
-      int t = a[j + i * cols];
-      bool l1 = t > a[(j - 1) + (i - 1) * cols];
-      bool l2 = t > a[j + (i - 1) * cols];
-      bool l3 = t > a[(j + 1) + (i - 1) * cols];
-      bool l4 = t > a[(j - 1) + i * cols];
-      bool l5 = t > a[(j + 1) + i * cols];
-      bool l6 = t > a[(j - 1) + (i + 1) * cols];
-      bool l7 = t > a[j + (i + 1) * cols];
-      bool l8 = t > a[(j + 1) + (i + 1) * cols];
-      if (l1 + l2 + l3 + l4 + l5 + l6 + l7 + l8 == 8)
+      size_t t = a[j + i * cols];
+      bool f = t > a[(j - 1) + (i - 1) * cols];
+      f = t > a[j + (i - 1) * cols];
+      f = t > a[(j + 1) + (i - 1) * cols];
+      f = t > a[(j - 1) + i * cols];
+      f = t > a[(j + 1) + i * cols];
+      f = t > a[(j - 1) + (i + 1) * cols];
+      f = t > a[j + (i + 1) * cols];
+      f = t > a[(j + 1) + (i + 1) * cols];
+      if (f == true)
       {
         count++;
       }
@@ -183,12 +177,19 @@ size_t chernikov::local_max_quantity(const int* a, int rows, int cols)
   return count;
 }
 
-bool chernikov::is_par_num(char* p)
+bool chernikov::isParNum(char * p)
 {
-  for (size_t i = 0; i < std::strlen(p); ++i) {
-    if (!std::isdigit(static_cast<unsigned char>(p[i]))) {
-      return 0;
-    }
+  if (p == nullptr)
+  {
+    return false;
   }
-  return 1;
+  size_t P_LEN = std::strlen(p);
+  for (size_t i = 0; i < P_LEN; ++i)
+  {
+     if (!std::isdigit(static_cast<unsigned char>(p[i])))
+     {
+       return false;
+     }
+  }
+  return true;
 }
