@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
   int* beginCopy = copy;
 
   size_t k = 0;
-  size_t k1 = 0; // для отслеживания ситуации(чтение r and c)
+  int k1 = 0; // для отслеживания ситуации(чтение r and c)
   int r = 0, c = 0;
   while (input >> number)
   {
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
       bool c2 = !(r == 0 &&  c == 0 && k1 == 2);
       bool c3 = (r != 0 && c == 0) || (r == 0 && c != 0);
       bool c4 = r < 0 || c < 0;
-      if ((c3 || c1) && c2 || c4)
+      if (((c3 || c1) && c2) || c4)
       {
         std::cerr << "Wrong size matric\n";
 	if (argv[1][0] == '2')
@@ -195,10 +195,11 @@ int* muhamadiarov::fll_inc_wav(muhamadiarov::matric_info matrix)
   int n = matrix.rows;
   int k = matrix.colons;
   int* ptr = matrix.start;
-  for (size_t j = 0; j < n; ++j)
+  for (int j = 0; j < n; ++j)
   {
-    for (size_t i = 0; i < k; ++i)
+    for (int i = 0; i < k; ++i)
     {
+      //смотрим позицию
       int p = 0;
       int top = j;
       int bottom = n - 1 - j;
@@ -266,7 +267,6 @@ void muhamadiarov::out(int* begin, muhamadiarov::matric_info matrix,const char* 
   int n = matrix.rows;
   int k = matrix.colons; 
   size_t count = n * k;
-  int* ptr = matrix.start;
   std::ofstream outfile(output, std::ios::app);
   if (!outfile)
   {
@@ -309,7 +309,7 @@ void muhamadiarov::out(int* begin, muhamadiarov::matric_info matrix,const char* 
 
 void muhamadiarov::tocoutargv(int argc, char* argv[])
 {
-  for (size_t i = 0; i < argc; ++i)
+  for (int i = 0; i < argc; ++i)
   {
     std::cout << argv[i] << " ";
   }
