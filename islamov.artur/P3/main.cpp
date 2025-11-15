@@ -4,67 +4,9 @@
 #include <climits>
 #include <cstring>
 namespace Islamov{
-    static int CNT_COL_NSM(const int* arr, int rows, int cols)
-    {
-        int count = 0;
-        for (int j = 0; j < cols; ++j)
-        {
-            bool equal = false;
-            for (int i = 0; i+1 < rows; ++i)
-            {
-                if (arr[i*cols+j] == arr[(i+1)*cols+j])
-                {
-                    equal = true;
-                    break;
-                }
-            }
-            if (!equal)
-            {
-                ++count;
-            }
-        }
-        return count;
-    }
-    static int CNT_NZR_DIG(const int* arr, int rows, int cols)
-    {
-        if (rows<=0 || cols<=0) return 0;
-        int count=0;
-        for (int d = -(rows-1); d <= (cols-1); ++d)
-        {
-            int start= (d<0) ? -d : 0;
-            int end=std::min(rows-1, cols-1-d);
-            bool Zero=false;
-            for (int i = start; i <= end; ++i)
-            {
-                int j = i+d;
-                if (arr[i*cols+j] == 0)
-                {
-                    Zero=true;
-                    break;
-                }
-            }
-            if (!Zero)
-            {
-                ++count;
-            }
-        }
-        return count;
-    }
-    static bool IntArg(const char* s, int &out)
-    {
-        char* endptr = nullptr;
-        long val = std::strtol(s, &endptr, 10);
-        if (endptr == s || *endptr != '\0')
-        {
-            return false;
-        }
-        if (val<INT_MIN || val>INT_MAX)
-        {
-            return false;
-        }
-        out = static_cast<int>(val);
-        return true;
-    }
+    static int CNT_COL_NSM(const int* arr, int rows, int cols);
+    static int CNT_NZR_DIG(const int* arr, int rows, int cols);
+    static bool IntArg(const char* s, int &out);
 }
 int main(int argc, char** argv)
 {
@@ -179,6 +121,7 @@ int main(int argc, char** argv)
             std::cerr << "Error: input file content is not a valid matrix\n";
             return 2;
         }
+        fin.close();
         res1 = Islamov::CNT_COL_NSM(dynArr, rows, cols);
         res2 = Islamov::CNT_NZR_DIG(dynArr, rows, cols);
         std::ofstream out(outputName, std::ios::binary);
@@ -192,4 +135,65 @@ int main(int argc, char** argv)
         delete[] dynArr;
         return 0;
     }
+}
+static int Islamov::CNT_COL_NSM(const int* arr, int rows, int cols)
+{
+    int count = 0;
+    for (int j = 0; j < cols; ++j)
+    {
+        bool equal = false;
+        for (int i = 0; i+1 < rows; ++i)
+        {
+            if (arr[i*cols+j] == arr[(i+1)*cols+j])
+            {
+                equal = true;
+                break;
+            }
+        }
+        if (!equal)
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+static int Islamov::CNT_NZR_DIG(const int* arr, int rows, int cols)
+{
+    if (rows<=0 || cols<=0) return 0;
+    int count=0;
+    for (int d = -(rows-1); d <= (cols-1); ++d)
+    {
+        int start= (d<0) ? -d : 0;
+        int end=std::min(rows-1, cols-1-d);
+        bool Zero=false;
+        for (int i = start; i <= end; ++i)
+        {
+            int j = i+d;
+            if (arr[i*cols+j] == 0)
+            {
+                Zero=true;
+                break;
+            }
+        }
+        if (!Zero)
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+static bool Islamov::IntArg(const char* s, int &out)
+{
+    char* endptr = nullptr;
+    long val = std::strtol(s, &endptr, 10);
+    if (endptr == s || *endptr != '\0')
+    {
+        return false;
+    }
+    if (val<INT_MIN || val>INT_MAX)
+    {
+        return false;
+    }
+    out = static_cast<int>(val);
+    return true;
 }
