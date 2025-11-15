@@ -78,7 +78,7 @@ int main (int argc, char ** argv)
     if (!(input >> a[i]))
     {
       std::cerr << "Failed to count element\n";
-      if (isDynamic && a != nullptr)
+      if (isDynamic)
       {
         free(a);
       }
@@ -86,7 +86,7 @@ int main (int argc, char ** argv)
     }
     ++col;
   }
-  if (col != ((rows * cols) - 1))
+  /*if (col != ((rows * cols) - 1))
   {
     std::cerr << "Not enough data";
     if (isDynamic == true)
@@ -98,7 +98,7 @@ int main (int argc, char ** argv)
     {
       return 2;
     }
-  }
+  }*/
   input.close();
 
   bool lwr_tri_mtx = chernikov::isDownTriangleMatrix(a, rows, cols);
@@ -160,15 +160,14 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
     for (size_t j = 1; j < (cols - 1); ++j)
     {
       int t = a[j + i * cols];
-      bool f = t > a[(j - 1) + (i - 1) * cols];
-      f = t > a[j + (i - 1) * cols];
-      f = t > a[(j + 1) + (i - 1) * cols];
-      f = t > a[(j - 1) + i * cols];
-      f = t > a[(j + 1) + i * cols];
-      f = t > a[(j - 1) + (i + 1) * cols];
-      f = t > a[j + (i + 1) * cols];
-      f = t > a[(j + 1) + (i + 1) * cols];
-      if (f == true)
+      if (t > a[(j - 1) + (i - 1) * cols] &&
+      t > a[j + (i - 1) * cols] &&
+      t > a[(j + 1) + (i - 1) * cols] &&
+      t > a[(j - 1) + i * cols] &&
+      t > a[(j + 1) + i * cols] &&
+      t > a[(j - 1) + (i + 1) * cols] &&
+      t > a[j + (i + 1) * cols] &&
+      t > a[(j + 1) + (i + 1) * cols])
       {
         count++;
       }
@@ -183,8 +182,7 @@ bool chernikov::isParNum(char * p)
   {
     return false;
   }
-  size_t P_LEN = std::strlen(p);
-  for (size_t i = 0; i < P_LEN; ++i)
+  for (size_t i = 0; p[i] != '\0'; ++i)
   {
      if (!std::isdigit(static_cast<unsigned char>(p[i])))
      {
