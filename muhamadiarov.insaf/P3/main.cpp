@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <limits>
 #include <string>
 #include <algorithm>
@@ -42,18 +41,16 @@ int main(int argc, char *argv[])
   {
     return 1;
   }
-  std::ifstream input(argv[2]); // открытие файла
-  if (!input) // открылся ли файл?
+  std::ifstream input(argv[2]);
+  //открылся ли файл?
+  if (!input)
   {
     std::cerr << "Error is openning file\n";
     return 2;
   }
- 
-  if (input.eof())
-  {
-    std::cerr << "The file is empty\n";
-    return 2;
-  }
+
+  //считаем количество элементов в файле
+  //и проверяем: достаточно ли количество элементов
   int number = 0;
   size_t count = 0;
   while (input >> number)
@@ -74,10 +71,9 @@ int main(int argc, char *argv[])
 
   input.clear();
   input.seekg(0);
+
+  //выбор метода хранения данных
   int* ptr = nullptr;
-
-  
-
   int arr[10000];
   if (argv[1][0] == '1')
   {
@@ -92,18 +88,21 @@ int main(int argc, char *argv[])
       return 1;
     }
   }
-
+  
+  // для вывода исходной матрицы
   int copy[count];
   int* beginCopy = copy;
+
   size_t k = 0;
   size_t k1 = 0; // для отслеживания ситуации(чтение r and c)
   int r = 0, c = 0;
   while (input >> number)
   {
     k1 += 1;
+    //проверяем элемент файла
     bool ch1 =  typeid(number).name() != typeid(int).name();
     bool ch2 = ch1 || number < muh::min_int() || number > muh::max_int();
-    if (ch2) // проверка number
+    if (ch2)
     {
       std::cerr << "Incorrect type for number\n";
       if (argv[1][0] == '2')
@@ -122,8 +121,9 @@ int main(int argc, char *argv[])
     {
       c = number;
     }
-    if (input.peek() == '\n')
+    if (input.peek() == '\n') // когда дошли до конца строки
     {
+      // проверяем: правильно ли даны размеры файла
       bool c1 = (k1 - 2 != r * c) && (r * c != 0);
       bool c2 = !(r == 0 &&  c == 0 && k1 == 2);
       bool c3 = (r != 0 && c == 0) || (r == 0 && c != 0);
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     int r = ptr[i];
     int c = ptr[i + 1];
     i += 2;
-    if (r == 0 && c == 0)
+    if (r == 0 && c == 0) // если матрица нулевая
     {
       matrix = {ptr + i - 2, 0, 0};
       muh::out(beginCopy + i - 2, matrix, argv[3], result_1, result_2);
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
       muh::out(beginCopy + i, matrix, argv[3], result_1, result_2);
       i += r * c;
     }
-    if (!isOutfileOpened)
+    if (!isOutfileOpened) // если не открылся output
     {
       std::cerr << "Error in openning file\n";
       if (argv[1][0] == '2')
@@ -216,8 +216,11 @@ long long muhamadiarov::max_sum_mdg(muhamadiarov::matric_info matrix, int order)
 {
   namespace muh = muhamadiarov;
   long long max_result = 0;
+  //разделяем массив на две части по побочной диагонали
+  //чтобы удобнее было найти
   long long par_branch_right = muh::toFindMaxRight(matrix.start, order);
   long long par_branch_left = muh::toFindMaxinLeft(matrix.start, order);
+  //нам нужен максимальный из них
   max_result = std::max(par_branch_right, par_branch_left);
   return max_result;
 }
