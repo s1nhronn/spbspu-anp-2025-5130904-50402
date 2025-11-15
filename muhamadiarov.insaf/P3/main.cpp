@@ -337,7 +337,6 @@ bool muhamadiarov::tocheckparam(int argc, char* argv[])
   }
   else if (argv[1][0] > '2')
   {
-    std::cout << '[' << argv[1][0] << ']' << '\n';
     muh::tocoutargv(argc, argv);
     std::cerr << "//First parameter is out of range\n";
     flag = false;
