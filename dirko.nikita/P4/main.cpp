@@ -5,6 +5,17 @@
 
 namespace dirko
 {
+  char *find(char *start, char *end, char target)
+  {
+    for (char *ch = start; ch < end; ++ch)
+    {
+      if (*ch == target)
+      {
+        return ch;
+      }
+    }
+    return end;
+  }
   char *getLine(std::istream &in, size_t &size)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
@@ -45,14 +56,14 @@ namespace dirko
   size_t DIF_LAT(const char *str, size_t size)
   {
     size_t count = 0;
-    char seen[26] = {};
+    char seen[26] = {}; // колхоз((
     for (size_t i = 0; i < size; ++i)
     {
       if (std::isalpha(str[i]))
       {
-        if (std::find(seen, seen + count, str[i]) == seen + count)
+        if (dirko::find(seen, seen + count, std::tolower(str[i])) == seen + count)
         {
-          seen[count] = str[i];
+          seen[count] = std::tolower(str[i]);
           ++count;
         }
       }
@@ -91,6 +102,7 @@ int main()
     std::cerr << e.what() << "\n";
     return 1;
   }
+  size_t result1 = dirko::DIF_LAT(str, size);
   char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
@@ -99,7 +111,6 @@ int main()
     return 1;
   }
   dirko::UPP_LOW(str, result2, size);
-  size_t result1 = dirko::DIF_LAT(result2, size);
   dirko::output(std::cout, result1, result2) << '\n';
   free(str);
   free(result2);
