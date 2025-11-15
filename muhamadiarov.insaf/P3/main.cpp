@@ -129,11 +129,11 @@ int main(int argc, char *argv[])
       if (((c3 || c1) && c2) || c4)
       {
         std::cerr << "Wrong size matric\n";
-	if (argv[1][0] == '2')
-	{
-	  free(ptr);
-	}
-	return 2;
+        if (argv[1][0] == '2')
+        {
+          free(ptr);
+        }
+        return 2;
       }
       k1 = 0;
     }
@@ -282,17 +282,17 @@ void muhamadiarov::out(int* begin, muhamadiarov::matric_info matrix,const char* 
       outfile << "//Expect output (return code 0): ";
       if (j == 0)
       {
-	outfile << n << ' ' << k << ' ';
-	if (res1 != nullptr)
-	{
+        outfile << n << ' ' << k << ' ';
+        if (res1 != nullptr)
+        {
           for (int j = 0; j < n; ++j)
           {
             for (int i = 0; i < k; ++i)
-	    {
+            {
               outfile << res1[j*k + i] << " ";
-	    }
+            }
           }
-	}
+        }
         outfile << "\n";
       }
       else
