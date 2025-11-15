@@ -43,12 +43,12 @@ int main (int argc, char ** argv)
     output << '0' << std::endl;
     return 0;
   }
-  if (rows < 0 || cols < 0)
+  /*if (rows < 0 || cols < 0)
   {
     std::cerr << "Invalid matrix dimensions\n";
     input.close();
     return 2;
-  }
+  }*/
   bool isDynamic = false;
   int * a = nullptr;
   int nums[MAX_SIZE] = {};
@@ -72,7 +72,7 @@ int main (int argc, char ** argv)
     std::cerr << "Parameter 2 is set incorrectly\n";
     return 2;
   }
-  int col = 0;
+  size_t col = 0;
   for (size_t i = 0; i < (rows * cols); ++i)
   {
     if (!(input >> a[i]))
@@ -159,7 +159,7 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
   {
     for (size_t j = 1; j < (cols - 1); ++j)
     {
-      size_t t = a[j + i * cols];
+      int t = a[j + i * cols];
       bool f = t > a[(j - 1) + (i - 1) * cols];
       f = t > a[j + (i - 1) * cols];
       f = t > a[(j + 1) + (i - 1) * cols];
