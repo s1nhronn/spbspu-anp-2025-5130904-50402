@@ -51,6 +51,20 @@ namespace dirko
     {
       in >> std::skipws;
     }
+    char *temp = reinterpret_cast<char *>(malloc(size + 1));
+    if (temp == nullptr)
+    {
+      free(str);
+      throw std::bad_alloc();
+    }
+    for (size_t i = 0; i < size; ++i)
+    {
+      temp[i] = str[i];
+    }
+    free(str);
+    str = temp;
+    str[size] = '\0';
+    ++size;
     return str;
   }
   size_t DIF_LAT(const char *str, size_t size)
