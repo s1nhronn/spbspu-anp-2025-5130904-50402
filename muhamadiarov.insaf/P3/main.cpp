@@ -263,7 +263,7 @@ long long muhamadiarov::toFindMaxRight(int* ptr, int order)
 void muhamadiarov::out(int* begin, muhamadiarov::matric_info matrix,const char* output, int* res1, long long int res2)
 {
   int n = matrix.rows;
-  int k = matrix.colons; 
+  int k = matrix.colons;
   size_t count = n * k;
   std::ofstream outfile(output, std::ios::app);
   if (!outfile)
