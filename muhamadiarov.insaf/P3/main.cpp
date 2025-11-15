@@ -316,33 +316,28 @@ void muhamadiarov::tocoutargv(int argc, char* argv[])
 bool muhamadiarov::tocheckparam(int argc, char* argv[])
 {
   namespace muh = muhamadiarov;
-  bool flag = true;
   if (argc < 4)
   {
     muh::tocoutargv(argc, argv);
     std::cerr << "//Not enough arguments\n";
-    flag = false;
+    return false;
   }
   if (argc > 4)
   {
     muh::tocoutargv(argc, argv);
     std::cerr << "//Too many arguments\n";
-    flag = false;
+    return false;
   }
   if (argv[1][0] < '0' || argv[1][0] > '9')
   {
     muh::tocoutargv(argc, argv);
     std::cerr << "//First parameter is not a number\n";
-    flag = false;
+    return false;
   }
   else if (argv[1][0] > '2')
   {
     muh::tocoutargv(argc, argv);
     std::cerr << "//First parameter is out of range\n";
-    flag = false;
-  }
-  if (!flag)
-  {
     return false;
   }
   return true;
