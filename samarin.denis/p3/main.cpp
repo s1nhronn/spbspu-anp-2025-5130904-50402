@@ -3,8 +3,8 @@
 #include <cstdlib>
 
 namespace samarin {
-bool check_max(int* a, int i, int j, int n, int m);
-bool is_lower_triangular(int* a, int size, int n);
+  bool check_max(int* a, int i, int j, int n, int m);
+  bool is_lower_triangular(int* a, int size, int n);
 }
 
 int main(int argc, char** argv) {
