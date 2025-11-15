@@ -81,6 +81,10 @@ int main(int argc, char** argv) {
             return 2;
         }
     }
+
+    fin.clear();
+    fin.seekg(0);
+
     long long r64 = 0, c64 = 0;
     if (!(fin >> r64 >> c64)) {
         std::cerr << "Error: input file content is not a valid matrix\n";
