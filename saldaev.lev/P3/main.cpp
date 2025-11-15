@@ -24,7 +24,7 @@ namespace saldaev
     }
     return count;
   }
-  
+
   void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
   {
     size_t x = 0;
@@ -177,6 +177,3 @@ int main(int argc, char ** argv)
 
   return 0;
 }
-
-
-
