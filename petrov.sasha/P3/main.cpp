@@ -62,7 +62,6 @@ namespace petrov
 
   bool stat(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
   {
-    const size_t max_size_arr = 10000;
     if (rows == 0 || cols == 0) {
       return true;
     }
