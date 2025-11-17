@@ -29,6 +29,8 @@ int main()
     return 1;
   }
 
+  if (strlen(str) == 0) return 0;
+
   char* res1 = nullptr, *res2 = nullptr;
   res1 = reinterpret_cast<char*>(malloc((strlen(str) + 1) * sizeof(char)));
   if (!res1)
@@ -55,6 +57,8 @@ int main()
   std::cout << res1;
   std::cout << res2;
 
+  bukreev::deleteString(res2);
+
   free(res1);
 }
 
@@ -79,6 +83,12 @@ char* bukreev::inputString()
     }
 
     std::cin >> buffer[i];
+    if (std::cin.eof())
+    {
+      buffer[i] = 0;
+      break;
+    }
+
     if (buffer[i] == '\n')
     {
       i++;
