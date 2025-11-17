@@ -4,7 +4,7 @@
 namespace karpovich
 {
   const size_t MAX = 10000;
-  
+
   std::istream& inputFunc(std::istream& input, int* arr, size_t& rows, size_t& cols)
   {
     if (!(input >> rows >> cols)) {
@@ -21,7 +21,7 @@ namespace karpovich
     }
     return input;
   }
-  
+
   void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols)
   {
     output << res1 << '\n';
@@ -30,7 +30,7 @@ namespace karpovich
       output << res2[i] << ' ';
     }
   }
-  
+
   size_t locMin(const int* arrdyn, size_t rows, size_t cols)
   {
     if (!arrdyn || rows < 3 || cols < 3) {
@@ -54,7 +54,7 @@ namespace karpovich
     }
     return minimum;
   }
-  
+
   void lftTopClk(int* arrdyn, size_t rows, size_t cols)
   {
     if (!arrdyn) {
@@ -90,6 +90,21 @@ namespace karpovich
       }
     }
   }
+  int processArray(int* arr, size_t rows, size_t cols, const char* ouput) {
+    lftTopClk(arr, rows, cols);
+
+    std::ofstream output(ouput);
+    if (!output.is_open()) {
+      std::cerr << "Failed to open output file\n";
+      return 2;
+    }
+
+    size_t res1 = locMin(arr, rows, cols);
+    outputFunc(output, res1, arr, rows, cols);
+    output.close();
+
+    return 0;
+  }
 }
 
 int main(int argc, char ** argv)
@@ -123,52 +138,30 @@ int main(int argc, char ** argv)
 
   size_t rows = 0;
   size_t cols = 0;
-  if (argv[1][0] == '1') {
+  if (num == 1) {
     int arr_static[karp::MAX];
     karp::inputFunc(input, arr_static, rows, cols);
     if (!input) {
       std::cerr << "Failed to read input data\n";
-      input.close();
       return 2;
     }
-    input.close();
-
-    karp::lftTopClk(arr_static, rows, cols);
-
-    std::ofstream output(argv[3]);
-    if (!output.is_open()) {
-      std::cerr << "Failed to open output file\n";
-      return 2;
-    }
-
-    size_t res1 = karp::locMin(arr_static, rows, cols);
-    karp::outputFunc(output, res1, arr_static, rows, cols);
-    output.close();
+    int res = karp::processArray(arr_static, rows, cols, argv[3]);
+    return res;
   }
-  else if (argv[1][0] == '2') {
+  else {
     int* arrdyn = new int[karp::MAX];
+    if (!arrdyn) {
+        std::cerr << "Memory allocation failed\n";
+        return 2;
+    }
     karp::inputFunc(input, arrdyn, rows, cols);
     if (!input) {
       std::cerr << "Failed to read input data\n";
-      input.close();
       delete[] arrdyn;
       return 2;
     }
-    input.close();
-
-    karp::lftTopClk(arrdyn, rows, cols);
-
-    std::ofstream output(argv[3]);
-    if (!output.is_open()) {
-      std::cerr << "Failed to open output file\n";
-      delete[] arrdyn;
-      return 2;
-    }
-
-    size_t res1 = karp::locMin(arrdyn, rows, cols);
-    karp::outputFunc(output, res1, arrdyn, rows, cols);
-    output.close();
+    int res = karp::processArray(arrdyn, rows, cols, argv[3]);
     delete[] arrdyn;
-  }
-  return 0;
+    return res;
+  } 
 }
