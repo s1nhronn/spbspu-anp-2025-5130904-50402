@@ -1,49 +1,37 @@
 #include <iostream>
 #include <fstream>
+
 namespace karpovich
 {
   const size_t MAX = 10000;
-  bool inputStaticFunc(std::istream& input, int* arr, size_t& rows, size_t& cols) 
+  
+  std::istream& inputFunc(std::istream& input, int* arr, size_t& rows, size_t& cols)
   {
     if (!(input >> rows >> cols)) {
-      return false;
+      return input;
     }
     if (rows * cols > MAX) {
-      return false;
+      input.setstate(std::ios::failbit);
+      return input;
     }
     for (size_t i = 0; i < rows * cols; ++i) {
       if (!(input >> arr[i])) {
-        return false;
+        return input;
       }
     }
-    return true;
+    return input;
   }
-  int* inputFunc(std::istream& input, size_t& rows, size_t& cols) 
-  {
-    if (!(input >> rows >> cols)) {
-      return nullptr;
-    }
-    size_t total = rows * cols;
-    int* arr = new int[total];
-    for (size_t i = 0; i < total; ++i) {
-      if (!(input >> arr[i])) {
-        delete[] arr;
-        return nullptr;
-      }
-    }
-    return arr;
-  }
-  void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols) 
+  
+  void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols)
   {
     output << res1 << '\n';
-    output << rows << ' ';
-    output << cols << ' ';
+    output << rows << ' ' << cols << ' ';
     for (size_t i = 0; i < rows * cols; ++i) {
       output << res2[i] << ' ';
     }
-    output << '\n';
   }
-  size_t locMin(const int* arrdyn, size_t rows, size_t cols) 
+  
+  size_t locMin(const int* arrdyn, size_t rows, size_t cols)
   {
     if (!arrdyn || rows < 3 || cols < 3) {
       return 0;
@@ -60,13 +48,14 @@ namespace karpovich
         yeslocMin = yeslocMin && (now < arrdyn[k + 1 - cols]);
         yeslocMin = yeslocMin && (now < arrdyn[k - 1 - cols]);
         if (yeslocMin) {
-          minimum += 1;
+          ++minimum;
         }
       }
     }
     return minimum;
   }
-  int* lfttopclk(const int* arrdyn, size_t rows, size_t cols) 
+  
+  int* lftTopClk(const int* arrdyn, size_t rows, size_t cols)
   {
     if (!arrdyn) {
       return nullptr;
@@ -108,8 +97,9 @@ namespace karpovich
   }
 }
 
-int main(int argc, char ** argv) 
+int main(int argc, char ** argv)
 {
+  namespace karp = karpovich;
   if (argc != 4) {
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
@@ -136,18 +126,18 @@ int main(int argc, char ** argv)
 
   size_t rows = 0;
   size_t cols = 0;
-  namespace karp = karpovich;
 
   if (c == '1') {
     int arr_static[karp::MAX];
-    if (!karp::inputStaticFunc(input, arr_static, rows, cols)) {
+    karp::inputFunc(input, arr_static, rows, cols);
+    if (!input) {
       std::cerr << "Failed to read input data\n";
       input.close();
       return 2;
     }
     input.close();
 
-    int* res2 = karp::lfttopclk(arr_static, rows, cols);
+    int* res2 = karp::lftTopClk(arr_static, rows, cols);
     if (!res2) {
       std::cerr << "Failed to process matrix\n";
       return 2;
@@ -166,14 +156,22 @@ int main(int argc, char ** argv)
     delete[] res2;
   }
   else if (c == '2') {
-    int* arrdyn = karp::inputFunc(input, rows, cols);
-    input.close();
-    if (!arrdyn) {
+    int* arrdyn = new int[karp::MAX];
+    karp::inputFunc(input, arrdyn, rows, cols);
+    if (!input) {
       std::cerr << "Failed to read input data\n";
+      input.close();
+      delete[] arrdyn;
       return 2;
     }
+    input.close();
 
-    int* res2 = karp::lfttopclk(arrdyn, rows, cols);
+    int* res2 = karp::lftTopClk(arrdyn, rows, cols);
+    if (!res2) {
+      std::cerr << "Failed to process matrix\n";
+      delete[] arrdyn;
+      return 2;
+    }
 
     std::ofstream output(argv[3]);
     if (!output.is_open()) {
