@@ -163,5 +163,5 @@ int main(int argc, char ** argv)
     int res = karp::processArray(arrdyn, rows, cols, argv[3]);
     delete[] arrdyn;
     return res;
-  } 
+  }
 }
