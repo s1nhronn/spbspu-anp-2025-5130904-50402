@@ -2,7 +2,8 @@
 #include <iomanip>
 namespace karpovich
 {
-  char* getline(std::istream& in, size_t& s) {
+  char* getline(std::istream& in, size_t& s) 
+  {
     bool is_skipws = in.flags() & std::ios_base::skipws;
     char* str = nullptr;
     char ch = 0;
@@ -52,46 +53,50 @@ namespace karpovich
     }
     return str;
   }
-  void repsym(const char* str, char*& data, const size_t size) {
-    if (size == 0) {
+  void repsym(const char* str, char* data, const size_t size) 
+  {
+    if (!str || !data) {
       data[0] = 0;
       return;
     }
+
+    int repeat[256] = {};
+    for (size_t i = 0; i < size && str[i] != 0; ++i) {
+      unsigned char c = static_cast<unsigned char>(str[i]);
+      ++repeat[c];
+    }
+
+    int saw[256] = {};
     size_t pos = 0;
-    for (size_t i = 0; i < size && str[i] != '\0'; ++i) {
-      char ch = str[i];
-      size_t j = 0;
-      for (; j < i; ++j) {
-        if (str[j] == ch) {
-          break;
-        }
-      }
-      if (j == i) {
-        data[pos] = ch;
-        ++pos;
+    for (size_t i = 0; i < size && str[i] != 0; ++i) {
+      unsigned char c = static_cast<unsigned char>(str[i]);
+      if (repeat[c] > 1 && saw[c] == 0) {
+        data[pos++] = c;
+        saw[c] = 1;
       }
     }
     data[pos] = 0;
   }
-void unitwo(const char* str1, const char* str2, size_t s1, size_t s2, char* data) {
-    if (!str1 || !str2 || !data) {
-        data[0] = 0;
-        return;
-    }
+  void unitwo(const char* str1, const char* str2, const size_t s1, const size_t s2, char* data) 
+  {
+      if (!str1 || !str2 || !data) {
+          data[0] = 0;
+          return;
+      }
 
-    size_t i = 0, j = 0, k = 0;
-    while (i < s1 && j < s2) {
+      size_t i = 0, j = 0, k = 0;
+      while (i < s1 && j < s2) {
+          data[k++] = str1[i++];
+          data[k++] = str2[j++];
+      }
+      while (i < s1) {
         data[k++] = str1[i++];
+      }
+      while (j < s2) {
         data[k++] = str2[j++];
-    }
-    while (i < s1) {
-      data[k++] = str1[i++];
-    }
-    while (j < s2) {
-      data[k++] = str2[j++];
-    }
-    data[k] = 0;
-}
+      }
+      data[k] = 0;
+  }
 }
 
 int main() {
@@ -112,8 +117,8 @@ int main() {
   }
   karp::repsym(str, data, s);
 
-  size_t s2 = 0;
-  const char* str2 = "def_";
+  size_t s2 = 4;
+  const char* str2 = "def ";
   char* data2 = reinterpret_cast<char*>(malloc(s + s2 + 1));
   if (!data2) {
     std::free(data);
