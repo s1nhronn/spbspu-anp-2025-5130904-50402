@@ -29,7 +29,12 @@ int main()
     return 1;
   }
 
-  if (strlen(str) == 0) return 0;
+  if (strlen(str) == 0)
+  {
+    bukreev::deleteString(str);
+    std::cerr << "Error: no input.\n";
+    return 2;
+  }
 
   char* res1 = nullptr, *res2 = nullptr;
   res1 = reinterpret_cast<char*>(malloc((strlen(str) + 1) * sizeof(char)));
@@ -57,9 +62,8 @@ int main()
   std::cout << res1;
   std::cout << res2;
 
+  bukreev::deleteString(res1);
   bukreev::deleteString(res2);
-
-  free(res1);
 }
 
 char* bukreev::inputString()
