@@ -99,17 +99,19 @@ int main(int argc, char ** argv)
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
-  if (argv[1][0] == '\0' || argv[1][1] != '\0') {
+  const char* s = argv[1];
+  if (s[0] == '\0' || s[1] != '\0') {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-  char c = argv[1][0];
-  if (c != '1' && c != '2') {
-    if (c >= '0' && c <= '9') {
-      std::cerr << "First parameter is out of range\n";
-    } else {
-      std::cerr << "First parameter is not a number\n";
-    }
+  char c = s[0];
+  if (!std::isdigit(static_cast<unsigned char>(c))) {
+    std::cerr << "First parameter is not a number\n";
+    return 1;
+  }
+  int num = std::atoi(s);
+  if (num != 1 && num != 2) {
+    std::cerr << "First parameter is out of range\n";
     return 1;
   }
 
@@ -121,8 +123,7 @@ int main(int argc, char ** argv)
 
   size_t rows = 0;
   size_t cols = 0;
-
-  if (c == '1') {
+  if (argv[1][0] == '1') {
     int arr_static[karp::MAX];
     karp::inputFunc(input, arr_static, rows, cols);
     if (!input) {
@@ -144,7 +145,7 @@ int main(int argc, char ** argv)
     karp::outputFunc(output, res1, arr_static, rows, cols);
     output.close();
   }
-  else if (c == '2') {
+  else if (argv[1][0] == '2') {
     int* arrdyn = new int[karp::MAX];
     karp::inputFunc(input, arrdyn, rows, cols);
     if (!input) {
