@@ -52,6 +52,27 @@ namespace karpovich
     }
     return str;
   }
+  void repsym(const char* str, char*& data, const size_t size) {
+    if (size == 0) {
+      data[0] = 0;
+      return;
+    }
+    size_t pos = 0;
+    for (size_t i = 0; i < size && str[i] != '\0'; ++i) {
+      char ch = str[i];
+      size_t j = 0;
+      for (; j < i; ++j) {
+        if (str[j] == ch) {
+          break;
+        }
+      }
+      if (j == i) {
+        data[pos] = ch;
+        ++pos;
+      }
+    }
+    data[pos] = 0;
+  }
 }
 
 int main() {
@@ -59,9 +80,12 @@ int main() {
   size_t s = 0;
   char* str = karp::getline(std::cin, s);
   if (!str) {
-    std::cerr << "Faled to alloc memory";
+    std::cerr << "Failed to alloc memory";
     return 1;
   }
-  std::cout << str << '\n' << s << '\n';
+  char* data = reinterpret_cast<char*>(malloc(s + 1));
+  karp::repsym(str, data, s);
+  std::cout << data << '\n';
   free(str);
+  free(data);
 }
