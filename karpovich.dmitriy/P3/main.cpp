@@ -48,52 +48,47 @@ namespace karpovich
         yeslocMin = yeslocMin && (now < arrdyn[k + 1 - cols]);
         yeslocMin = yeslocMin && (now < arrdyn[k - 1 - cols]);
         if (yeslocMin) {
-          ++minimum;
+          minimum++;
         }
       }
     }
     return minimum;
   }
   
-  int* lftTopClk(const int* arrdyn, size_t rows, size_t cols)
+  void lftTopClk(int* arrdyn, size_t rows, size_t cols)
   {
     if (!arrdyn) {
-      return nullptr;
+      return;
     }
     size_t total = rows * cols;
-    int* result = new int[total];
-    for (size_t i = 0; i < total; ++i) {
-      result[i] = arrdyn[i];
-    }
     if (total == 0) {
-      return result;
+      return;
     }
     size_t top = 0, bottom = rows - 1;
     size_t left = 0, right = cols - 1;
     int current_value = 1;
     while (top <= bottom && left <= right) {
       for (size_t j = left; j <= right; ++j) {
-        result[top * cols + j] -= current_value++;
+        arrdyn[top * cols + j] -= current_value++;
       }
       top++;
       for (size_t i = top; i <= bottom; ++i) {
-        result[i * cols + right] -= current_value++;
+        arrdyn[i * cols + right] -= current_value++;
       }
       right--;
       if (top <= bottom) {
         for (size_t j = right + 1; j > left; --j) {
-          result[bottom * cols + j - 1] -= current_value++;
+          arrdyn[bottom * cols + j - 1] -= current_value++;
         }
         bottom--;
       }
       if (left <= right) {
         for (size_t i = bottom + 1; i > top; --i) {
-          result[(i - 1) * cols + left] -= current_value++;
+          arrdyn[(i - 1) * cols + left] -= current_value++;
         }
         left++;
       }
     }
-    return result;
   }
 }
 
@@ -137,23 +132,17 @@ int main(int argc, char ** argv)
     }
     input.close();
 
-    int* res2 = karp::lftTopClk(arr_static, rows, cols);
-    if (!res2) {
-      std::cerr << "Failed to process matrix\n";
-      return 2;
-    }
+    karp::lftTopClk(arr_static, rows, cols);
 
     std::ofstream output(argv[3]);
     if (!output.is_open()) {
       std::cerr << "Failed to open output file\n";
-      delete[] res2;
       return 2;
     }
 
     size_t res1 = karp::locMin(arr_static, rows, cols);
-    karp::outputFunc(output, res1, res2, rows, cols);
+    karp::outputFunc(output, res1, arr_static, rows, cols);
     output.close();
-    delete[] res2;
   }
   else if (c == '2') {
     int* arrdyn = new int[karp::MAX];
@@ -166,26 +155,19 @@ int main(int argc, char ** argv)
     }
     input.close();
 
-    int* res2 = karp::lftTopClk(arrdyn, rows, cols);
-    if (!res2) {
-      std::cerr << "Failed to process matrix\n";
-      delete[] arrdyn;
-      return 2;
-    }
+    karp::lftTopClk(arrdyn, rows, cols);
 
     std::ofstream output(argv[3]);
     if (!output.is_open()) {
       std::cerr << "Failed to open output file\n";
       delete[] arrdyn;
-      delete[] res2;
       return 2;
     }
 
     size_t res1 = karp::locMin(arrdyn, rows, cols);
-    karp::outputFunc(output, res1, res2, rows, cols);
+    karp::outputFunc(output, res1, arrdyn, rows, cols);
     output.close();
     delete[] arrdyn;
-    delete[] res2;
   }
   return 0;
 }
