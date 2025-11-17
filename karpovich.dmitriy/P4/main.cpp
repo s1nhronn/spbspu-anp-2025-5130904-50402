@@ -73,9 +73,25 @@ namespace karpovich
     }
     data[pos] = 0;
   }
-  void unitwo(const char* str, const char* str2,const size_t s, const size_t s1, char*& data2) {
-    
-  }
+void unitwo(const char* str1, const char* str2, size_t s1, size_t s2, char* data) {
+    if (!str1 || !str2 || !data) {
+        data[0] = '\0';
+        return;
+    }
+
+    size_t i = 0, j = 0, k = 0;
+    while (i < s1 && j < s2) {
+        data[k++] = str1[i++];
+        data[k++] = str2[j++];
+    }
+    while (i < s1) {
+      data[k++] = str1[i++];
+    }
+    while (j < s2) {
+      data[k++] = str2[j++];
+    }
+    data[k] = 0;
+}
 }
 
 int main() {
@@ -98,13 +114,14 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  char* data2 = reinterpret_cast<char*>(malloc(s + 1));
+  char* data2 = reinterpret_cast<char*>(malloc(s + s2 + 1));
   karp::unitwo(str, str2, s, s2, data2);
   if (!data2) {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
   std::cout << data << '\n';
+  std::cout << data2 << '\n';
   free(data2);
   free(str);
   free(data);
