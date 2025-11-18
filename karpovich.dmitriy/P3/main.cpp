@@ -25,9 +25,9 @@ namespace karpovich
   void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols)
   {
     output << res1 << '\n';
-    output << rows << ' ' << cols << ' ';
+    output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i) {
-      output << res2[i] << ' ';
+      output << ' ' << res2[i];
     }
   }
 
