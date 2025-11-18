@@ -5,17 +5,20 @@
 #include <cstring>
 #include <limits>
 
-size_t lengthInput(char *file);
-void input(std::istream &in, int *m, size_t lng);
-void output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2);
-bool isDigit(char *str);
-int strToInt(char *str);
-int myPow(int a, int b);
-int *copy(const int *a, size_t k);
-int *spiral(int *matrix, size_t m, size_t n);
-bool isTriangularMatrix(int *matrix, size_t m, size_t n);
-size_t transformIndexes(size_t i, size_t j);
-void cutMatrix(int *matrix, size_t m, size_t n);
+namespace shirokov
+{
+  size_t lengthInput(char *file);
+  void input(std::istream &in, int *m, size_t lng);
+  void output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2);
+  bool isDigit(char *str);
+  int strToInt(char *str);
+  int myPow(int a, int b);
+  int *copy(const int *a, size_t k);
+  int *spiral(int *matrix, size_t m, size_t n);
+  bool isTriangularMatrix(int *matrix, size_t m, size_t n);
+  size_t transformIndexes(size_t i, size_t j);
+  void cutMatrix(int *matrix, size_t m, size_t n);
+} // namespace shirokov
 
 int main(int argc, char **argv)
 {
@@ -29,7 +32,7 @@ int main(int argc, char **argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  if (!isDigit(argv[1]))
+  if (!shirokov::isDigit(argv[1]))
   {
     std::cerr << "First parameter is not a number\n";
     return 1;
@@ -37,8 +40,9 @@ int main(int argc, char **argv)
   int num = 0;
   try
   {
-    num = strToInt(argv[1]);
-  } catch (const std::overflow_error &e)
+    num = shirokov::strToInt(argv[1]);
+  }
+  catch (const std::overflow_error &e)
   {
     std::cerr << e.what() << '\n';
     return 1;
@@ -52,8 +56,9 @@ int main(int argc, char **argv)
   size_t lng = 0;
   try
   {
-    lng = lengthInput(argv[2]);
-  } catch (const std::logic_error &e)
+    lng = shirokov::lengthInput(argv[2]);
+  }
+  catch (const std::logic_error &e)
   {
     std::cerr << e.what() << '\n';
     return 2;
@@ -69,25 +74,25 @@ int main(int argc, char **argv)
   {
     if (num == 1)
     {
-      input(in, a, lng);
       matrix = a;
       delete[] b;
     }
     else
     {
-      input(in, b, lng);
       matrix = b;
     }
-  } catch (const std::logic_error &e)
+    shirokov::input(in, matrix, lng);
+  }
+  catch (const std::logic_error &e)
   {
     std::cerr << e.what() << '\n';
     delete[] b;
     return 2;
   }
   std::ofstream out(argv[3]);
-  int *res1 = spiral(matrix, m, n);
-  bool res2 = isTriangularMatrix(matrix, m, n);
-  output(out, res1, m, n, res2);
+  int *res1 = shirokov::spiral(matrix, m, n);
+  bool res2 = shirokov::isTriangularMatrix(matrix, m, n);
+  shirokov::output(out, res1, m, n, res2);
   delete[] res1;
   if (num == 2)
   {
@@ -135,13 +140,13 @@ bool isDigit(char *str)
 int strToInt(char *str)
 {
   int res = 0;
-  int iLimit = std::numeric_limits<int>::max();
+  int iLimit = std::numeric_limits< int >::max();
   size_t len = std::strlen(str);
 
   for (size_t i = 0; i < len; i++)
   {
     int temp = 0;
-    temp = myPow(10, len - i - 1);
+    temp = shirokov::myPow(10, len - i - 1);
     if ((str[i] - '0') > iLimit / temp)
     {
       throw std::overflow_error("First parameter is out of range");
@@ -160,7 +165,7 @@ int myPow(int a, int b)
   int res = 1;
   for (int i = 0; i < b; i++)
   {
-    if (res > std::numeric_limits<int>::max() / a)
+    if (res > std::numeric_limits< int >::max() / a)
     {
       throw std::overflow_error("First parameter is out of range");
     }
@@ -212,8 +217,7 @@ int *spiral(int *matrix, size_t m, size_t n)
   size_t lowerBorder = m - 1;
 
   size_t deductible = 1;
-  while (leftBorder < n || upperBorder < m || rightBorder > 0 ||
-         lowerBorder > 0)
+  while (leftBorder < n || upperBorder < m || rightBorder > 0 || lowerBorder > 0)
   {
     for (size_t i = lowerBorder; i + 1 >= upperBorder + 1; i--)
     {
