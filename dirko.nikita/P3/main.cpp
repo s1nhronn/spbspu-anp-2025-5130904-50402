@@ -3,6 +3,7 @@
 
 namespace dirko
 {
+  const size_t MAX_SIZE = 10000;
   std::istream &inputMtx(std::istream &input, int *matrix, const size_t rows, const size_t cols)
   {
     for (size_t i = 0; i < rows * cols; ++i)
@@ -130,7 +131,7 @@ int main(int argc, char **argv)
     return 3;
   }
   bool result2 = false;
-  int staticMatrix[1000]{};
+  int staticMatrix[dirko::MAX_SIZE]{};
   int *matrix = nullptr;
   if (mode == 1)
   {
