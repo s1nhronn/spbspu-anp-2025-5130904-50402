@@ -8,47 +8,16 @@ namespace strelnikov {
     delete[] a;
   }
 
-  void staticmtx(std::ifstream& in, int* a, size_t r, size_t c)
+  void input(std::ifstream& in, int* a, size_t r, size_t c)
   {
-    size_t cnt = 0;
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
-        in >> a[i*c+j];
+        in >> a[i * c + j];
         if (in.fail()) {
           throw std::logic_error("Bad input\n");
         }
-        ++cnt;
       }
     }
-
-    if (cnt != c * r) {
-      throw std::logic_error("Wrong format\n");
-    }
-  }
-
-  int* dynamicmtx(std::ifstream& in, size_t r, size_t c)
-  {
-    int* a = nullptr;
-    size_t cnt = 0;
-    try {
-      a = new int[r*c];
-    } catch (const std::bad_alloc& e) {
-      throw;
-    }
-
-    for (size_t i = 0; i < r; ++i) {
-      for (size_t j = 0; j < c; ++j) {
-        in >> a[i*c + j];
-        if (in.fail()) {
-          throw std::logic_error("Bad input\n");
-        }
-        ++cnt;
-      }
-    }
-    if (cnt != c * r) {
-      throw std::logic_error("Wrong format\n");
-    }
-    return a;
   }
 
   void lftBotCnt(int* mtx, size_t r, size_t c)
@@ -62,7 +31,7 @@ namespace strelnikov {
 
     while (left <= right && top <= bot) {
       for (size_t j = left; j <= right; ++j) {
-        mtx[bot*c + j] += cnt++;
+        mtx[bot * c + j] += cnt++;
       }
       if (bot == 0) {
         break;
@@ -70,8 +39,8 @@ namespace strelnikov {
       --bot;
 
       if (left <= right) {
-        for (size_t i = bot + 1; i-- > top;) {
-          mtx[i*c + right] += cnt++;
+        for (size_t i = bot; i >= top; --i) {
+          mtx[i * c + right] += cnt++;
           if (i == 0) {
             break;
           }
@@ -83,8 +52,8 @@ namespace strelnikov {
       }
 
       if (top <= bot && left <= right) {
-        for (size_t j = right + 1; j-- > left;) {
-          mtx[top*c + j] += cnt++;
+        for (size_t j = right; j >= left; --j) {
+          mtx[top * c + j] += cnt++;
           if (j == 0) {
             break;
           }
@@ -94,7 +63,7 @@ namespace strelnikov {
 
       if (left <= right && top <= bot) {
         for (size_t i = top; i <= bot; ++i) {
-          mtx[i*c + left] += cnt++;
+          mtx[i * c + left] += cnt++;
         }
         ++left;
       }
@@ -108,22 +77,20 @@ namespace strelnikov {
     for (size_t i = 1; i < min; ++i) {
       int tr = 1;
       for (size_t j = 0; j < min - i; ++j) {
-        if (mtx[j*c + j + i] == 0) {
+        if (mtx[j * c + j + i] == 0) {
           tr = 0;
           break;
         }
       }
-      cnt += tr;
-    }
-    for (size_t i = 1; i < min; ++i) {
-      int tr = 1;
+
+      int tr2 = 1;
       for (size_t j = 0; j < min - i; ++j) {
-        if (mtx[(j+i)*c + j] == 0) {
-          tr = 0;
+        if (mtx[(j + i) * c + j] == 0) {
+          tr2 = 0;
           break;
         }
       }
-      cnt += tr;
+      cnt += tr + tr2;
     }
     return cnt;
   }
@@ -145,12 +112,12 @@ namespace strelnikov {
 
     try {
       if (pr == 1) {
-        static int static_mtx[1000*1000];
+        static int static_mtx[1000 * 1000];
         if (r > 1000 || c > 1000) {
           throw std::logic_error("Matrix too large\n");
         }
-        
-        staticmtx(in, static_mtx, r, c);
+
+        input(in, static_mtx, r, c);
         mtx = static_mtx;
         in.close();
 
@@ -164,13 +131,18 @@ namespace strelnikov {
         lftBotCnt(mtx, r, c);
         for (size_t i = 0; i < r; ++i) {
           for (size_t j = 0; j < c; ++j)
-            out << mtx[i*c + j] << ' ';
+            out << mtx[i * c + j] << ' ';
           out << '\n';
         }
         out.close();
         return;
       } else {
-        mtx = dynamicmtx(in, r, c);
+        try {
+          mtx = new int[r * c];
+        } catch (std::bad_alloc& e) {
+          throw;
+        }
+        input(in, mtx, r, c);
         in.close();
 
         std::ofstream out(outf);
@@ -182,7 +154,7 @@ namespace strelnikov {
         lftBotCnt(mtx, r, c);
         for (size_t i = 0; i < r; ++i) {
           for (size_t j = 0; j < c; ++j) {
-            out << mtx[i*c + j] << ' ';
+            out << mtx[i * c + j] << ' ';
           }
           out << '\n';
         }
