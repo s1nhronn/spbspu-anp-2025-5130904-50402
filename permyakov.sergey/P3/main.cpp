@@ -4,9 +4,10 @@
 
 namespace permyakov
 {
-  bool isErr(size_t sizeArr, size_t size);
-  int * lft_top_clk(int * arr, size_t n, size_t m);
-  int * lft_bot_cnt(int * arr, size_t n, size_t m);
+  void movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
+		      size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr);
+  void lft_top_clk(int * arr2, int * arr, size_t n, size_t m);
+  void lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m);
 }
 
 int main(int argc, char ** argv)
@@ -56,18 +57,20 @@ int main(int argc, char ** argv)
       return 2;
     }
     try{
-      arr1 = per::lft_top_clk(arr, n, m);
+      arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));;
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       return 3;
     }
     try{
-      arr2 = per::lft_bot_cnt(arr, n, m);
+      arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memory\n";
       free(arr1);
       return 3;
     }
+    per::lft_top_clk(arr1, arr, n, m);
+    per::lft_bot_cnt(arr2, arr, n, m);
   } else {
     int * d_arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
     if(d_arr == nullptr){
@@ -89,20 +92,22 @@ int main(int argc, char ** argv)
       return 2;
     }
     try{
-      arr1 = per::lft_top_clk(d_arr, n, m);
+      arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memory\n";
       free(d_arr);
       return 3;
     }
     try{
-      arr2 = per::lft_bot_cnt(d_arr, n, m);
+      arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memory\n";
       free(arr1);
       free(d_arr);
       return 3;
     }
+    per::lft_top_clk(arr1, d_arr, n, m);
+    per::lft_bot_cnt(arr2, d_arr, n, m);
     free(d_arr);
   }
 
@@ -119,89 +124,74 @@ int main(int argc, char ** argv)
   free(arr1);
   free(arr2);
 }
-
-int * permyakov::lft_top_clk(int * arr, size_t n, size_t m)
+//прошу прощения за функцию ниже,
+//но это самый простой вариант вынести цикл в отдельную функцию
+void permyakov::movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
+			       size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr)
 {
-  int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-  if(arr1 == nullptr){
-    throw std::bad_alloc();
+  if(isIncr){
+    while(ij < end){
+      arr[i * m + j] += cnt * (isCntInc ? 1 : -1);
+      cnt++;
+      ij++;
+    }
+  } else {
+    while(ij > end){
+      arr[i * m + j] += cnt * (isCntInc ? 1 : -1);
+      cnt++;
+      ij--;
+    }
+  }
+}
+
+void permyakov::lft_top_clk(int * arr1, int * arr, size_t n, size_t m)
+{
+  if(n * m == 0){
+    return;
   }
   for(size_t i = 0; i < n * m; ++i){
     arr1[i] = arr[i];
   }
   size_t lef = 0, rig = m - 1, top = 0, bot = n - 1;
   size_t cnt = 1, i = 0, j = 0;
+  namespace per = permyakov;
   while(cnt < n * m){
-    while(j < rig){
-      arr1[i * m + j] -= cnt;
-      cnt++;
-      j++;
-    }
+    per::movePointToEnd(arr1, j, cnt, rig, i, j, m, false, true);
     top++;
-    while(i < bot){
-      arr1[i * m + j] -= cnt;
-      cnt++;
-      i++;
-    }
+    per::movePointToEnd(arr1, i, cnt, bot, i, j, m, false, true);
     rig--;
-    while(j > lef){
-      arr1[i * m + j] -= cnt;
-      cnt++;
-      j--;
-    }
+    per::movePointToEnd(arr1, j, cnt, lef, i, j, m, false, false);
     bot--;
-    while(i > top){
-      arr1[i * m + j] -= cnt;
-      cnt++;
-      i--;
-    }
+    per::movePointToEnd(arr1, i, cnt, top, i, j, m, false, false);
     lef++;
     if(cnt == m * n){
       arr1[i * m + j] -= cnt;
     }
   }
-  return arr1;
 }
 
-int * permyakov::lft_bot_cnt(int * arr, size_t n, size_t m)
+void permyakov::lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m)
 {
-  int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-  if(arr2 == nullptr){
-    throw std::bad_alloc();
+  if(n * m == 0){
+    return;
   }
   for(size_t i = 0; i < n * m; ++i){
     arr2[i] = arr[i];
   }
   size_t lef = 0, rig = m - 1, top = 0, bot = n - 1;
   size_t cnt = 1, i = n - 1, j = 0;
+  namespace per = permyakov;
   while(cnt < n * m){
-    while(j < rig){
-      arr2[i * m + j] += cnt;
-      cnt++;
-      j++;
-    }
+    per::movePointToEnd(arr2, j, cnt, rig, i, j, m, true, true);
     bot--;
-    while(i > top){
-      arr2[i * m + j] += cnt;
-      cnt++;
-      i--;
-    }
+    per::movePointToEnd(arr2, i, cnt, top, i, j, m, true, false);
     rig--;
-    while(j > lef){
-      arr2[i * m + j] += cnt;
-      cnt++;
-      j--;
-    }
+    per::movePointToEnd(arr2, j, cnt, lef, i, j, m, true, false);
     top++;
-    while(i < bot){
-      arr2[i * m + j] += cnt;
-      cnt++;
-      i++;
-    }
+    per::movePointToEnd(arr2, i, cnt, bot, i, j, m, true, true);
     lef++;
     if(cnt == n * m){
       arr2[i * m + j] += cnt;
     }
   }
-  return arr2;
 }
