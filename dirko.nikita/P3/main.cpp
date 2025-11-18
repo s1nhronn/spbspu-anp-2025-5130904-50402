@@ -11,22 +11,9 @@ namespace dirko
     }
     return input;
   }
-  int *doLftBotClk(const int *matrix, const size_t rows, const size_t cols)
+  void *doLftBotClk(const int *matrix, int *result, const size_t rows, const size_t cols)
   {
     const size_t elements = rows * cols;
-    if (elements == 0)
-    {
-      return nullptr;
-    }
-    int *result = nullptr;
-    try
-    {
-      result = new int[elements];
-    }
-    catch (const std::bad_alloc &e)
-    {
-      throw;
-    }
     for (size_t i = 0; i < elements; ++i)
     {
       result[i] = matrix[i];
@@ -63,7 +50,6 @@ namespace dirko
         bottom--;
       }
     }
-    return result;
   }
   bool doLwrTriMtx(const int *matrix, const size_t rows, const size_t cols)
   {
@@ -148,7 +134,7 @@ int main(int argc, char **argv)
   {
     int matrix[1000]{};
     dirko::inputMtx(fin, matrix, rows, cols);
-    result1 = dirko::doLftBotClk(matrix, rows, cols);
+    dirko::doLftBotClk(matrix, result1, rows, cols);
     result2 = dirko::doLwrTriMtx(matrix, rows, cols);
   }
   else
@@ -164,7 +150,7 @@ int main(int argc, char **argv)
       return 3;
     }
     dirko::inputMtx(fin, matrix, rows, cols);
-    result1 = dirko::doLftBotClk(matrix, rows, cols);
+    dirko::doLftBotClk(matrix, result1, rows, cols);
     result2 = dirko::doLwrTriMtx(matrix, rows, cols);
     delete[] matrix;
   }
