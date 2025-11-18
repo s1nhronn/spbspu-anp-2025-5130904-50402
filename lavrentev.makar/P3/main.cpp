@@ -62,7 +62,7 @@ int main(int argc, char **argv)
   size_t total = x * y;
 
   int arr2[10000] = {};
-  int* arr = nullptr; 
+  int* arr = nullptr;
 
   int *matrix = nullptr;
   try
