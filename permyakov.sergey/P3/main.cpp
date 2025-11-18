@@ -5,8 +5,8 @@
 namespace permyakov
 {
   bool isErr(size_t sizeArr, size_t size);
-  int * changeArrVar1(int * arr, size_t n);
-  int * changeArrVar2(int * arr, size_t n);
+  int * lft_top_clk(int * arr, size_t n);
+  int * lft_bot_cnt(int * arr, size_t n);
 }
 
 int main(int argc, char ** argv)
@@ -59,13 +59,13 @@ int main(int argc, char ** argv)
       return 2;
     }
     try{
-      arr1 = per::changeArrVar1(arr, n);
+      arr1 = per::lft_top_clk(arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       return 3;
     }
     try{
-      arr2 = per::changeArrVar2(arr, n);
+      arr2 = per::lft_bot_cnt(arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(arr1);
@@ -91,14 +91,14 @@ int main(int argc, char ** argv)
       return 2;
     }
     try{
-      arr1 = per::changeArrVar1(d_arr, n);
+      arr1 = per::lft_top_clk(d_arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(d_arr);
       return 3;
     }
     try{
-      arr2 = per::changeArrVar2(d_arr, n);
+      arr2 = per::lft_bot_cnt(d_arr, n);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(arr1);
@@ -135,7 +135,7 @@ bool permyakov::isErr(size_t sizeArr, size_t size)
   return false;
 }
 
-int * permyakov::changeArrVar1(int * arr, size_t n)
+int * permyakov::lft_top_clk(int * arr, size_t n)
 {
   int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
   if(arr1 == nullptr){
@@ -178,7 +178,7 @@ int * permyakov::changeArrVar1(int * arr, size_t n)
   return arr1;
 }
 
-int * permyakov::changeArrVar2(int * arr, size_t n)
+int * permyakov::lft_bot_cnt(int * arr, size_t n)
 {
   int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
   if(arr2 == nullptr){
