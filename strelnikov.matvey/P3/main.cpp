@@ -3,11 +3,6 @@
 
 namespace strelnikov {
 
-  void rm(int* a, size_t r)
-  {
-    delete[] a;
-  }
-
   bool prValidation(char* a)
   {
     if (std::string(a) != "1" && std::string(a) != "2") {
