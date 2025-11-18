@@ -3,7 +3,7 @@
 
 namespace saldaev
 {
-  size_t CNT_ROW_NSM(const long long* matrix, size_t rows, size_t cols)
+  size_t doCntRowNsm(const long long *matrix, size_t rows, size_t cols)
   {
     size_t count = 0;
     for (size_t r = 0; r < rows; ++r)
@@ -19,13 +19,13 @@ namespace saldaev
       }
       if (flag)
       {
-        count += 1;
+        ++count;
       }
     }
     return count;
   }
 
-  void LFT_BOT_CLK(long long* matrix, size_t rows, size_t cols)
+  void doLftBotClk(long long *matrix, size_t rows, size_t cols)
   {
     size_t x = 0;
     size_t y = rows - 1;
@@ -64,9 +64,9 @@ namespace saldaev
 
       for (; y < bottom; ++y)
       {
-      flag = true;
-      c++;
-      matrix[y * cols + x] -= c;
+        flag = true;
+        c++;
+        matrix[y * cols + x] -= c;
       }
       right--;
       if (!flag)
@@ -87,15 +87,14 @@ namespace saldaev
   }
 }
 
-
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
   if (argc < 4)
   {
     std::cerr << "Not enough arguments\n";
     return 1;
   }
-  else if (argc > 4)
+  if (argc > 4)
   {
     std::cerr << "Too many arguments\n";
     return 1;
@@ -122,7 +121,8 @@ int main(int argc, char ** argv)
 
   if (rows == 0 && cols == 0)
   {
-    output << 0 << "\n" << 0 << " " << 0;
+    output << 0 << "\n"
+           << 0 << " " << 0;
     return 0;
   }
 
@@ -139,10 +139,11 @@ int main(int argc, char ** argv)
       return 2;
     }
 
-    size_t res1 = saldaev::CNT_ROW_NSM(matrix, rows, cols);
-    saldaev::LFT_BOT_CLK(matrix, rows, cols);
+    size_t res1 = saldaev::doCntRowNsm(matrix, rows, cols);
+    saldaev::doLftBotClk(matrix, rows, cols);
 
-    output << res1 << "\n" << rows << " " << cols << " ";
+    output << res1 << "\n"
+           << rows << " " << cols << " ";
     for (size_t i = 0; i < rows * cols - 1; ++i)
     {
       output << matrix[i] << " ";
@@ -151,7 +152,7 @@ int main(int argc, char ** argv)
   }
   else
   {
-    long long* matrix = new long long[rows * cols];
+    long long *matrix = new long long[rows * cols];
     for (size_t i = 0; i < rows * cols; ++i)
     {
       input >> matrix[i];
@@ -163,10 +164,11 @@ int main(int argc, char ** argv)
       return 2;
     }
 
-    size_t res1 = saldaev::CNT_ROW_NSM(matrix, rows, cols);
-    saldaev::LFT_BOT_CLK(matrix, rows, cols);
+    size_t res1 = saldaev::doCntRowNsm(matrix, rows, cols);
+    saldaev::doLftBotClk(matrix, rows, cols);
 
-    output << res1 << "\n" << rows << " " << cols << " ";
+    output << res1 << "\n"
+           << rows << " " << cols << " ";
     for (size_t i = 0; i < rows * cols - 1; ++i)
     {
       output << matrix[i] << " ";
