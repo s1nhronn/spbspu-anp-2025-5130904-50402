@@ -4,8 +4,8 @@
 #include <climits>
 #include <cstring>
 namespace Islamov{
-    static int CNT_COL_NSM(const int* arr, int rows, int cols);
-    static int CNT_NZR_DIG(const int* arr, int rows, int cols);
+    static int Colsdiffnumbers(const int* arr, int rows, int cols);
+    static int ZeroChecker(const int* arr, int rows, int cols);
     static bool IntArg(const char* s, int &out);
 }
 int main(int argc, char** argv)
@@ -91,8 +91,9 @@ int main(int argc, char** argv)
             std::cerr << "Error: input file content is not a valid matrix\n";
             return 2;
         }
-        res1 = Islamov::CNT_COL_NSM(stackArr, rows, cols);
-        res2 = Islamov::CNT_NZR_DIG(stackArr, rows, cols);
+        fin.close();
+        res1 = Islamov::Colsdiffnumbers(stackArr, rows, cols);
+        res2 = Islamov::ZeroChecker(stackArr, rows, cols);
         std::ofstream fout(outputName, std::ios::binary);
         if (!fout)
         {
@@ -122,8 +123,8 @@ int main(int argc, char** argv)
             return 2;
         }
         fin.close();
-        res1 = Islamov::CNT_COL_NSM(dynArr, rows, cols);
-        res2 = Islamov::CNT_NZR_DIG(dynArr, rows, cols);
+        res1 = Islamov::Colsdiffnumbers(dynArr, rows, cols);
+        res2 = Islamov::ZeroChecker(dynArr, rows, cols);
         std::ofstream out(outputName, std::ios::binary);
         if (!out)
         {
@@ -136,7 +137,7 @@ int main(int argc, char** argv)
         return 0;
     }
 }
-static int Islamov::CNT_COL_NSM(const int* arr, int rows, int cols)
+static int Islamov::Colsdiffnumbers(const int* arr, int rows, int cols)
 {
     int count = 0;
     for (int j = 0; j < cols; ++j)
@@ -157,7 +158,7 @@ static int Islamov::CNT_COL_NSM(const int* arr, int rows, int cols)
     }
     return count;
 }
-static int Islamov::CNT_NZR_DIG(const int* arr, int rows, int cols)
+static int Islamov::ZeroChecker(const int* arr, int rows, int cols)
 {
     if (rows<=0 || cols<=0) return 0;
     int count=0;
