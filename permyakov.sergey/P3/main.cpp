@@ -51,7 +51,8 @@ int main(int argc, char ** argv)
       return 2;
     }
     input.close();
-    if(per::isErr(s, n * m)){
+    if(s != n * m){
+      std::cerr << "Failure to define array";
       return 2;
     }
     try{
@@ -63,7 +64,7 @@ int main(int argc, char ** argv)
     try{
       arr2 = per::lft_bot_cnt(arr, n, m);
     } catch(std::bad_alloc()){
-      std::cerr << "Failure to allocate memoty\n";
+      std::cerr << "Failure to allocate memory\n";
       free(arr1);
       return 3;
     }
@@ -82,21 +83,22 @@ int main(int argc, char ** argv)
       return 2;
     }
     input.close();
-    if(per::isErr(s, n * m)){
+    if(s != n * m){
+      std::cerr << "Failure to define array";
       free(d_arr);
       return 2;
     }
     try{
       arr1 = per::lft_top_clk(d_arr, n, m);
     } catch(std::bad_alloc()){
-      std::cerr << "Failure to allocate memoty\n";
+      std::cerr << "Failure to allocate memory\n";
       free(d_arr);
       return 3;
     }
     try{
       arr2 = per::lft_bot_cnt(d_arr, n, m);
     } catch(std::bad_alloc()){
-      std::cerr << "Failure to allocate memoty\n";
+      std::cerr << "Failure to allocate memory\n";
       free(arr1);
       free(d_arr);
       return 3;
@@ -116,19 +118,6 @@ int main(int argc, char ** argv)
   output.close();
   free(arr1);
   free(arr2);
-}
-
-bool permyakov::isErr(size_t sizeArr, size_t size)
-{
-  if(sizeArr < size){
-    std::cerr << "Not enough numbers to create array\n";
-    return true;
-  }
-  if(sizeArr > size){
-    std::cerr << "Too many numbers in file\n";
-    return true;
-  }
-  return false;
 }
 
 int * permyakov::lft_top_clk(int * arr, size_t n, size_t m)
