@@ -5,9 +5,10 @@
 namespace permyakov
 {
   void movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
-		      size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr);
+  size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr);
   void lft_top_clk(int * arr2, int * arr, size_t n, size_t m);
   void lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m);
+  void arrOutInFile(int * arr, size_t n, size_t m, std::ofstream & out);
 }
 
 int main(int argc, char ** argv)
@@ -112,22 +113,16 @@ int main(int argc, char ** argv)
   }
 
   std::ofstream output(argv[3]);
-  output << n << " " << m << " ";
-  for(size_t i = 0; i < n * m; ++i){
-    output << arr1[i] << " ";
-  }
-  output << "\n" << n << " " << m << " ";
-  for(size_t i = 0; i < n * m; ++i){
-    output << arr2[i] << " ";
-  }
-  output.close();
+  per::arrOutInFile(arr1, n, m, output);
+  output << "\n";
+  per::arrOutInFile(arr2, n, m, output);
   free(arr1);
   free(arr2);
 }
 //прошу прощения за функцию ниже,
-//но это самый простой вариант вынести цикл в отдельную функцию
+//но это самый очевидный вариант вынести цикл в отдельную функцию
 void permyakov::movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
-			       size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr)
+size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr)
 {
   if(isIncr){
     while(ij < end){
@@ -193,5 +188,13 @@ void permyakov::lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m)
     if(cnt == n * m){
       arr2[i * m + j] += cnt;
     }
+  }
+}
+
+void permyakov::arrOutInFile(int * arr, size_t n, size_t m, std::ofstream & out)
+{
+  out << n << " " << m;
+  for(size_t i = 0; i < n * m; ++i){
+    out << " " << arr[i];
   }
 }
