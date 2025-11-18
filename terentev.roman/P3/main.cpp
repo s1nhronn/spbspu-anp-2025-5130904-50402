@@ -110,7 +110,7 @@ int main(int argc, char** argv)
         {
           min = a[ix];
         }
-        bool ifi = true;
+        ifi = true;
         if (a[ix] <= a[ix - m - 1]) ifi = false;
         if (a[ix] <= a[ix - m]) ifi = false;
         if (a[ix] <= a[ix - m + 1]) ifi = false;
@@ -181,29 +181,29 @@ int main(int argc, char** argv)
       }
       else
       {
-        bool ifi = true;
-        if (a[ix] >= a[ix - m - 1]) ifi = false;
-        if (a[ix] >= a[ix - m]) ifi = false;
-        if (a[ix] >= a[ix - m + 1]) ifi = false;
-        if (a[ix] >= a[ix - 1]) ifi = false;
-        if (a[ix] >= a[ix + 1]) ifi = false;
-        if (a[ix] >= a[ix + m - 1]) ifi = false;
-        if (a[ix] >= a[ix + m]) ifi = false;
-        if (a[ix] >= a[ix + m + 1]) ifi = false;
-        if (ifi)
+        bool ififi = true;
+        if (a[ix] >= a[ix - m - 1]) ififi = false;
+        if (a[ix] >= a[ix - m]) ififi = false;
+        if (a[ix] >= a[ix - m + 1]) ififi = false;
+        if (a[ix] >= a[ix - 1]) ififi = false;
+        if (a[ix] >= a[ix + 1]) ififi = false;
+        if (a[ix] >= a[ix + m - 1]) ififi = false;
+        if (a[ix] >= a[ix + m]) ififi = false;
+        if (a[ix] >= a[ix + m + 1]) ififi = false;
+        if (ififi)
         {
           min = a[ix];
         }
-        bool ifi = true;
-        if (a[ix] <= a[ix - m - 1]) ifi = false;
-        if (a[ix] <= a[ix - m]) ifi = false;
-        if (a[ix] <= a[ix - m + 1]) ifi = false;
-        if (a[ix] <= a[ix - 1]) ifi = false;
-        if (a[ix] <= a[ix + 1]) ifi = false;
-        if (a[ix] <= a[ix + m - 1]) ifi = false;
-        if (a[ix] <= a[ix + m]) ifi = false;
-        if (a[ix] <= a[ix + m + 1]) ifi = false;
-        if (ifi)
+        ififi = true;
+        if (a[ix] <= a[ix - m - 1]) ififi = false;
+        if (a[ix] <= a[ix - m]) ififi = false;
+        if (a[ix] <= a[ix - m + 1]) ififi = false;
+        if (a[ix] <= a[ix - 1]) ififi = false;
+        if (a[ix] <= a[ix + 1]) ififi = false;
+        if (a[ix] <= a[ix + m - 1]) ififi = false;
+        if (a[ix] <= a[ix + m]) ififi = false;
+        if (a[ix] <= a[ix + m + 1]) ififi = false;
+        if (ififi)
         {
           max = a[ix];
         }
