@@ -8,13 +8,13 @@ namespace strelnikov {
     delete[] a;
   }
 
-  void staticmtx(std::ifstream& out, int* a, size_t r, size_t c)
+  void staticmtx(std::ifstream& in, int* a, size_t r, size_t c)
   {
     size_t cnt = 0;
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
-        out >> a[i*c+j];
-        if (out.eof() || out.fail()) {
+        in >> a[i*c+j];
+        if (in.fail()) {
           throw std::logic_error("Bad input\n");
         }
         ++cnt;
@@ -26,7 +26,7 @@ namespace strelnikov {
     }
   }
 
-  int* dynamicmtx(std::ifstream& out, size_t r, size_t c)
+  int* dynamicmtx(std::ifstream& in, size_t r, size_t c)
   {
     int* a = nullptr;
     size_t cnt = 0;
@@ -38,8 +38,8 @@ namespace strelnikov {
 
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
-        out >> a[i*c + j];
-        if (out.fail()) {
+        in >> a[i*c + j];
+        if (in.fail()) {
           throw std::logic_error("Bad input\n");
         }
         ++cnt;
@@ -128,16 +128,16 @@ namespace strelnikov {
     return cnt;
   }
 
-  void doall(int pr, const char* outf, const char* inf)
+  void doall(int pr, const char* inf, const char* outf)
   {
-    std::ifstream out(outf);
-    if (!out.is_open()) {
+    std::ifstream in(inf);
+    if (!in.is_open()) {
       throw std::logic_error("Cannot open input file\n");
     }
 
     size_t r, c;
-    out >> r >> c;
-    if (out.fail()) {
+    in >> r >> c;
+    if (in.fail()) {
       throw std::logic_error("Bad rows and cols file input\n");
     }
 
@@ -150,43 +150,43 @@ namespace strelnikov {
           throw std::logic_error("Matrix too large\n");
         }
         
-        staticmtx(out, static_mtx, r, c);
+        staticmtx(in, static_mtx, r, c);
         mtx = static_mtx;
-        out.close();
+        in.close();
 
-        std::ofstream in(inf);
-        if (!in.is_open()) {
+        std::ofstream out(outf);
+        if (!out.is_open()) {
           throw std::logic_error("Cannot open output file");
         }
 
         size_t dig = cntNzrDig(mtx, r, c);
-        in << dig << '\n';
+        out << dig << '\n';
         lftBotCnt(mtx, r, c);
         for (size_t i = 0; i < r; ++i) {
           for (size_t j = 0; j < c; ++j)
-            in << mtx[i*c + j] << ' ';
-          in << '\n';
+            out << mtx[i*c + j] << ' ';
+          out << '\n';
         }
-        in.close();
+        out.close();
         return;
       } else {
-        mtx = dynamicmtx(out, r, c);
-        out.close();
+        mtx = dynamicmtx(in, r, c);
+        in.close();
 
-        std::ofstream in(inf);
-        if (!in.is_open()) {
+        std::ofstream out(outf);
+        if (!out.is_open()) {
           throw std::logic_error("Cannot open output file");
         }
         size_t dig = cntNzrDig(mtx, r, c);
-        in << dig << '\n';
+        out << dig << '\n';
         lftBotCnt(mtx, r, c);
         for (size_t i = 0; i < r; ++i) {
           for (size_t j = 0; j < c; ++j) {
-            in << mtx[i*c + j] << ' ';
+            out << mtx[i*c + j] << ' ';
           }
-          in << '\n';
+          out << '\n';
         }
-        in.close();
+        out.close();
         rm(mtx, r);
       }
     } catch (const std::exception& e) {
