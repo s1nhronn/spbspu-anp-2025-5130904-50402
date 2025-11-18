@@ -15,6 +15,7 @@ namespace shirokov
   bool isTriangularMatrix(int *matrix, size_t m, size_t n);
   size_t transformIndexes(size_t i, size_t j, size_t n);
   void cutMatrix(int *matrix, size_t m, size_t n);
+  const size_t MATRIX_SIZE = 10000;
 } // namespace shirokov
 
 int main(int argc, char **argv)
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
   {
     if (num == 1)
     {
-      int a[10000] = {};
+      int a[shirokov::MATRIX_SIZE] = {};
       matrix = a;
     }
     else
