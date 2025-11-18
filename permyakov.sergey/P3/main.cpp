@@ -5,7 +5,6 @@
 namespace permyakov
 {
   bool isErr(size_t sizeArr, size_t size);
-  bool isEmptyFile(std::ifstream & input);
   int * changeArrVar1(int * arr, size_t n);
   int * changeArrVar2(int * arr, size_t n);
 }
@@ -131,15 +130,6 @@ bool permyakov::isErr(size_t sizeArr, size_t size)
   }
   if(sizeArr > size){
     std::cerr << "Too many numbers in file\n";
-    return true;
-  }
-  return false;
-}
-
-bool permyakov::isEmptyFile(std::ifstream & input)
-{
-  if(input.peek() == std::ifstream::traits_type::eof()){
-    std::cerr << "Input file is empty\n";
     return true;
   }
   return false;
