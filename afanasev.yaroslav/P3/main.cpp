@@ -1,11 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <cstdlib>
+#include <cstring>
 
 namespace afanasev
 {
-  long long CNT_LOC_MIN(const long long *mtx, const size_t r, const size_t c)
+  long long doCntLocMin(const long long * mtx, const size_t r, const size_t c)
   {
     if (!mtx || r < 3 || c < 3)
     {
@@ -41,7 +41,7 @@ namespace afanasev
     return ans;
   }
 
-  long long CNT_LOC_MAX(const long long *mtx, const size_t r, const size_t c)
+  long long doCntLocMax(const long long * mtx, const size_t r, const size_t c)
   {
     if (!mtx || r < 3 || c < 3)
     {
@@ -76,89 +76,97 @@ namespace afanasev
     }
     return ans;
   }
+
+  void getMinAndMax(const long long * mtx, const size_t r, const size_t c, 
+    long long & min, long long & max)
+  {
+    min = doCntLocMin(mtx, r, c);
+    max = doCntLocMax(mtx, r, c);
+  }
 }
 
 int main (int argc, char ** argv)
 {
-  if (argc == 4)
+  if (argc < 4)
   {
-    std::string arg = argv[1];
-    if (arg != "2" && arg != "1")
-    {
-      std::cerr << "Invalid first argument" << "\n";
-      return 1;
-    }
+    std::cerr << "Not enough arguments" << '\n';
+    return 1;
+  }
+  if (argc > 4)
+  {
+    std::cerr << "Too many arguments" << '\n';
+    return 1;
+  }
+  if (!strcmp(argv[1], "2") && !strcmp(argv[1], "1"))
+  {
+    std::cerr << "First parameter is out of range" << '\n';
+    return 1;
+  }
+  
+  
+  long long r_1 = 0, c_1 = 0;
+  std::ifstream input(argv[2]);
+  input >> r_1 >> c_1;
 
-    long long r_1 = 0, c_1 = 0;
-    std::ifstream input(argv[2]);
-    input >> r_1 >> c_1;
-    if (input.fail() || r_1 < 0 || c_1 < 0)
+  if (input.fail() || r_1 < 0 || c_1 < 0)
+  {
+    std::cerr << "Incorrect input" << '\n';
+    return 2;
+  }
+  size_t r = r_1, c = c_1;
+
+  if (strcmp(argv[1], "2"))
+  {
+    long long * mtx = reinterpret_cast <long long *> (malloc(r * c * sizeof(long long)));
+
+    if (mtx == nullptr)
     {
-      std::cerr << "Incorrect input" << "\n";
+      std::cerr << "Get memory failed" << '\n';
       return 2;
     }
-    size_t r = r_1, c = c_1;
 
-    if (arg == "2")
+    for (size_t i = 0; i < (r * c); i++)
     {
-      long long *mtx = static_cast<long long*>(malloc(r * c * sizeof(long long)));
-
-      if (mtx == nullptr)
+      input >> mtx[i];
+      if (input.fail())
       {
-        std::cerr << "Get memory failed" << "\n";
+        std::cerr << "Incorrect input" << '\n';
+        free(mtx);
         return 2;
       }
-
-      for (size_t i = 0; i < (r * c); i++)
-      {
-        input >> mtx[i];
-        if (input.fail())
-        {
-          std::cerr << "Incorrect input" << "\n";
-          free(mtx);
-          return 2;
-        }
-      }
-
-      long long min = 0;
-      min = afanasev::CNT_LOC_MIN(mtx, r, c);
-      long long max = 0;
-      max = afanasev::CNT_LOC_MAX(mtx, r, c);
-
-      free(mtx);
-
-      std::ofstream output(argv[3]);
-      output << min << " " << max << "\n";
-      output.close();
     }
-    else if (arg == "1")
-    {
-      long long mtx[10000] = {};
 
-      for (size_t i = 0; i < (r * c); i++)
-      {
-        input >> mtx[i];
-        if (input.fail())
-        {
-          std::cerr << "Incorrect input" << "\n";
-          return 2;
-        }
-      }
-      long long min = 0;
-      min = afanasev::CNT_LOC_MIN(mtx, r, c);
-      long long max = 0;
-      max = afanasev::CNT_LOC_MAX(mtx, r, c);
+    long long min = 0;
+    long long max = 0;
+    afanasev::getMinAndMax(mtx, r, c, min, max);
 
-      std::ofstream output(argv[3]);
-      output << min << " " << max << "\n";
-      output.close();
-    }
-    input.close();
+    free(mtx);
+
+    std::ofstream output(argv[3]);
+    output << min << ' ' << max << '\n';
+    output.close();
   }
-  else
+  else if (strcmp(argv[1], "1"))
   {
-    std::cerr << "Incorrect quantity of arguments" << "\n";
-    return 1;
+    const size_t size_mtx = 10000;
+    long long mtx[size_mtx] = {};
+
+    for (size_t i = 0; i < (r * c); i++)
+    {
+      input >> mtx[i];
+      if (input.fail())
+      {
+        std::cerr << "Incorrect input" << '\n';
+        return 2;
+      }
+    }
+    long long min = 0;
+    long long max = 0;
+    afanasev::getMinAndMax(mtx, r, c, min, max);
+
+    std::ofstream output(argv[3]);
+    output << min << ' ' << max << '\n';
+    output.close();
   }
   return 0;
 }
