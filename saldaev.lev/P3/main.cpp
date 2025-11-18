@@ -109,7 +109,6 @@ int main(int argc, char **argv)
   }
 
   std::ifstream input(argv[2]);
-  std::ofstream output(argv[3]);
 
   size_t rows = 0;
   size_t cols = 0;
@@ -118,12 +117,6 @@ int main(int argc, char **argv)
   {
     std::cerr << "data from file is unacceptable\n";
     return 2;
-  }
-
-  if (rows == 0 && cols == 0)
-  {
-    output << "0\n0 0";
-    return 0;
   }
 
   long long statMatrix[saldaev::Max_size] = {};
@@ -150,10 +143,12 @@ int main(int argc, char **argv)
     }
     return 2;
   }
+  input.close();
 
   size_t res1 = saldaev::doCntRowNsm(matrix, rows, cols);
   saldaev::doLftBotClk(matrix, rows, cols);
 
+  std::ofstream output(argv[3]);
   output << res1 << "\n"
          << rows << " " << cols;
   for (size_t i = 0; i < rows * cols; ++i)
