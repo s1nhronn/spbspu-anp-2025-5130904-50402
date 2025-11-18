@@ -3,6 +3,7 @@
 
 namespace saldaev
 {
+  const size_t Max_size = 10000;
   size_t doCntRowNsm(const long long *matrix, size_t rows, size_t cols)
   {
     size_t count = 0;
@@ -27,6 +28,10 @@ namespace saldaev
 
   void doLftBotClk(long long *matrix, size_t rows, size_t cols)
   {
+    if (cols * rows == 0)
+    {
+      return;
+    }
     size_t x = 0;
     size_t y = rows - 1;
     size_t c = 0;
@@ -133,7 +138,7 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  long long statMatrix[10000] = {};
+  long long statMatrix[saldaev::Max_size] = {};
   long long *matrix = nullptr;
   if (mode == 1)
   {
@@ -162,14 +167,13 @@ int main(int argc, char **argv)
   saldaev::doLftBotClk(matrix, rows, cols);
 
   output << res1 << "\n"
-         << rows << " " << cols << " ";
-  for (size_t i = 0; i < rows * cols - 1; ++i)
+         << rows << " " << cols;
+  for (size_t i = 0; i < rows * cols; ++i)
   {
-    output << matrix[i] << " ";
+    output << " " << matrix[i];
   }
-  output << matrix[rows * cols - 1];
 
-  if (argv[1][0] == '2')
+  if (mode == 2)
   {
     delete[] matrix;
   }
