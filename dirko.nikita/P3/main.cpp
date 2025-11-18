@@ -11,7 +11,7 @@ namespace dirko
     }
     return input;
   }
-  void *doLftBotClk(const int *matrix, int *result, const size_t rows, const size_t cols)
+  void doLftBotClk(const int *matrix, int *result, const size_t rows, const size_t cols)
   {
     const size_t elements = rows * cols;
     for (size_t i = 0; i < elements; ++i)
@@ -72,15 +72,14 @@ namespace dirko
     }
     return true;
   }
-  std::ostream &output(std::ostream &output, const int *matrix, const size_t rows, const size_t cols, const bool result2)
+  std::ostream &output(std::ostream &output, const int *matrix, const size_t rows, const size_t cols)
   {
-    output << rows << ' ' << cols << ' ';
+    output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i)
     {
-      output << matrix[i] << ' ';
+      output << ' ' << matrix[i];
     }
-    output << '\n';
-    return output << std::boolalpha << result2;
+    return output;
   }
 }
 
@@ -96,16 +95,12 @@ int main(int argc, char **argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  int mode = 0;
-  try
-  {
-    mode = std::stoi(argv[1]);
-  }
-  catch (std::out_of_range &e)
+  if (argv[1][1] != '\0' || argv[1][0] > '9' || argv[1][0] < '0')
   {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
+  int mode = std::stoi(argv[1]);
   if (mode < 1 || mode > 2)
   {
     std::cerr << "First parameter is out of range\n";
@@ -166,6 +161,7 @@ int main(int argc, char **argv)
   }
   fin.close();
   std::ofstream fout(argv[3]);
-  dirko::output(fout, result1, rows, cols, result2) << '\n';
+  dirko::output(fout, result1, rows, cols) << '\n';
+  fout << std::boolalpha << result2 << '\n';
   delete[] result1;
 }
