@@ -77,8 +77,7 @@ namespace afanasev
     return ans;
   }
 
-  void getMinAndMax(const long long * mtx, const size_t r, const size_t c, 
-    long long & min, long long & max)
+  void getMinAndMax(const long long * mtx, const size_t r, const size_t c, long long & min, long long & max)
   {
     min = doCntLocMin(mtx, r, c);
     max = doCntLocMax(mtx, r, c);
