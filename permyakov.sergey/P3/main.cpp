@@ -6,8 +6,9 @@ namespace permyakov
 {
   void movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
   size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr);
-  void lft_top_clk(int * arr2, int * arr, size_t n, size_t m);
+  void lft_top_clk(int * arr1, int * arr, size_t n, size_t m);
   void lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m);
+  void arrInFromFile(int * arr, size_t & s, std::ifstream & in);
   void arrOutInFile(int * arr, size_t n, size_t m, std::ofstream & out);
 }
 
@@ -45,9 +46,7 @@ int main(int argc, char ** argv)
   const size_t SIZE_OF_MATRIX = 10000;
   if(task == 1){
     int arr[SIZE_OF_MATRIX]{};
-    for(size_t num = 0; input >> num; ++s){
-      arr[s] = num;
-    }
+    per::arrInFromFile(arr, s, input);
     if(!input.eof()){
       std::cerr << "Invalid array format\n";
       return 2;
@@ -78,9 +77,7 @@ int main(int argc, char ** argv)
       std::cerr << "Failure to allocate memory\n";
       return 3;
     }
-    for(size_t num = 0; input >> num; ++s){
-      d_arr[s] = num;
-    }
+    per::arrInFromFile(d_arr, s, input);
     if(!input.eof()){
       std::cerr << "Invalid array format\n";
       free(d_arr);
@@ -188,6 +185,13 @@ void permyakov::lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m)
     if(cnt == n * m){
       arr2[i * m + j] += cnt;
     }
+  }
+}
+
+void permyakov::arrInFromFile(int * arr, size_t & s, std::ifstream & in)
+{
+  for(size_t num = 0; in >> num; ++s){
+    arr[s] = num;
   }
 }
 
