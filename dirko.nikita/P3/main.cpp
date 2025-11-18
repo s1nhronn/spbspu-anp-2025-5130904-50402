@@ -3,46 +3,13 @@
 
 namespace dirko
 {
-  void staticInput(std::istream &input, int *matrix, const size_t rows, const size_t cols)
+  std::istream &inputMtx(std::istream &input, int *matrix, const size_t rows, const size_t cols)
   {
     for (size_t i = 0; i < rows * cols; ++i)
     {
       input >> matrix[i];
-      if (input.eof())
-      {
-        throw std::logic_error("Not enougth data\n");
-      }
-      else if (input.fail())
-      {
-        throw std::logic_error("Cant read\n");
-      }
     }
-  }
-  int *dinamicInput(std::istream &input, const size_t rows, const size_t cols)
-  {
-    try
-    {
-      int *matrix = new int[rows * cols];
-      for (size_t i = 0; i < rows * cols; ++i)
-      {
-        input >> matrix[i];
-        if (input.eof())
-        {
-          delete[] matrix;
-          throw std::logic_error("Not enougth data\n");
-        }
-        else if (input.fail())
-        {
-          delete[] matrix;
-          throw std::logic_error("Cant read");
-        }
-      }
-      return matrix;
-    }
-    catch (std::bad_alloc &e)
-    {
-      throw;
-    }
+    return input;
   }
   int *LFT_BOT_CLK(const int *matrix, const size_t rows, const size_t cols)
   {
@@ -131,9 +98,8 @@ namespace dirko
   }
 }
 
-int main(int argc, char const **argv)
+int main(int argc, char **argv)
 {
-  int mode = 0;
   if (argc < 4)
   {
     std::cerr << "Not enough arguments\n";
@@ -144,6 +110,7 @@ int main(int argc, char const **argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
+  int mode = 0;
   try
   {
     mode = std::stoi(argv[1]);
@@ -166,6 +133,41 @@ int main(int argc, char const **argv)
   }
   size_t rows = 0, cols = 0;
   fin >> rows >> cols;
+  int *result1 = nullptr;
+  try
+  {
+    result1 = new int[rows * cols];
+  }
+  catch (std::bad_alloc &e)
+  {
+    std::cerr << "Cant alloc\n";
+    return 3;
+  }
+  bool result2 = false;
+  if (mode == 1)
+  {
+    int matrix[1000]{};
+    dirko::inputMtx(fin, matrix, rows, cols);
+    result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
+    result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
+  }
+  else
+  {
+    int *matrix = nullptr;
+    try
+    {
+      matrix = new int[rows * cols];
+    }
+    catch (const std::bad_alloc &e)
+    {
+      std::cerr << "Cant alloc\n";
+      return 3;
+    }
+    dirko::inputMtx(fin, matrix, rows, cols);
+    result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
+    result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
+    delete[] matrix;
+  }
   if (fin.eof())
   {
     std::cerr << "Not enougth data\n";
@@ -176,60 +178,8 @@ int main(int argc, char const **argv)
     std::cerr << "Cant read\n";
     return 2;
   }
-  int *result1 = nullptr;
-  bool result2 = false;
-  if (mode == 1)
-  {
-    int matrix[1000]{};
-    try
-    {
-      dirko::staticInput(fin, matrix, rows, cols);
-      fin.close();
-      result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
-      result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
-    }
-    catch (std::logic_error &e)
-    {
-      std::cerr << e.what();
-      delete[] result1;
-      return 2;
-    }
-    std::ofstream fout(argv[3]);
-    dirko::output(fout, result1, rows, cols, result2) << '\n';
-  }
-  else
-  {
-    int *matrix = nullptr;
-    try
-    {
-      matrix = dirko::dinamicInput(fin, rows, cols);
-    }
-    catch (const std::bad_alloc &e)
-    {
-      std::cerr << "Cant alloc\n";
-      return 3;
-    }
-    catch (std::logic_error &e)
-    {
-      delete[] matrix;
-      std::cerr << e.what();
-      return 2;
-    }
-    try
-    {
-      fin.close();
-      result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
-      result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
-    }
-    catch (std::bad_alloc &e)
-    {
-      delete[] matrix;
-      std::cerr << "Cant alloc\n";
-      return 3;
-    }
-    std::ofstream fout(argv[3]);
-    dirko::output(fout, result1, rows, cols, result2) << '\n';
-    delete[] matrix;
-  }
+  fin.close();
+  std::ofstream fout(argv[3]);
+  dirko::output(fout, result1, rows, cols, result2) << '\n';
   delete[] result1;
 }
