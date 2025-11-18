@@ -5,14 +5,13 @@
 namespace permyakov
 {
   bool isErr(size_t sizeArr, size_t size);
-  int * lft_top_clk(int * arr, size_t n);
-  int * lft_bot_cnt(int * arr, size_t n);
+  int * lft_top_clk(int * arr, size_t n, size_t m);
+  int * lft_bot_cnt(int * arr, size_t n, size_t m);
 }
 
 int main(int argc, char ** argv)
 {
   namespace per = permyakov;
-  
   if(argc < 4){
     std::cerr << "Not enough arguments\n";
     return 1;
@@ -21,14 +20,12 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-
   int task = std::stoi(argv[1]);
   
   if(task != 1 && task != 2){
     std::cerr << "First argument is not correct\n";
     return 1;
   }
-
   std::ifstream input(argv[2]);
   size_t n = 0, m = 0;
   input >> n >> m;
@@ -44,7 +41,6 @@ int main(int argc, char ** argv)
   int * arr2 = nullptr;
   size_t s = 0;
   const size_t SIZE_OF_MATRIX = 10000;
-  
   if(task == 1){
     int arr[SIZE_OF_MATRIX]{};
     for(size_t num = 0; input >> num; ++s){
@@ -59,13 +55,13 @@ int main(int argc, char ** argv)
       return 2;
     }
     try{
-      arr1 = per::lft_top_clk(arr, n);
+      arr1 = per::lft_top_clk(arr, n, m);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       return 3;
     }
     try{
-      arr2 = per::lft_bot_cnt(arr, n);
+      arr2 = per::lft_bot_cnt(arr, n, m);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(arr1);
@@ -91,14 +87,14 @@ int main(int argc, char ** argv)
       return 2;
     }
     try{
-      arr1 = per::lft_top_clk(d_arr, n);
+      arr1 = per::lft_top_clk(d_arr, n, m);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(d_arr);
       return 3;
     }
     try{
-      arr2 = per::lft_bot_cnt(d_arr, n);
+      arr2 = per::lft_bot_cnt(d_arr, n, m);
     } catch(std::bad_alloc()){
       std::cerr << "Failure to allocate memoty\n";
       free(arr1);
@@ -135,18 +131,18 @@ bool permyakov::isErr(size_t sizeArr, size_t size)
   return false;
 }
 
-int * permyakov::lft_top_clk(int * arr, size_t n)
+int * permyakov::lft_top_clk(int * arr, size_t n, size_t m)
 {
-  int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
+  int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
   if(arr1 == nullptr){
     throw std::bad_alloc();
   }
-  for(size_t i = 0; i < n * n; ++i){
+  for(size_t i = 0; i < n * m; ++i){
     arr1[i] = arr[i];
   }
-  size_t lef = 0, rig = n - 1, top = 0, bot = n - 1;
+  size_t lef = 0, rig = m - 1, top = 0, bot = n - 1;
   size_t cnt = 1, i = 0, j = 0;
-  while(cnt < n * n){
+  while(cnt < n * m){
     while(j < rig){
       arr1[i * n + j] -= cnt;
       cnt++;
@@ -171,25 +167,25 @@ int * permyakov::lft_top_clk(int * arr, size_t n)
       i--;
     }
     lef++;
-    if(cnt == n * n){
+    if(cnt == m * n){
       arr1[i * n + j] -= cnt;
     }
   }
   return arr1;
 }
 
-int * permyakov::lft_bot_cnt(int * arr, size_t n)
+int * permyakov::lft_bot_cnt(int * arr, size_t n, size_t m)
 {
-  int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * n));
+  int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
   if(arr2 == nullptr){
     throw std::bad_alloc();
   }
-  for(size_t i = 0; i < n * n; ++i){
+  for(size_t i = 0; i < n * m; ++i){
     arr2[i] = arr[i];
   }
-  size_t lef = 0, rig = n - 1, top = 0, bot = n - 1;
+  size_t lef = 0, rig = m - 1, top = 0, bot = n - 1;
   size_t cnt = 1, i = n - 1, j = 0;
-  while(cnt < n * n){
+  while(cnt < n * m){
     while(j < rig){
       arr2[i * n + j] += cnt;
       cnt++;
@@ -214,7 +210,7 @@ int * permyakov::lft_bot_cnt(int * arr, size_t n)
       i++;
     }
     lef++;
-    if(cnt == n * n){
+    if(cnt == n * m){
       arr2[i * n + j] += cnt;
     }
   }
