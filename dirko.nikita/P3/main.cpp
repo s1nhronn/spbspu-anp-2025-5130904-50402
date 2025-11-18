@@ -14,6 +14,11 @@ namespace dirko
   void doLftBotClk(const int *matrix, int *result, const size_t rows, const size_t cols)
   {
     const size_t elements = rows * cols;
+    if (elements < 1)
+    {
+      return;
+    }
+
     for (size_t i = 0; i < elements; ++i)
     {
       result[i] = matrix[i];
