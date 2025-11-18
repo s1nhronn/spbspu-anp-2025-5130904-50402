@@ -50,10 +50,6 @@ namespace saldaev
         matrix[y * cols + x] -= c;
       }
       left++;
-      if (!flag)
-      {
-        break;
-      }
 
       for (; x < right; ++x)
       {
@@ -62,10 +58,6 @@ namespace saldaev
         matrix[y * cols + x] -= c;
       }
       top++;
-      if (!flag)
-      {
-        break;
-      }
 
       for (; y < bottom; ++y)
       {
@@ -74,10 +66,6 @@ namespace saldaev
         matrix[y * cols + x] -= c;
       }
       right--;
-      if (!flag)
-      {
-        break;
-      }
 
       for (; x > left; --x)
       {
