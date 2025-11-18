@@ -21,7 +21,7 @@ int main(int argc, char ** argv)
     return 1;
   }
   int task = std::stoi(argv[1]);
-  
+
   if(task != 1 && task != 2){
     std::cerr << "First argument is not correct\n";
     return 1;
@@ -103,7 +103,7 @@ int main(int argc, char ** argv)
     }
     free(d_arr);
   }
-  
+
   std::ofstream output(argv[3]);
   output << n << " " << m << " ";
   for(size_t i = 0; i < n * m; ++i){
