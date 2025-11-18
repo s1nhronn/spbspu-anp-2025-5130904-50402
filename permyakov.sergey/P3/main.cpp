@@ -4,8 +4,7 @@
 
 namespace permyakov
 {
-  bool isErr1(int argc, char ** argv);
-  bool isErr2(size_t sizeArr, size_t size);
+  bool isErr(size_t sizeArr, size_t size);
   bool isEmptyFile(std::ifstream & input);
   int * changeArrVar1(int * arr, size_t n);
   int * changeArrVar2(int * arr, size_t n);
@@ -14,14 +13,24 @@ namespace permyakov
 int main(int argc, char ** argv)
 {
   namespace per = permyakov;
-  if(per::isErr1(argc, argv)){
+  
+  if(argc < 4){
+    std::cerr << "Not enough arguments\n";
+    return 1;
+  }
+  if(argc > 4){
+    std::cerr << "Too many arguments\n";
+    return 1;
+  }
+
+  int task = std::stoi(argv[1]);
+  
+  if(task != 1 && task != 2){
+    std::cerr << "First argument is not correct\n";
     return 1;
   }
 
   std::ifstream input(argv[2]);
-  if(per::isEmptyFile(input)){
-    return 2;
-  }
   size_t n = 0, m = 0;
   input >> n >> m;
   if(input.fail()){
@@ -35,8 +44,10 @@ int main(int argc, char ** argv)
   int * arr1 = nullptr;
   int * arr2 = nullptr;
   size_t s = 0;
-  if(argv[1][0] == '1'){
-    int arr[10000]{};
+  const size_t SIZE_OF_MATRIX = 10000;
+  
+  if(task == 1){
+    int arr[SIZE_OF_MATRIX]{};
     for(size_t num = 0; input >> num; ++s){
       arr[s] = num;
     }
@@ -45,7 +56,7 @@ int main(int argc, char ** argv)
       return 2;
     }
     input.close();
-    if(per::isErr2(s, n * m)){
+    if(per::isErr(s, n * m)){
       return 2;
     }
     try{
@@ -76,7 +87,7 @@ int main(int argc, char ** argv)
       return 2;
     }
     input.close();
-    if(per::isErr2(s, n * m)){
+    if(per::isErr(s, n * m)){
       free(d_arr);
       return 2;
     }
@@ -97,6 +108,7 @@ int main(int argc, char ** argv)
     }
     free(d_arr);
   }
+  
   std::ofstream output(argv[3]);
   output << n << " " << m << " ";
   for(size_t i = 0; i < n * m; ++i){
@@ -111,24 +123,7 @@ int main(int argc, char ** argv)
   free(arr2);
 }
 
-bool permyakov::isErr1(int argc, char ** argv)
-{
-  if(argc < 4){
-    std::cerr << "Not enough arguments\n";
-    return true;
-  }
-  if(argc > 4){
-    std::cerr << "Too many arguments\n";
-    return true;
-  }
-  if(argv[1][0] != '1' && argv[1][0] != '2'){
-    std::cerr << "First argument is not correct\n";
-    return true;
-  }
-  return false;
-}
-
-bool permyakov::isErr2(size_t sizeArr, size_t size)
+bool permyakov::isErr(size_t sizeArr, size_t size)
 {
   if(sizeArr < size){
     std::cerr << "Not enough numbers to create array\n";
