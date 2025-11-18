@@ -151,11 +151,13 @@ int main(int argc, char **argv)
   }
   if (fin.eof())
   {
+    delete[] result1;
     std::cerr << "Not enougth data\n";
     return 2;
   }
   else if (fin.fail())
   {
+    delete[] result1;
     std::cerr << "Cant read\n";
     return 2;
   }
