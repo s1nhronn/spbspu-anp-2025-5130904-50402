@@ -102,8 +102,8 @@ int main (int argc, char ** argv)
     std::cerr << "First parameter is out of range" << '\n';
     return 1;
   }
-  
-  
+
+
   long long r_1 = 0, c_1 = 0;
   std::ifstream input(argv[2]);
   input >> r_1 >> c_1;
