@@ -133,31 +133,31 @@ int * permyakov::lft_top_clk(int * arr, size_t n, size_t m)
   size_t cnt = 1, i = 0, j = 0;
   while(cnt < n * m){
     while(j < rig){
-      arr1[i * n + j] -= cnt;
+      arr1[i * m + j] -= cnt;
       cnt++;
       j++;
     }
     top++;
     while(i < bot){
-      arr1[i * n + j] -= cnt;
+      arr1[i * m + j] -= cnt;
       cnt++;
       i++;
     }
     rig--;
     while(j > lef){
-      arr1[i * n + j] -= cnt;
+      arr1[i * m + j] -= cnt;
       cnt++;
       j--;
     }
     bot--;
     while(i > top){
-      arr1[i * n + j] -= cnt;
+      arr1[i * m + j] -= cnt;
       cnt++;
       i--;
     }
     lef++;
     if(cnt == m * n){
-      arr1[i * n + j] -= cnt;
+      arr1[i * m + j] -= cnt;
     }
   }
   return arr1;
@@ -176,31 +176,31 @@ int * permyakov::lft_bot_cnt(int * arr, size_t n, size_t m)
   size_t cnt = 1, i = n - 1, j = 0;
   while(cnt < n * m){
     while(j < rig){
-      arr2[i * n + j] += cnt;
+      arr2[i * m + j] += cnt;
       cnt++;
       j++;
     }
     bot--;
     while(i > top){
-      arr2[i * n + j] += cnt;
+      arr2[i * m + j] += cnt;
       cnt++;
       i--;
     }
     rig--;
     while(j > lef){
-      arr2[i * n + j] += cnt;
+      arr2[i * m + j] += cnt;
       cnt++;
       j--;
     }
     top++;
     while(i < bot){
-      arr2[i * n + j] += cnt;
+      arr2[i * m + j] += cnt;
       cnt++;
       i++;
     }
     lef++;
     if(cnt == n * m){
-      arr2[i * n + j] += cnt;
+      arr2[i * m + j] += cnt;
     }
   }
   return arr2;
