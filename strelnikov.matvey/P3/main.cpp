@@ -3,23 +3,17 @@
 
 namespace strelnikov {
 
-  void rm(int** a, size_t r)
+  void rm(int* a, size_t r)
   {
-    if (!a) {
-      return;
-    }
-    for (size_t i = 0; i < r; ++i) {
-      delete[] a[i];
-    }
     delete[] a;
   }
 
-  void staticmtx(std::ifstream& out, int** a, size_t r, size_t c)
+  void staticmtx(std::ifstream& out, int* a, size_t r, size_t c)
   {
     size_t cnt = 0;
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
-        out >> a[i][j];
+        out >> a[i*c+j];
         if (out.eof() || out.fail()) {
           throw std::logic_error("Bad input\n");
         }
@@ -32,25 +26,20 @@ namespace strelnikov {
     }
   }
 
-  int** dynamicmtx(std::ifstream& out, size_t r, size_t c)
+  int* dynamicmtx(std::ifstream& out, size_t r, size_t c)
   {
-    int** a = nullptr;
+    int* a = nullptr;
     size_t cnt = 0;
     try {
-      a = new int*[r];
-      for (size_t i = 0; i < r; ++i) {
-        a[i] = new int[c];
-      }
+      a = new int[r*c];
     } catch (const std::bad_alloc& e) {
-      rm(a, r);
       throw;
     }
 
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
-        out >> a[i][j];
+        out >> a[i*c + j];
         if (out.fail()) {
-          rm(a, r);
           throw std::logic_error("Bad input\n");
         }
         ++cnt;
@@ -62,7 +51,7 @@ namespace strelnikov {
     return a;
   }
 
-  void lftBotCnt(int** mtx, size_t r, size_t c)
+  void lftBotCnt(int* mtx, size_t r, size_t c)
   {
     if (r == 0 || c == 0) {
       return;
@@ -73,7 +62,7 @@ namespace strelnikov {
 
     while (left <= right && top <= bot) {
       for (size_t j = left; j <= right; ++j) {
-        mtx[bot][j] += cnt++;
+        mtx[bot*c + j] += cnt++;
       }
       if (bot == 0) {
         break;
@@ -82,7 +71,7 @@ namespace strelnikov {
 
       if (left <= right) {
         for (size_t i = bot + 1; i-- > top;) {
-          mtx[i][right] += cnt++;
+          mtx[i*c + right] += cnt++;
           if (i == 0) {
             break;
           }
@@ -95,7 +84,7 @@ namespace strelnikov {
 
       if (top <= bot && left <= right) {
         for (size_t j = right + 1; j-- > left;) {
-          mtx[top][j] += cnt++;
+          mtx[top*c + j] += cnt++;
           if (j == 0) {
             break;
           }
@@ -105,36 +94,34 @@ namespace strelnikov {
 
       if (left <= right && top <= bot) {
         for (size_t i = top; i <= bot; ++i) {
-          mtx[i][left] += cnt++;
+          mtx[i*c + left] += cnt++;
         }
         ++left;
       }
     }
   }
 
-  size_t cntNzrDig(int** mtx, size_t r, size_t c)
+  size_t cntNzrDig(int* mtx, size_t r, size_t c)
   {
     size_t min = (r < c) ? r : c;
     size_t cnt = 0;
     for (size_t i = 1; i < min; ++i) {
       int tr = 1;
-      size_t ecri = i;
       for (size_t j = 0; j < min - i; ++j) {
-        if (mtx[j][ecri] == 0) {
+        if (mtx[j*c + j + i] == 0) {
           tr = 0;
+          break;
         }
-        ++ecri;
       }
       cnt += tr;
     }
     for (size_t i = 1; i < min; ++i) {
-      size_t ecri = i;
       int tr = 1;
       for (size_t j = 0; j < min - i; ++j) {
-        if (mtx[ecri][j] == 0) {
+        if (mtx[(j+i)*c + j] == 0) {
           tr = 0;
+          break;
         }
-        ++ecri;
       }
       cnt += tr;
     }
@@ -154,21 +141,17 @@ namespace strelnikov {
       throw std::logic_error("Bad rows and cols file input\n");
     }
 
-    int** mtx = 0;
+    int* mtx = nullptr;
 
     try {
       if (pr == 1) {
-        static int static_mtx[1000][1000];
+        static int static_mtx[1000*1000];
         if (r > 1000 || c > 1000) {
           throw std::logic_error("Matrix too large\n");
         }
-        int* rows[1000];
-        for (size_t i = 0; i < r; ++i) {
-          rows[i] = static_mtx[i];
-        }
-
-        staticmtx(out, rows, r, c);
-        mtx = rows;
+        
+        staticmtx(out, static_mtx, r, c);
+        mtx = static_mtx;
         out.close();
 
         std::ofstream in(inf);
@@ -176,12 +159,12 @@ namespace strelnikov {
           throw std::logic_error("Cannot open output file");
         }
 
-        size_t dig = cntNzrDig(rows, r, c);
+        size_t dig = cntNzrDig(mtx, r, c);
         in << dig << '\n';
-        lftBotCnt(rows, r, c);
+        lftBotCnt(mtx, r, c);
         for (size_t i = 0; i < r; ++i) {
           for (size_t j = 0; j < c; ++j)
-            in << rows[i][j] << ' ';
+            in << mtx[i*c + j] << ' ';
           in << '\n';
         }
         in.close();
@@ -199,7 +182,7 @@ namespace strelnikov {
         lftBotCnt(mtx, r, c);
         for (size_t i = 0; i < r; ++i) {
           for (size_t j = 0; j < c; ++j) {
-            in << mtx[i][j] << ' ';
+            in << mtx[i*c + j] << ' ';
           }
           in << '\n';
         }
