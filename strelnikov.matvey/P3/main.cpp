@@ -16,6 +16,9 @@ namespace strelnikov {
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
         in >> a[i * c + j];
+        if (!in) {
+          throw std::logic_error("Wrong format\n");
+        }
       }
     }
   }
@@ -144,21 +147,21 @@ int main(int argc, char* argv[])
   try {
     if (pr == 1) {
       static int static_mtx[1000 * 1000];
-      strelnikov::input(in, static_mtx, r, c);
-      if (!in) {
-        std::cerr << "Bad input\n";
+      try {
+        strelnikov::input(in, static_mtx, r, c);
+      } catch (std::logic_error& e) {
+        std::cerr << e.what();
         return 2;
       }
       mtx = static_mtx;
       in.close();
     } else {
       mtx = new int[r * c];
-      strelnikov::input(in, mtx, r, c);
-      if (!in) {
-        std::cerr << "Bad input\n";
-        if (pr == 2) {
-          delete[] mtx;
-        }
+      try {
+        strelnikov::input(in, mtx, r, c);
+      } catch (std::logic_error& e) {
+        std::cerr << e.what();
+        delete[] mtx;
         return 2;
       }
       in.close();
