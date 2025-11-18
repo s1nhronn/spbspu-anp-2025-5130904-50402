@@ -87,7 +87,7 @@ namespace sogdanov
   }
   void rm (char num, int * mtx)
   {
-    if (num == '2' && mtx != nullptr) {
+    if (num == 2 && mtx != nullptr) {
       free(mtx);
     }
   }
