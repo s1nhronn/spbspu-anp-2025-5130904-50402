@@ -100,15 +100,23 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  std::string arg = argv[1];
-  if (arg != "1" and arg != "2")
+  size_t mode = 0;
+  if (argv[1][0] == '1')
   {
-    std::cerr << "First parameter is unacceptable\n";
+    mode = 1;
+  }
+  else if (argv[1][0] == '2')
+  {
+    mode = 2;
+  }
+  else
+  {
     return 1;
+    std::cerr << "First parameter is unacceptable\n";
   }
 
   std::ifstream input(argv[2]);
-  std::ofstream output(argv[3], std::ios::trunc);
+  std::ofstream output(argv[3]);
 
   size_t rows = 0;
   size_t cols = 0;
@@ -121,61 +129,48 @@ int main(int argc, char **argv)
 
   if (rows == 0 && cols == 0)
   {
-    output << 0 << "\n"
-           << 0 << " " << 0;
+    output << "0\n0 0";
     return 0;
   }
 
-  if (arg == "1")
+  long long statMatrix[10000] = {};
+  long long *matrix = nullptr;
+  if (mode == 1)
   {
-    long long matrix[1000] = {};
-    for (size_t i = 0; i < rows * cols; ++i)
-    {
-      input >> matrix[i];
-    }
-    if (input.fail())
-    {
-      std::cerr << "data from file is unacceptable\n";
-      return 2;
-    }
-
-    size_t res1 = saldaev::doCntRowNsm(matrix, rows, cols);
-    saldaev::doLftBotClk(matrix, rows, cols);
-
-    output << res1 << "\n"
-           << rows << " " << cols << " ";
-    for (size_t i = 0; i < rows * cols - 1; ++i)
-    {
-      output << matrix[i] << " ";
-    }
-    output << matrix[rows * cols - 1];
+    matrix = statMatrix;
   }
   else
   {
-    long long *matrix = new long long[rows * cols];
-    for (size_t i = 0; i < rows * cols; ++i)
-    {
-      input >> matrix[i];
-    }
-    if (input.fail())
-    {
-      std::cerr << "data from file is unacceptable\n";
-      delete[] matrix;
-      return 2;
-    }
-
-    size_t res1 = saldaev::doCntRowNsm(matrix, rows, cols);
-    saldaev::doLftBotClk(matrix, rows, cols);
-
-    output << res1 << "\n"
-           << rows << " " << cols << " ";
-    for (size_t i = 0; i < rows * cols - 1; ++i)
-    {
-      output << matrix[i] << " ";
-    }
-    output << matrix[rows * cols - 1];
-    delete[] matrix;
+    matrix = new long long[rows * cols];
   }
 
-  return 0;
+  for (size_t i = 0; i < rows * cols; ++i)
+  {
+    input >> matrix[i];
+  }
+  if (input.fail())
+  {
+    std::cerr << "data from file is unacceptable\n";
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
+    return 2;
+  }
+
+  size_t res1 = saldaev::doCntRowNsm(matrix, rows, cols);
+  saldaev::doLftBotClk(matrix, rows, cols);
+
+  output << res1 << "\n"
+         << rows << " " << cols << " ";
+  for (size_t i = 0; i < rows * cols - 1; ++i)
+  {
+    output << matrix[i] << " ";
+  }
+  output << matrix[rows * cols - 1];
+
+  if (argv[1][0] == '2')
+  {
+    delete[] matrix;
+  }
 }
