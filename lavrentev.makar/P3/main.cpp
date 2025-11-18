@@ -81,6 +81,7 @@ int main(int argc, char **argv)
     if (k == 2)
     {
       std::cerr << "Couldn't read the matrix" << "\n";
+      free(arr);
       return 2;
     }
   }
