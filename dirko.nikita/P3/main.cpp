@@ -11,7 +11,7 @@ namespace dirko
     }
     return input;
   }
-  int *LFT_BOT_CLK(const int *matrix, const size_t rows, const size_t cols)
+  int *doLftBotClk(const int *matrix, const size_t rows, const size_t cols)
   {
     const size_t elements = rows * cols;
     if (elements == 0)
@@ -65,7 +65,7 @@ namespace dirko
     }
     return result;
   }
-  bool LWR_TRI_MTX(const int *matrix, const size_t rows, const size_t cols)
+  bool doLwrTriMtx(const int *matrix, const size_t rows, const size_t cols)
   {
     const size_t min = (rows > cols) ? cols : rows;
     if (min < 2)
@@ -148,8 +148,8 @@ int main(int argc, char **argv)
   {
     int matrix[1000]{};
     dirko::inputMtx(fin, matrix, rows, cols);
-    result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
-    result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
+    result1 = dirko::doLftBotClk(matrix, rows, cols);
+    result2 = dirko::doLwrTriMtx(matrix, rows, cols);
   }
   else
   {
@@ -164,8 +164,8 @@ int main(int argc, char **argv)
       return 3;
     }
     dirko::inputMtx(fin, matrix, rows, cols);
-    result1 = dirko::LFT_BOT_CLK(matrix, rows, cols);
-    result2 = dirko::LWR_TRI_MTX(matrix, rows, cols);
+    result1 = dirko::doLftBotClk(matrix, rows, cols);
+    result2 = dirko::doLwrTriMtx(matrix, rows, cols);
     delete[] matrix;
   }
   if (fin.eof())
