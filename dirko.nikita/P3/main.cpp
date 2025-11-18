@@ -130,16 +130,14 @@ int main(int argc, char **argv)
     return 3;
   }
   bool result2 = false;
+  int staticMatrix[1000]{};
+  int *matrix = nullptr;
   if (mode == 1)
   {
-    int matrix[1000]{};
-    dirko::inputMtx(fin, matrix, rows, cols);
-    dirko::doLftBotClk(matrix, result1, rows, cols);
-    result2 = dirko::doLwrTriMtx(matrix, rows, cols);
+    matrix = staticMatrix;
   }
   else
   {
-    int *matrix = nullptr;
     try
     {
       matrix = new int[rows * cols];
@@ -149,9 +147,12 @@ int main(int argc, char **argv)
       std::cerr << "Cant alloc\n";
       return 3;
     }
-    dirko::inputMtx(fin, matrix, rows, cols);
-    dirko::doLftBotClk(matrix, result1, rows, cols);
-    result2 = dirko::doLwrTriMtx(matrix, rows, cols);
+  }
+  dirko::inputMtx(fin, matrix, rows, cols);
+  dirko::doLftBotClk(matrix, result1, rows, cols);
+  result2 = dirko::doLwrTriMtx(matrix, rows, cols);
+  if (mode == 2)
+  {
     delete[] matrix;
   }
   if (fin.eof())
