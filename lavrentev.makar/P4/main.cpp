@@ -1,8 +1,11 @@
 #include <iostream>
 #include <cstring>
 
-size_t dif_lat(char * ans, std::string s);
-void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
+namespace pFourFunc
+{
+  size_t dif_lat(char * ans, std::string s);
+  void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
+}
 
 int main()
 {
@@ -28,8 +31,6 @@ int main()
     return 1;
   }
 
-  int ans_7 = dif_lat(ans, s);
-
   char* result = new char[ex + ex2];
   if (result == nullptr)
   {
@@ -37,7 +38,8 @@ int main()
     return 1;
   }
 
-  uni_two(s, s2, ex, ex2, result);
+  pFourFunc::uni_two(s, s2, ex, ex2, result);
+  int ans_7 = pFourFunc::dif_lat(ans, s);
 
   std::cout << "Ans 7: " << ans_7 << "\n";
   std::cout << "Ans 12: " << result << "\n";
@@ -46,45 +48,54 @@ int main()
   delete[] result;
 }
 
-size_t dif_lat(char * ans, std::string s){
+size_t pFourFunc::dif_lat(char * ans, std::string s)
+{
   size_t ex = s.size();
 
   size_t answer = 0;
 
-  for(size_t i = 0; i < ex; ++i){
+  for (size_t i = 0; i < ex; ++i)
+  {
     ans[i] = '#';
   }
 
-  for(size_t i = 0; i < ex; ++i){
+  for (size_t i = 0; i < ex; ++i)
+  {
     bool flag = false;
-    for(size_t j = 0; j < ex; ++j){
-      if(ans[j] == s[i]){
+    for (size_t j = 0; j < ex; ++j)
+    {
+      if (ans[j] == s[i])
+      {
         flag = true;
         break;
       }
     }
 
-    if(!flag && isalpha(s[i])){
+    if (!flag && isalpha(s[i]))
+    {
       ans[i] = s[i];
     }
    
   }
 
-  for(size_t i = 0; i < ex; ++i){
-    if(ans[i] != '#'){
+  for (size_t i = 0; i < ex; ++i)
+  {
+    if (ans[i] != '#')
+    {
       ++answer;
     }
   }
-  
+
   return answer;
 }
 
-void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
+void pFourFunc::uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
 {
   size_t min;
   size_t max;
   std::string max_s;
-  if (ex < ex2){
+  if (ex < ex2)
+  {
     min = ex;
     max = ex2;
     max_s = s2;
@@ -95,12 +106,21 @@ void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
     max = ex;
     max_s = s;
   }
+
+  size_t buf = 0;
+
   for (size_t i = 0; i < min; ++i)
   {
-    result += s[i];
-    result += s2[i];
+    result[buf] =  s[i];
+    result[buf + 1] =  s2[i];
+    buf += 2;
   }
-  for(size_t i = min; i < max; ++i){
-    result += max_s[i];
+
+  buf = min;
+
+  for (size_t i = min * 2; i < ex + ex2; ++i)
+  {
+    result[i] = max_s[min];
+    ++min;
   }
 }
