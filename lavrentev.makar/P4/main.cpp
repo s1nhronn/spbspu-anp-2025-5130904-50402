@@ -2,7 +2,7 @@
 #include <cstring>
 
 size_t dif_lat(char * ans, std::string s);
-char* uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
+void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
 
 int main()
 {
@@ -37,7 +37,7 @@ int main()
     return 1;
   }
 
-  result = uni_two(s, s2, ex, ex2, result);
+  uni_two(s, s2, ex, ex2, result);
 
   std::cout << "Ans 7: " << ans_7 << "\n";
   std::cout << "Ans 12: " << result << "\n";
@@ -64,8 +64,7 @@ size_t dif_lat(char * ans, std::string s){
       }
     }
 
-    int k = s[i];
-    if(!flag && k ){
+    if(!flag && isalpha(s[i])){
       ans[i] = s[i];
     }
    
@@ -80,7 +79,7 @@ size_t dif_lat(char * ans, std::string s){
   return answer;
 }
 
-char* uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
+void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
 {
   size_t min;
   size_t max;
@@ -104,5 +103,4 @@ char* uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result
   for(size_t i = min; i < max; ++i){
     result += max_s[i];
   }
-  return result;
 }
