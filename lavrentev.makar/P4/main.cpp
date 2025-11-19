@@ -45,3 +45,37 @@ int main()
   delete[] ans;
   delete[] result;
 }
+
+size_t dif_lat(char * ans, std::string s){
+  size_t ex = s.size();
+
+  size_t answer = 0;
+
+  for(size_t i = 0; i < ex; ++i){
+    ans[i] = '#';
+  }
+
+  for(size_t i = 0; i < ex; ++i){
+    bool flag = false;
+    for(size_t j = 0; j < ex; ++j){
+      if(ans[j] == s[i]){
+        flag = true;
+        break;
+      }
+    }
+
+    int k = s[i];
+    if(!flag && k ){
+      ans[i] = s[i];
+    }
+   
+  }
+
+  for(size_t i = 0; i < ex; ++i){
+    if(ans[i] != '#'){
+      ++answer;
+    }
+  }
+  
+  return answer;
+}
