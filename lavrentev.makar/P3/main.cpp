@@ -5,10 +5,14 @@
 #include <cstring>
 #include <limits>
 
-int myPow(int a, int b);
-size_t cntLocMin(int* arr, size_t x, size_t y);
-size_t numColLsr(int* arr, size_t x, size_t y);
-int inputFile(std::istream& in, int* m, size_t lng);
+const size_t STATIC_SIZE = 10000;
+
+namespace pThrFunc
+{
+  size_t cntLocMin(int* arr, size_t x, size_t y);
+  size_t numColLsr(int* arr, size_t x, size_t y);
+  int inputFile(std::istream& in, int* m, size_t lng);
+}
 
 int main(int argc, char **argv)
 {
@@ -61,7 +65,7 @@ int main(int argc, char **argv)
 
   size_t total = x * y;
 
-  int arr2[10000] = {};
+  int arr2[STATIC_SIZE] = {};
   int* arr = nullptr;
 
   int *matrix = nullptr;
@@ -77,7 +81,7 @@ int main(int argc, char **argv)
       arr = static_cast <int*> (malloc(total_for_memory * sizeof(int)));
       matrix = arr;
     }
-    int k = inputFile(input, matrix, total);
+    int k = pThrFunc::inputFile(input, matrix, total);
     if (k == 2)
     {
       std::cerr << "Couldn't read the matrix" << "\n";
@@ -92,27 +96,25 @@ int main(int argc, char **argv)
     return 2;
   }
 
-  size_t ans2 = cntLocMin(matrix, x, y);
-  size_t ans11 = numColLsr(matrix, x, y);
+  size_t ans2 = pThrFunc::cntLocMin(matrix, x, y);
+  size_t ans11 = pThrFunc::numColLsr(matrix, x, y);
 
   std::ofstream output(argv[3]);
 
   output << "Answer for var_2: " << ans2 << "\n";
   output << "Answer for var_11: " << ans11 << "\n";
-  if (num == 2)
-  {
-    free(arr);
-  }
+
+  free(arr);
 }
 
-size_t cntLocMin(int* arr, size_t x, size_t y){
+size_t pThrFunc::cntLocMin(int* arr, size_t x, size_t y){
 
   size_t ans_2 = 0;
   size_t total = x * y;
 
   for (size_t i = y + 1; i < total - y; ++i)
   {
-    try
+    if ((i % y != 0) && (i % y != y - 1))
     {
       bool b1 = (arr[i] < arr[i + 1]) && (arr[i] < arr[i - 1]);
       b1 = b1 && (arr[i] < arr[i + y]) && (arr[i] < arr[i - y]);
@@ -123,16 +125,12 @@ size_t cntLocMin(int* arr, size_t x, size_t y){
         ++ans_2;
       }
     }
-    catch (const std::out_of_range &)
-    {
-      continue;
-    }
   }
 
   return ans_2;
 }
 
-size_t numColLsr(int* arr, size_t x, size_t y)
+size_t pThrFunc::numColLsr(int* arr, size_t x, size_t y)
 {
   int ans_11 = 0;
   size_t total = x * y;
@@ -182,7 +180,7 @@ size_t numColLsr(int* arr, size_t x, size_t y)
   return ans_11;
 }
 
-int inputFile(std::istream& in, int* m, size_t lng)
+int pThrFunc::inputFile(std::istream& in, int* m, size_t lng)
 {
   for (size_t i = 0; i < lng; i++)
   {
