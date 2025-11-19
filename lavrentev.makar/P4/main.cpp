@@ -79,3 +79,30 @@ size_t dif_lat(char * ans, std::string s){
   
   return answer;
 }
+
+char* uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
+{
+  size_t min;
+  size_t max;
+  std::string max_s;
+  if (ex < ex2){
+    min = ex;
+    max = ex2;
+    max_s = s2;
+  }
+  else
+  {
+    min = ex2;
+    max = ex;
+    max_s = s;
+  }
+  for (size_t i = 0; i < min; ++i)
+  {
+    result += s[i];
+    result += s2[i];
+  }
+  for(size_t i = min; i < max; ++i){
+    result += max_s[i];
+  }
+  return result;
+}
