@@ -91,22 +91,6 @@ namespace karpovich
       }
     }
   }
-  int processArray(int* arr, size_t rows, size_t cols, const char* ouput) 
-  {
-    lftTopClk(arr, rows, cols);
-
-    std::ofstream output(ouput);
-    if (!output.is_open()) {
-      std::cerr << "Failed to open output file\n";
-      return 2;
-    }
-
-    size_t res1 = locMin(arr, rows, cols);
-    outputFunc(output, res1, arr, rows, cols);
-    output.close();
-
-    return 0;
-  }
 }
 
 int main(int argc, char ** argv)
@@ -134,9 +118,14 @@ int main(int argc, char ** argv)
     return 2;
   }
 
+  std::ofstream output(argv[3]);
+  if (!output.is_open()) {
+    std::cerr << "Failed to open output file\n";
+    return 2;
+  }
+
   size_t rows = 0;
   size_t cols = 0;
-
   int* active_arr = nullptr;
   int arr_static[karp::MAX];
   bool is_dynamic = false;
@@ -162,9 +151,12 @@ int main(int argc, char ** argv)
     return 2;
   }
 
-  int res = karp::processArray(active_arr, rows, cols, argv[3]);
+  size_t res1 = karp::locMin(active_arr, rows, cols);
+  karp::lftTopClk(active_arr, rows, cols);
+  karp::outputFunc(output, res1, active_arr, rows, cols);
+
   if (is_dynamic) {
     delete[] active_arr;
   }
-  return res;
+  return 0;
 }
