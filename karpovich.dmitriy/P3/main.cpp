@@ -120,10 +120,6 @@ int main(int argc, char ** argv)
     std::cerr << "Failed to read rows and cols\n";
     return 2;
   }
-  if (rows == 0 || cols == 0) {
-    std::cerr << "Invalid matrix size\n";
-    return 2;
-  }
 
   size_t size = rows * cols;
   int* active_arr = nullptr;
