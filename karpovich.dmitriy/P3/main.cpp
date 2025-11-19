@@ -6,30 +6,15 @@ namespace karpovich
 {
   const size_t MAX = 10000;
 
-  std::istream& inputFunc(std::istream& input, int* arr, size_t& rows, size_t& cols)
+  std::istream& inputFunc(std::istream& input, int* arr, size_t size)
   {
-    if (!(input >> rows >> cols)) {
-      return input;
-    }
-    if (rows * cols > MAX) {
-      input.setstate(std::ios::failbit);
-      return input;
-    }
-    for (size_t i = 0; i < rows * cols; ++i) {
+    for (size_t i = 0; i < size; ++i) {
       if (!(input >> arr[i])) {
-        return input;
+        input.setstate(std::ios::failbit);
+        break;
       }
     }
     return input;
-  }
-
-  void outputFunc(std::ostream& output, size_t res1, int* res2, size_t rows, size_t cols)
-  {
-    output << res1 << '\n';
-    output << rows << ' ' << cols;
-    for (size_t i = 0; i < rows * cols; ++i) {
-      output << ' ' << res2[i];
-    }
   }
 
   size_t locMin(const int* arrdyn, size_t rows, size_t cols)
@@ -91,6 +76,13 @@ namespace karpovich
       }
     }
   }
+  void printArray(std::ostream& out, const int* arr, size_t rows, size_t cols)
+  {
+    out << rows << ' ' << cols;
+    for (size_t i = 0; i < rows * cols; ++i) {
+      out << ' ' << arr[i];
+    }
+  }
 }
 
 int main(int argc, char ** argv)
@@ -102,7 +94,7 @@ int main(int argc, char ** argv)
   }
 
   char* endptr = nullptr;
-  long num = std::strtol(argv[1], &endptr, 10);
+  size_t num = std::strtol(argv[1], &endptr, 10);
   if (endptr == argv[1] || *endptr != '\0') {
     std::cerr << "First parameter is not a number\n";
     return 1;
@@ -117,15 +109,23 @@ int main(int argc, char ** argv)
     std::cerr << "Failed to open input file\n";
     return 2;
   }
-
   std::ofstream output(argv[3]);
   if (!output.is_open()) {
     std::cerr << "Failed to open output file\n";
     return 2;
   }
 
-  size_t rows = 0;
-  size_t cols = 0;
+  size_t rows = 0, cols = 0;
+  if (!(input >> rows >> cols)) {
+    std::cerr << "Failed to read rows and cols\n";
+    return 2;
+  }
+  if (rows == 0 || cols == 0) {
+    std::cerr << "Invalid matrix size\n";
+    return 2;
+  }
+
+  size_t size = rows * cols;
   int* active_arr = nullptr;
   int arr_static[karp::MAX];
   bool is_dynamic = false;
@@ -134,7 +134,7 @@ int main(int argc, char ** argv)
     active_arr = arr_static;
   } else {
     try {
-      active_arr = new int[karp::MAX];
+      active_arr = new int[size];
       is_dynamic = true;
     } catch (const std::bad_alloc&) {
       std::cerr << "Memory allocation failed\n";
@@ -142,18 +142,17 @@ int main(int argc, char ** argv)
     }
   }
 
-  karp::inputFunc(input, active_arr, rows, cols);
+  karp::inputFunc(input, active_arr, size);
   if (!input) {
-    std::cerr << "Failed to read input data\n";
-    if (is_dynamic) {
-      delete[] active_arr;
-    }
+    std::cerr << "Failed to read matrix data\n";
+    if (is_dynamic) delete[] active_arr;
     return 2;
   }
 
   size_t res1 = karp::locMin(active_arr, rows, cols);
+  output << res1 << '\n';
   karp::lftTopClk(active_arr, rows, cols);
-  karp::outputFunc(output, res1, active_arr, rows, cols);
+  karp::printArray(output, active_arr, rows, cols);
 
   if (is_dynamic) {
     delete[] active_arr;
