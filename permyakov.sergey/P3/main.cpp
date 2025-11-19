@@ -116,8 +116,7 @@ int main(int argc, char ** argv)
   free(arr1);
   free(arr2);
 }
-//прошу прощения за функцию ниже,
-//но это самый очевидный вариант вынести цикл в отдельную функцию
+
 void permyakov::movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
 size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr)
 {
