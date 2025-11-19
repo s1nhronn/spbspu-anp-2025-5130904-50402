@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 namespace karpovich
 {
@@ -90,7 +91,8 @@ namespace karpovich
       }
     }
   }
-  int processArray(int* arr, size_t rows, size_t cols, const char* ouput) {
+  int processArray(int* arr, size_t rows, size_t cols, const char* ouput) 
+  {
     lftTopClk(arr, rows, cols);
 
     std::ofstream output(ouput);
@@ -114,17 +116,13 @@ int main(int argc, char ** argv)
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
-  const char* s = argv[1];
-  if (s[0] == '\0' || s[1] != '\0') {
+
+  char* endptr = nullptr;
+  long num = std::strtol(argv[1], &endptr, 10);
+  if (endptr == argv[1] || *endptr != '\0') {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-  char c = s[0];
-  if (!std::isdigit(static_cast<unsigned char>(c))) {
-    std::cerr << "First parameter is not a number\n";
-    return 1;
-  }
-  int num = std::atoi(s);
   if (num != 1 && num != 2) {
     std::cerr << "First parameter is out of range\n";
     return 1;
