@@ -1,12 +1,13 @@
 #include <iostream>
 #include <iomanip>
 #include <cctype>
+#include <algorithm>
 
 namespace dirko
 {
-  const char *find(const char *start, const char *end, char target)
+  char *find(char *start, char *end, char target)
   {
-    for (const char *ch = start; ch < end; ++ch)
+    for (char *ch = start; ch < end; ++ch)
     {
       if (*ch == target)
       {
@@ -15,46 +16,61 @@ namespace dirko
     }
     return end;
   }
-  std::istream &getSize(std::istream &in, size_t &size)
+  char *getLine(std::istream &in, size_t &size)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
+    char *str = nullptr;
+    char ch = 0;
     if (isSkipWp)
     {
       in >> std::noskipws;
     }
-    std::streampos pos = in.tellg();
-    char ch = 0;
     while (in >> ch && ch != '\n')
     {
+      char *temp = reinterpret_cast<char *>(malloc(size + 1));
+      if (temp == nullptr)
+      {
+        free(str);
+        throw std::bad_alloc();
+      }
+      for (size_t i = 0; i < size; ++i)
+      {
+        temp[i] = str[i];
+      }
+      free(str);
+      str = temp;
+      str[size] = ch;
       ++size;
     }
-    in.seekg(pos);
+    if (in.fail())
+    {
+      free(str);
+      throw std::logic_error("Cant read");
+    }
     if (isSkipWp)
     {
       in >> std::skipws;
     }
-    return in;
-  }
-  void getLine(std::istream &in, char *str, const size_t size)
-  {
-    bool isSkipWp = in.flags() & std::ios::skipws;
-    if (isSkipWp)
+    char *temp = reinterpret_cast<char *>(malloc(size + 1));
+    if (temp == nullptr)
     {
-      in >> std::noskipws;
+      free(str);
+      throw std::bad_alloc();
     }
     for (size_t i = 0; i < size; ++i)
     {
-      in >> str[i];
+      temp[i] = str[i];
     }
-    if (isSkipWp)
-    {
-      in >> std::skipws;
-    }
+    free(str);
+    str = temp;
+    str[size] = '\0';
+    ++size;
+    return str;
   }
-  size_t doDifLat(const char *str, const size_t size)
+  size_t DIF_LAT(const char *str, size_t size)
   {
     size_t count = 0;
-    char seen[26] = {};
+    char seen[26] = {}; // колхоз((
     for (size_t i = 0; i < size; ++i)
     {
       if (std::isalpha(str[i]))
@@ -68,7 +84,7 @@ namespace dirko
     }
     return count;
   }
-  char *doUppLow(const char *source, char *distention, const size_t size)
+  char *UPP_LOW(const char *source, char *distention, const size_t size)
   {
     for (size_t i = 0; i < size; ++i)
     {
@@ -76,36 +92,40 @@ namespace dirko
     }
     return distention;
   }
+  std::ostream &output(std::ostream &out, const size_t result1, const char *result2)
+  {
+    out << result1 << '\n';
+    return out << result2;
+  }
 }
 int main()
 {
   char *str = nullptr;
   size_t size = 0;
-  dirko::getSize(std::cin, size);
-  if (std::cin.fail())
+  try
   {
-    std::cerr << "Cant read\n";
-    return 1;
+    str = dirko::getLine(std::cin, size);
   }
-  str = reinterpret_cast< char * >(malloc(sizeof(char) * (size + 1)));
-  if (str == nullptr)
+  catch (const std::bad_alloc &e)
   {
     std::cerr << "Cant alloc\n";
     return 1;
   }
-  str[size] = '\0';
-  dirko::getLine(std::cin, str, size);
-  size_t result1 = dirko::doDifLat(str, size);
-  char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * size));
+  catch (const std::logic_error &e)
+  {
+    std::cerr << e.what() << "\n";
+    return 1;
+  }
+  size_t result1 = dirko::DIF_LAT(str, size);
+  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
     free(str);
     std::cerr << "Cant alloc\n";
     return 1;
   }
-  dirko::doUppLow(str, result2, size);
-  std::cout << result1 << '\n';
-  std::cout << result2;
+  dirko::UPP_LOW(str, result2, size);
+  dirko::output(std::cout, result1, result2) << '\n';
   free(str);
   free(result2);
 }
