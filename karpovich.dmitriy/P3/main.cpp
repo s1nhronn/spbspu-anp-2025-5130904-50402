@@ -136,30 +136,34 @@ int main(int argc, char ** argv)
 
   size_t rows = 0;
   size_t cols = 0;
+
+  int* active_arr = nullptr;
+  int arr_static[karp::MAX];
+  bool is_dynamic = false;
+
   if (num == 1) {
-    int arr_static[karp::MAX];
-    karp::inputFunc(input, arr_static, rows, cols);
-    if (!input) {
-      std::cerr << "Failed to read input data\n";
+    active_arr = arr_static;
+  } else {
+    active_arr = new int[karp::MAX];
+    if (!active_arr) {
+      std::cerr << "Memory allocation failed\n";
       return 2;
     }
-    int res = karp::processArray(arr_static, rows, cols, argv[3]);
-    return res;
+    is_dynamic = true;
   }
-  else {
-    int* arrdyn = new int[karp::MAX];
-    if (!arrdyn) {
-        std::cerr << "Memory allocation failed\n";
-        return 2;
+
+  karp::inputFunc(input, active_arr, rows, cols);
+  if (!input) {
+    std::cerr << "Failed to read input data\n";
+    if (is_dynamic) {
+      delete[] active_arr;
     }
-    karp::inputFunc(input, arrdyn, rows, cols);
-    if (!input) {
-      std::cerr << "Failed to read input data\n";
-      delete[] arrdyn;
-      return 2;
-    }
-    int res = karp::processArray(arrdyn, rows, cols, argv[3]);
-    delete[] arrdyn;
-    return res;
+    return 2;
   }
+
+  int res = karp::processArray(active_arr, rows, cols, argv[3]);
+  if (is_dynamic) {
+    delete[] active_arr;
+  }
+  return res;
 }
