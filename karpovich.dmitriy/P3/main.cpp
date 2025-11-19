@@ -144,12 +144,13 @@ int main(int argc, char ** argv)
   if (num == 1) {
     active_arr = arr_static;
   } else {
-    active_arr = new int[karp::MAX];
-    if (!active_arr) {
+    try {
+      active_arr = new int[karp::MAX];
+      is_dynamic = true;
+    } catch (const std::bad_alloc&) {
       std::cerr << "Memory allocation failed\n";
       return 2;
     }
-    is_dynamic = true;
   }
 
   karp::inputFunc(input, active_arr, rows, cols);
