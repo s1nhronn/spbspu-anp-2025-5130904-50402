@@ -1,13 +1,12 @@
 #include <iostream>
 #include <iomanip>
 #include <cctype>
-#include <algorithm>
 
 namespace dirko
 {
-  char *find(char *start, char *end, char target)
+  const char *find(const char *start, const char *end, const char target)
   {
-    for (char *ch = start; ch < end; ++ch)
+    for (const char *ch = start; ch < end; ++ch)
     {
       if (*ch == target)
       {
@@ -27,7 +26,7 @@ namespace dirko
     }
     while (in >> ch && ch != '\n')
     {
-      char *temp = reinterpret_cast<char *>(malloc(size + 1));
+      char *temp = reinterpret_cast< char * >(malloc(size + 1));
       if (temp == nullptr)
       {
         free(str);
@@ -51,7 +50,7 @@ namespace dirko
     {
       in >> std::skipws;
     }
-    char *temp = reinterpret_cast<char *>(malloc(size + 1));
+    char *temp = reinterpret_cast< char * >(malloc(size + 1));
     if (temp == nullptr)
     {
       free(str);
@@ -67,10 +66,10 @@ namespace dirko
     ++size;
     return str;
   }
-  size_t DIF_LAT(const char *str, size_t size)
+  size_t doDifLat(const char *str, const size_t size)
   {
     size_t count = 0;
-    char seen[26] = {}; // колхоз((
+    char seen[26] = {};
     for (size_t i = 0; i < size; ++i)
     {
       if (std::isalpha(str[i]))
@@ -84,18 +83,13 @@ namespace dirko
     }
     return count;
   }
-  char *UPP_LOW(const char *source, char *distention, const size_t size)
+  char *doUppLow(const char *source, char *distention, const size_t size)
   {
     for (size_t i = 0; i < size; ++i)
     {
       distention[i] = std::tolower(source[i]);
     }
     return distention;
-  }
-  std::ostream &output(std::ostream &out, const size_t result1, const char *result2)
-  {
-    out << result1 << '\n';
-    return out << result2;
   }
 }
 int main()
@@ -116,16 +110,17 @@ int main()
     std::cerr << e.what() << "\n";
     return 1;
   }
-  size_t result1 = dirko::DIF_LAT(str, size);
-  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
+  size_t result1 = dirko::doDifLat(str, size);
+  char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
     free(str);
     std::cerr << "Cant alloc\n";
     return 1;
   }
-  dirko::UPP_LOW(str, result2, size);
-  dirko::output(std::cout, result1, result2) << '\n';
+  dirko::doUppLow(str, result2, size);
+  std::cout << result1 << '\n';
+  std::cout << result2 << '\n';
   free(str);
   free(result2);
 }
