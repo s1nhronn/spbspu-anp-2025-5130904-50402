@@ -131,10 +131,10 @@ int main(int argc, char **argv)
     return 3;
   }
   bool result2 = false;
-  int staticMatrix[dirko::MAX_SIZE]{};
   int *matrix = nullptr;
   if (mode == 1)
   {
+    static int staticMatrix[dirko::MAX_SIZE]{};
     matrix = staticMatrix;
   }
   else
