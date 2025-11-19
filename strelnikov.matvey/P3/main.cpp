@@ -23,9 +23,8 @@ namespace strelnikov {
     }
   }
 
-  void output(std::ofstream& out, int* a, size_t r, size_t c, int dig)
+  void output(std::ofstream& out, int* a, size_t r, size_t c)
   {
-    out << dig << '\n';
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
         out << a[i * c + j] << ' ';
@@ -34,7 +33,7 @@ namespace strelnikov {
     }
   }
 
-  void lftBotCnt(int* mtx, size_t r, size_t c)
+  void doLftBotCnt(int* mtx, size_t r, size_t c)
   {
     if (r == 0 || c == 0) {
       return;
@@ -84,7 +83,7 @@ namespace strelnikov {
     }
   }
 
-  size_t cntNzrDig(int* mtx, size_t r, size_t c)
+  size_t doCntNzrDig(int* mtx, size_t r, size_t c)
   {
     size_t min = (r < c) ? r : c;
     size_t cnt = 0;
@@ -180,9 +179,10 @@ int main(int argc, char* argv[])
     }
     return 2;
   }
-  size_t dig = strelnikov::cntNzrDig(mtx, r, c);
-  strelnikov::lftBotCnt(mtx, r, c);
-  strelnikov::output(out, mtx, r, c, dig);
+  size_t dig = strelnikov::doCntNzrDig(mtx, r, c);
+  strelnikov::doLftBotCnt(mtx, r, c);
+  out << dig << '\n';
+  strelnikov::output(out, mtx, r, c);
   if (pr == 2) {
     delete[] mtx;
   }
