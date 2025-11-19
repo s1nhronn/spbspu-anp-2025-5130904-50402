@@ -2,8 +2,7 @@
 #include <cstring>
 
 size_t dif_lat(char * ans, std::string s);
-std::string uni_two(std::string s);
-char * del(char * a, char * b, char el);
+char* uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
 
 int main()
 {
@@ -18,50 +17,31 @@ int main()
     return 1;
   }
 
+  std::string s2;
+  std::getline(std::cin, s2);
+
+  size_t ex2 = s2.size();
+  char * ans2 = new char[ex2];
+  if (ans2 == nullptr)
+  {
+    std::cerr << "Memory allocation fail" << "\n";
+    return 1;
+  }
+
   int ans_7 = dif_lat(ans, s);
 
-  //std::string ans_12 = uni_two(s);
+  char* result = new char[ex + ex2];
+  if (result == nullptr)
+  {
+    std::cerr << "Memory allocation fail" << "\n";
+    return 1;
+  }
+
+  result = uni_two(s, s2, ex, ex2, result);
 
   std::cout << "Ans 7: " << ans_7 << "\n";
-  //std::cout << "Ans 12: " << ans_12 << "\n";
+  std::cout << "Ans 12: " << result << "\n";
 
   delete[] ans;
-}
-
-size_t dif_lat(char * ans, std::string s){
-  size_t ex = s.size();
-
-  size_t answer = 0;
-
-  for(size_t i = 0; i < ex; ++i){
-    ans[i] = '#';
-  }
-
-  for(size_t i = 0; i < ex; ++i){
-    bool flag = false;
-    for(size_t j = 0; j < ex; ++j){
-      if(ans[j] == s[i]){
-        flag = true;
-        break;
-      }
-    }
-
-    int k = s[i];
-    if(!flag && k ){
-      ans[i] = s[i];
-    }
-   
-  }
-
-  for(size_t i = 0; i < ex; ++i){
-    if(ans[i] != '#'){
-      ++answer;
-    }
-  }
-  
-  return answer;
-}
-
-char * del(char * a, char * b, char el){
-
+  delete[] result;
 }
