@@ -7,22 +7,20 @@ namespace strelnikov {
 
   bool prValidation(char* a)
   {
-    if (a == nullptr || (a[0] != '1' && a[0] != '2') || a[1] != '\0') {
-      return false;
-    }
-    return true;
+    return (a && (a[0] == '1' || a[0] == '2') && a[1] == '\0');
   }
 
-  void input(std::ifstream& in, int* a, size_t r, size_t c)
+  bool input(std::ifstream& in, int* a, size_t r, size_t c)
   {
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
         in >> a[i * c + j];
         if (!in) {
-          throw std::logic_error("Wrong format\n");
+          return false;
         }
       }
     }
+    return true;
   }
 
   void output(std::ofstream& out, int* a, size_t r, size_t c)
@@ -30,7 +28,7 @@ namespace strelnikov {
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
         out << a[i * c + j];
-        if(!(i == r - 1 && j == c - 1)){
+        if (!(i == r - 1 && j == c - 1)) {
           out << ' ';
         }
       }
@@ -66,7 +64,7 @@ namespace strelnikov {
       }
 
       if (top <= bot && left <= right) {
-        for (long long j = (long long)right; j >= (long long)left && j >= 0 ; --j) {
+        for (long long j = (long long)right; j >= (long long)left && j >= 0; --j) {
           mtx[top * c + j] += cnt++;
         }
         ++top;
@@ -106,14 +104,14 @@ namespace strelnikov {
     return cnt;
   }
 
-}
+} // namespace strelnikov
 int main(int argc, char* argv[])
 {
-  if(argc > 4){
+  if (argc > 4) {
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  if(argc < 4){
+  if (argc < 4) {
     std::cerr << "Too few arguments\n";
     return 1;
   }
@@ -135,7 +133,7 @@ int main(int argc, char* argv[])
     std::cerr << "Bad rows and cols file input\n";
     return 2;
   }
-  if ((r > 10000 || c > 10000 || r/10000 > c) && pr == 1) {
+  if ((r > 10000 || c > 10000 || r / 10000 > c) && pr == 1) {
     std::cerr << "Matrix too large\n";
     return 2;
   }
@@ -143,10 +141,8 @@ int main(int argc, char* argv[])
   int* mtx = nullptr;
   int static_mtx[strelnikov::static_max];
   if (pr == 1) {
-    try {
-      strelnikov::input(in, static_mtx, r, c);
-    } catch (std::logic_error& e) {
-      std::cerr << e.what();
+    if (!(strelnikov::input(in, static_mtx, r, c))) {
+      std::cerr << "Wrong format\n";
       return 2;
     }
     mtx = static_mtx;
@@ -157,10 +153,8 @@ int main(int argc, char* argv[])
     } catch (const std::bad_alloc& e) {
       return 2;
     }
-    try {
-      strelnikov::input(in, mtx, r, c);
-    } catch (std::logic_error& e) {
-      std::cerr << e.what();
+    if (!(strelnikov::input(in, mtx, r, c))) {
+      std::cerr << "Wrong format\n";
       delete[] mtx;
       return 2;
     }
