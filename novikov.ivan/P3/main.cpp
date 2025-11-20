@@ -1,19 +1,13 @@
 #include <cstddef>
-#include <exception>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <new>
-#include <stdexcept>
-#include <string>
 
 namespace novikov {
-  void remove(int ** mtx, size_t r)
+  size_t getIndex(size_t current_row, size_t current_col, size_t cols)
   {
-    for (size_t i = 0; i < r; ++i) {
-      delete[] mtx[i];
-    }
-    delete[] mtx;
+    return (current_row - 1) * cols + current_col;
   }
 
   bool isDigit(const char * str)
@@ -29,7 +23,7 @@ namespace novikov {
     return true;
   }
 
-  int minSum(int ** mtx, size_t r, size_t c)
+  int minSum(int * mtx, size_t r, size_t c)
   {
     int sum;
     int min = std::numeric_limits< int >::max();
@@ -40,7 +34,7 @@ namespace novikov {
       sum = 0;
       for (size_t i = 0; i < r; ++i) {
         if (k - i < c) {
-          sum += mtx[i][k - i];
+          sum += mtx[getIndex(i, k - i, c)];
         }
       }
       min = (sum < min) ? sum : min;
@@ -48,13 +42,13 @@ namespace novikov {
     return min;
   }
 
-  void addPeripheral(int ** mtx, size_t r, size_t c)
+  void addPeripheral(int * mtx, size_t r, size_t c)
   {
     size_t center_row = (r % 2) ? r + 1 : r;
     for (size_t current_row = 0; current_row < center_row; ++current_row) {
       for (size_t i = current_row; i < r - current_row; ++i) {
         for (size_t j = current_row; j < c - current_row; ++j) {
-          ++mtx[i][j];
+          ++mtx[getIndex(i, j, c)];
         }
       }
     }
@@ -114,65 +108,45 @@ int main(int argc, char ** argv)
         return 2;
       }
 
-      size_t count = 0;
-      int static_mtx[rows][cols];
-      int * mtx[rows];
+      int mtx[novikov::max_length];
 
-      for (size_t i = 0; i < rows; ++i) {
-        for (size_t j = 0; j < cols; ++j) {
-          input >> static_mtx[i][j];
-          if (input.eof()) {
-            std::cerr << "Wrong matrix format\n";
-            return 2;
-          }
-          if (input.fail()) {
-            std::cerr << "Invalid input\n";
-            return 2;
-          }
-          ++count;
+      for (size_t i = 0; i < rows * cols; ++i) {
+        input >> mtx[i];
+        if (input.eof()) {
+          std::cerr << "Wrong matrix format\n";
+          return 2;
         }
-      }
-
-      for (size_t i = 0; i < rows; ++i) {
-        mtx[i] = static_mtx[i];
+        if (input.fail()) {
+          std::cerr << "Invalid input\n";
+          return 2;
+        }
       }
 
       int min = novikov::minSum(mtx, rows, cols);
       novikov::addPeripheral(mtx, rows, cols);
 
       output << min << " " << rows << " " << cols;
-      for (size_t i = 0; i < rows; ++i) {
-        for (size_t j = 0; j < cols; ++j) {
-          output << " " << mtx[i][j];
-        }
+      for (size_t i = 0; i < rows * cols; ++i) {
+        output << " " << mtx[i];
       }
     } else if (argv[1][0] == '2') {
-      int ** mtx = new int * [rows];
-
-      for (size_t i = 0; i < rows; ++i) {
-        try {
-          mtx[i] = new int[cols];
-        } catch (std::bad_alloc &) {
-          novikov::remove(mtx, i);
-          throw;
-        }
+      int * mtx = nullptr;
+      try {
+        mtx = new int[rows * cols];
+      } catch (std::bad_alloc &) {
+        delete[] mtx;
+        throw;
       }
 
-      size_t count = 0;
-
-      for (size_t i = 0; i < rows; ++i) {
-        for (size_t j = 0; j < cols; ++j) {
-          input >> mtx[i][j];
-          if (input.eof()) {
-            std::cerr << "Wrong matrix format\n";
-            novikov::remove(mtx, rows);
-            return 2;
-          }
-          if (input.fail()) {
-            std::cerr << "Invalid input\n";
-            return 2;
-          }
-          ++count;
+      for (size_t i = 0; i < rows * cols; ++i) {
+        input >> mtx[i];
+        if (input.eof()) {
+          std::cerr << "Wrong matrix format\n";
+          return 2;
+        }
+        if (input.fail()) {
+          std::cerr << "Invalid input\n";
+          return 2;
         }
       }
 
@@ -180,12 +154,10 @@ int main(int argc, char ** argv)
       novikov::addPeripheral(mtx, rows, cols);
 
       output << min << " " << rows << " " << cols;
-      for (size_t i = 0; i < rows; ++i) {
-        for (size_t j = 0; j < cols; ++j) {
-          output << " " << mtx[i][j];
-        }
+      for (size_t i = 0; i < rows * cols; ++i) {
+        output << " " << mtx[i];
       }
-      novikov::remove(mtx, rows);
+      delete[] mtx;
     }
   } catch (std::bad_alloc &) {
     std::cerr << "Memory can not be allocated\n";
