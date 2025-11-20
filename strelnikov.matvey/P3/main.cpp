@@ -3,9 +3,11 @@
 
 namespace strelnikov {
 
+  const int static_max = 10000;
+
   bool prValidation(char* a)
   {
-    if (std::string(a) != "1" && std::string(a) != "2") {
+    if (a == nullptr || (a[0] != '1' && a[0] != '2') || a[1] != '\0') {
       return false;
     }
     return true;
@@ -27,9 +29,11 @@ namespace strelnikov {
   {
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
-        out << a[i * c + j] << ' ';
+        out << a[i * c + j];
+        if(!(i == r - 1 && j == c - 1)){
+          out << ' ';
+        }
       }
-      out << '\n';
     }
   }
 
@@ -43,7 +47,7 @@ namespace strelnikov {
     int cnt = 1;
 
     while (left <= right && top <= bot) {
-      for (size_t j = left; j <= right; ++j) {
+      for (long long j = (long long)left; j <= (long long)right && j >= 0; ++j) {
         mtx[bot * c + j] += cnt++;
       }
       if (bot == 0) {
@@ -52,11 +56,8 @@ namespace strelnikov {
       --bot;
 
       if (left <= right) {
-        for (size_t i = bot; i >= top; --i) {
+        for (long long i = (long long)bot; i >= (long long)top; --i) {
           mtx[i * c + right] += cnt++;
-          if (i == 0) {
-            break;
-          }
         }
         if (right == 0) {
           break;
@@ -65,17 +66,14 @@ namespace strelnikov {
       }
 
       if (top <= bot && left <= right) {
-        for (size_t j = right; j >= left; --j) {
+        for (long long j = (long long)right; j >= (long long)left && j >= 0 ; --j) {
           mtx[top * c + j] += cnt++;
-          if (j == 0) {
-            break;
-          }
         }
         ++top;
       }
 
       if (left <= right && top <= bot) {
-        for (size_t i = top; i <= bot; ++i) {
+        for (long long i = (long long)top; i <= (long long)bot; ++i) {
           mtx[i * c + left] += cnt++;
         }
         ++left;
@@ -111,19 +109,19 @@ namespace strelnikov {
 }
 int main(int argc, char* argv[])
 {
-  if (argc != 4) {
-    if (argc > 4) {
-      std::cerr << "Too many arguments\n";
-    } else {
-      std::cerr << "Too few arguments\n";
-    }
+  if(argc > 4){
+    std::cerr << "Too many arguments\n";
+    return 1;
+  }
+  if(argc < 4){
+    std::cerr << "Too few arguments\n";
     return 1;
   }
   if (!strelnikov::prValidation(argv[1])) {
     std::cerr << "First argument must be a number(1 or 2)\n";
     return 1;
   }
-  int pr = std::stoi(argv[1]);
+  int pr = std::atoi(argv[1]);
 
   std::ifstream in(argv[2]);
   if (!in.is_open()) {
@@ -137,39 +135,36 @@ int main(int argc, char* argv[])
     std::cerr << "Bad rows and cols file input\n";
     return 2;
   }
-  if ((r > 1000 || c > 1000) && pr == 1) {
+  if ((r > 10000 || c > 10000 || r/10000 > c) && pr == 1) {
     std::cerr << "Matrix too large\n";
     return 2;
   }
 
   int* mtx = nullptr;
-  try {
-    if (pr == 1) {
-      static int static_mtx[1000 * 1000];
-      try {
-        strelnikov::input(in, static_mtx, r, c);
-      } catch (std::logic_error& e) {
-        std::cerr << e.what();
-        return 2;
-      }
-      mtx = static_mtx;
-      in.close();
-    } else {
+  int static_mtx[strelnikov::static_max];
+  if (pr == 1) {
+    try {
+      strelnikov::input(in, static_mtx, r, c);
+    } catch (std::logic_error& e) {
+      std::cerr << e.what();
+      return 2;
+    }
+    mtx = static_mtx;
+    in.close();
+  } else {
+    try {
       mtx = new int[r * c];
-      try {
-        strelnikov::input(in, mtx, r, c);
-      } catch (std::logic_error& e) {
-        std::cerr << e.what();
-        delete[] mtx;
-        return 2;
-      }
-      in.close();
+    } catch (const std::bad_alloc& e) {
+      return 2;
     }
-  } catch (const std::exception& e) {
-    if (pr == 2) {
+    try {
+      strelnikov::input(in, mtx, r, c);
+    } catch (std::logic_error& e) {
+      std::cerr << e.what();
       delete[] mtx;
+      return 2;
     }
-    return 2;
+    in.close();
   }
   std::ofstream out(argv[3]);
   if (!out.is_open()) {
