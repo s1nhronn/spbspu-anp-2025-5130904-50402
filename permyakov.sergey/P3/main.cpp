@@ -23,9 +23,10 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  int task = std::stoi(argv[1]);
+  char * endFrstArg;
+  long task = std::strtol(argv[1], &endFrstArg, 10);
 
-  if (task != 1 && task != 2) {
+  if (!(task == 1 || task == 2) || *endFrstArg != '\0') {
     std::cerr << "First argument is not correct\n";
     return 1;
   }
