@@ -5,8 +5,6 @@
 bool proverka(const char* str);
 void output_mtx(std::ostream & out, const int * a, size_t n, size_t m);
 void input_mtx(std::istream & in, int * a, size_t n, size_t m);
-size_t cols(std::istream & in);
-size_t rows(std::istream & in);
 size_t count_seddle(const int * a, size_t n, size_t m);
 int * spiral(const int * a, int * res, size_t n, size_t m);
 
@@ -104,14 +102,14 @@ int * spiral(const int * a, int * res, size_t n, size_t m, size_t st_row, size_t
   for(size_t i = st_col; i <= end_col; ++i)
   {
     size_t step = st_row * m + i;
-    res[c] = a[step];
+    res[step] = a[step] - c;
     ++c;
   }
 
   for(size_t i = st_row + 1; i <= end_row; ++i)
   {
     size_t step = end_col + i * m;
-    res[c] = a[step];
+    res[step] = a[step] - c;
     ++c;
   }
 
@@ -120,7 +118,7 @@ int * spiral(const int * a, int * res, size_t n, size_t m, size_t st_row, size_t
     for(size_t i = end_col - 1; i >= st_col; --i)
     {
       size_t step = end_row * m + i;
-      res[c] = a[step];
+      res[step] = a[step] - c;
       ++c;
       if (i == 0)
       {
@@ -134,7 +132,7 @@ int * spiral(const int * a, int * res, size_t n, size_t m, size_t st_row, size_t
     for(size_t i = end_row - 1; i > st_row; --i)
     {
       size_t step = st_col + i * m;
-      res[c] = a[step];
+      res[step] = a[step] - c;
       ++c;
       if (i == 0)
       {
@@ -151,7 +149,7 @@ int * spiral(const int * a, int * res, size_t n, size_t m)
   {
     return res;
   }
-  size_t c = 0;
+  size_t c = 1;
   return spiral(a, res, n, m, 0, 0, n-1, m-1, c);
 }
 int main(int argc, char ** argv)
@@ -224,12 +222,6 @@ int main(int argc, char ** argv)
     output_mtx(output, b, n, m);
     std::cout << "\n";
     res = spiral(b, res, n, m);
-    size_t c = 1;
-    for (size_t i = 0; i < n*m; ++i)
-    {
-      res[i] -= c;
-      ++c;
-    }
     output_mtx(output, res, n, m);
     delete[] res;
     delete[] b;
