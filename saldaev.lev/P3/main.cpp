@@ -94,11 +94,11 @@ int main(int argc, char **argv)
   }
 
   size_t mode = 0;
-  if (argv[1][0] == '1' && argv[1][1] != '\0')
+  if (argv[1][0] == '1' && argv[1][1] == '\0')
   {
     mode = 1;
   }
-  else if (argv[1][0] == '2' && argv[1][1] != '\0')
+  else if (argv[1][0] == '2' && argv[1][1] == '\0')
   {
     mode = 2;
   }
