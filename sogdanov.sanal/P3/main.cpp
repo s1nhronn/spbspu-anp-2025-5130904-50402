@@ -1,7 +1,9 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 namespace sogdanov
 {
+  const size_t SIZE = 10000;
   std::istream & readMatrix(std::ifstream & input, int * mtx, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows * cols ; i++) {
@@ -16,7 +18,7 @@ namespace sogdanov
     if (rows == 0 || cols == 0) {
       return 0;
     }
-    int * rowMin = static_cast< int* >(malloc(rows * sizeof(int)));
+    int * rowMin = reinterpret_cast< int * >(malloc(rows * sizeof(int)));
     if (rowMin == nullptr) {
       std::cerr << "Memory allocation failed\n";
       return 2;
@@ -47,7 +49,7 @@ namespace sogdanov
     free(rowMin);
     return count;
   }
-  int maxSumSdg(int * a, size_t rows, size_t cols)
+  int maxSumSdg(const int * mtx, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
@@ -57,7 +59,7 @@ namespace sogdanov
     for (size_t i = 1; i < n; ++i) {
       long long sum = 0;
       for (size_t j = 0; j < n - i; ++j) {
-        sum += a[j * cols + j + i];
+        sum += mtx[j * cols + j + i];
       }
       if (sum > maxSum) {
         maxSum = sum;
@@ -66,7 +68,7 @@ namespace sogdanov
     for (size_t i = 1; i < n; i++) {
       long long sum = 0;
       for (size_t j = 0; j < n - i; j++) {
-        sum += a[cols * (j + i) + j];
+        sum += mtx[cols * (j + i) + j];
       }
       if (sum > maxSum) {
         maxSum = sum;
@@ -74,14 +76,13 @@ namespace sogdanov
     }
     return maxSum;
   }
-  const size_t SIZE = 10000;
-  static int static_mtx[SIZE] = {};
+  int static_mtx[SIZE] = {};
   int * createMatrix(int num, size_t rows, size_t cols)
   {
     if (num  == 1) {
       return static_mtx;
     } else if (num == 2) {
-      return reinterpret_cast< int* >(malloc(rows * cols * sizeof(int)));
+      return reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
     }
     return nullptr;
   }
@@ -103,14 +104,14 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  int num;
-  try {
-    num = std::stoi(argv[1]);
-    if (num != 1 && num != 2) {
-      std::cerr << "First argument is out of range\n";
-    }
-  } catch ( const std::invalid_argument & e) {
-    std::cerr << "First argument is not a number\n";
+  char * end = nullptr;
+  long num = std::strtol(argv[1], std::addressof(end), 10);
+  if (num != 1 && num != 2) {
+    std::cerr <<"First argument is out of range\n";
+    return 1;
+  }
+  if (* end != '\0' || end == argv[1]) {
+    std::cerr <<"First argument is not a number\n";
     return 1;
   }
   std::ifstream input(argv[2]);
@@ -123,43 +124,36 @@ int main(int argc, char ** argv)
   input >> rows >> cols;
   if (rows > 10000 || cols > 10000 || rows * cols > 10000) {
     std::cerr << "Matrix sizes are too large\n";
-    input.close();
     return 2;
   }
   if (input.fail()) {
     std::cerr << "Incorrect Matrix Sizes\n";
-    input.close();
     return 2;
   }
   int * mtx = sogdanov::createMatrix(num, rows, cols);
   if (mtx == nullptr) {
     std::cerr << "Memory allocation failed\n";
-    input.close();
     return 2;
   }
-  int res1 = 0;
-  int res2 = 0;
   sogdanov::readMatrix(input, mtx, rows, cols);
   if (input.fail()) {
     std::cerr << "Input error\n";
     sogdanov::rm(num, mtx);
-    input.close();
     return 2;
   }
   int extra;
   if (input >> extra) {
     std::cerr <<"Too many elements in input file\n";
     sogdanov::rm(num, mtx);
-    input.close();
     return 2;
   }
-  res1 = sogdanov::maxSumSdg(mtx, rows, cols);
-  res2 = sogdanov::cntSdlPnt(mtx, rows, cols);
+  int res1 = sogdanov::maxSumSdg(mtx, rows, cols);
+  int res2 = sogdanov::cntSdlPnt(mtx, rows, cols);
   sogdanov::rm(num, mtx);
-  input.close();
   std::ofstream output(argv[3]);
   if (!output) {
     std::cerr << "Cannot open output file\n";
+    return 2;
   }
-  output << res1 << ' ' << res2 << "\n";
+  output << res1 << ' ' << res2 << '\n';
 }
