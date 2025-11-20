@@ -7,7 +7,7 @@
 namespace novikov {
   size_t getIndex(size_t current_row, size_t current_col, size_t cols)
   {
-    return (current_row - 1) * cols + current_col;
+    return current_row * cols + current_col;
   }
 
   bool isDigit(const char * str)
@@ -142,10 +142,12 @@ int main(int argc, char ** argv)
         input >> mtx[i];
         if (input.eof()) {
           std::cerr << "Wrong matrix format\n";
+          delete[] mtx;
           return 2;
         }
         if (input.fail()) {
           std::cerr << "Invalid input\n";
+          delete[] mtx;
           return 2;
         }
       }
