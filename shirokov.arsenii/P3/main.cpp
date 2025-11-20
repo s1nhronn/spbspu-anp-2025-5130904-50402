@@ -7,7 +7,6 @@
 namespace shirokov
 {
   std::istream &input(std::istream &in, int *m, size_t lng);
-  void output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2);
   std::ostream &outputMatrix(std::ostream &out, const int *matrix, size_t m, size_t n);
   int *copy(const int *a, size_t k);
   void spiral(int *matrix, size_t m, size_t n);
@@ -40,7 +39,7 @@ int main(int argc, char **argv)
   int num = 0;
   try
   {
-    num = std::atoi(argv[1]);
+    num = std::stoi(argv[1]);
   }
   catch (const std::out_of_range &e)
   {
@@ -55,49 +54,34 @@ int main(int argc, char **argv)
 
   size_t lng = 0;
   size_t m, n;
-  try
+  std::ifstream in(argv[2]);
+  in >> m >> n;
+  if (in.fail())
   {
-    std::ifstream in(argv[2]);
-    in >> m >> n;
-    if (in.fail())
-    {
-      throw std::logic_error("Couldn't read the size of matrix");
-    }
-    lng = m * n;
-  }
-  catch (const std::logic_error &e)
-  {
-    std::cerr << e.what() << '\n';
+    std::cerr << "Couldn't read the size of matrix" << '\n';
     return 2;
   }
-  std::ifstream in(argv[2]);
+  lng = m * n;
 
   int *matrix = nullptr;
-  try
+  int a[shirokov::MATRIX_SIZE] = {};
+  if (num == 1)
   {
-    if (num == 1)
-    {
-      int a[shirokov::MATRIX_SIZE] = {};
-      matrix = a;
-    }
-    else
-    {
-      matrix = new int[lng];
-    }
-    if (shirokov::input(in, matrix, lng).fail())
-    {
-      throw std::logic_error("Couldn't read the matrix");
-    };
+    matrix = a;
   }
-  catch (const std::logic_error &e)
+  else
   {
-    std::cerr << e.what() << '\n';
+    matrix = new int[lng];
+  }
+  if (shirokov::input(in, matrix, lng).fail())
+  {
+    std::cerr << "Couldn't read the matrix" << '\n';
     if (num == 2)
     {
       delete[] matrix;
     }
     return 2;
-  }
+  };
   std::ofstream out(argv[3]);
   if (!out.is_open())
   {
@@ -108,7 +92,9 @@ int main(int argc, char **argv)
   int *res1 = shirokov::copy(matrix, m * n);
   shirokov::spiral(res1, m, n);
   bool res2 = shirokov::isTriangularMatrix(matrix, m, n);
-  shirokov::output(out, res1, m, n, res2);
+  out << "Решение варианта 1:\n";
+  shirokov::outputMatrix(out, res1, m, n) << '\n';
+  out << "Решение варианта 2:\n" << (res2 ? "true" : "false");
   delete[] res1;
   if (num == 2)
   {
@@ -152,13 +138,6 @@ std::ostream &shirokov::outputMatrix(std::ostream &out, const int *matrix, size_
   return out;
 }
 
-void shirokov::output(std::ostream &out, const int *res1, size_t m, size_t n, bool res2)
-{
-  out << "Решение варианта 1:\n";
-  shirokov::outputMatrix(out, res1, m, n) << '\n';
-  out << "Решение варианта 2:\n" << (res2 ? "true" : "false");
-}
-
 int *shirokov::copy(const int *a, size_t k)
 {
   int *b = new int[k];
@@ -180,7 +159,7 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
   {
     return;
   }
-  size_t ptr = matrix[shirokov::transformIndexes(m - 1, 0, n)];
+  size_t ptr = matrix[transformIndexes(m - 1, 0, n)];
   size_t leftBorder = 0;
   size_t rightBorder = n - 1;
   size_t upperBorder = 0;
@@ -191,7 +170,7 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
   {
     for (size_t i = lowerBorder; i + 1 >= upperBorder + 1; i--)
     {
-      ptr = shirokov::transformIndexes(i, leftBorder, n);
+      ptr = transformIndexes(i, leftBorder, n);
       matrix[ptr] -= deductible++;
     }
     if (leftBorder < n)
@@ -201,7 +180,7 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
 
     for (size_t j = leftBorder; j <= rightBorder; j++)
     {
-      ptr = shirokov::transformIndexes(upperBorder, j, n);
+      ptr = transformIndexes(upperBorder, j, n);
       matrix[ptr] -= deductible++;
     }
     if (upperBorder < m)
@@ -211,7 +190,7 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
 
     for (size_t i = upperBorder; i <= lowerBorder; i++)
     {
-      ptr = shirokov::transformIndexes(i, rightBorder, n);
+      ptr = transformIndexes(i, rightBorder, n);
       matrix[ptr] -= deductible++;
     }
     if (rightBorder > 0)
@@ -221,7 +200,7 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
 
     for (size_t j = rightBorder; j + 1 >= leftBorder + 1; j--)
     {
-      ptr = shirokov::transformIndexes(lowerBorder, j, n);
+      ptr = transformIndexes(lowerBorder, j, n);
       matrix[ptr] -= deductible++;
     }
     if (lowerBorder > 0)
