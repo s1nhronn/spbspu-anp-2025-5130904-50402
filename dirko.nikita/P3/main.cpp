@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <cstring>
+#include <cstdlib>
 
 namespace dirko
 {
@@ -153,9 +153,6 @@ int main(int argc, char **argv)
     }
   }
   dirko::inputMtx(fin, matrix, rows, cols);
-  dirko::copyMtx(matrix, result1, rows, cols);
-  dirko::doLftBotClk(result1, rows, cols);
-  result2 = dirko::doLwrTriMtx(matrix, rows, cols);
   if (fin.fail())
   {
     if (mode == 2)
@@ -167,7 +164,15 @@ int main(int argc, char **argv)
     return 2;
   }
   fin.close();
+  dirko::copyMtx(matrix, result1, rows, cols);
+  dirko::doLftBotClk(result1, rows, cols);
+  result2 = dirko::doLwrTriMtx(matrix, rows, cols);
   std::ofstream fout(argv[3]);
+  if (!fout.is_open())
+  {
+    std::cerr << "Cant open output file\n";
+    return 2;
+  }
   dirko::output(fout, result1, rows, cols) << '\n';
   fout << std::boolalpha << result2 << '\n';
   delete[] result1;
