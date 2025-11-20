@@ -94,11 +94,11 @@ int main(int argc, char **argv)
   }
 
   size_t mode = 0;
-  if (argv[1][0] == '1')
+  if (argv[1][0] == '1' && argv[1][1] != '\0')
   {
     mode = 1;
   }
-  else if (argv[1][0] == '2')
+  else if (argv[1][0] == '2' && argv[1][1] != '\0')
   {
     mode = 2;
   }
@@ -109,6 +109,11 @@ int main(int argc, char **argv)
   }
 
   std::ifstream input(argv[2]);
+  if (!input.is_open())
+  {
+    std::cerr << "Cant open input file\n";
+    return 2;
+  }
 
   size_t rows = 0;
   size_t cols = 0;
