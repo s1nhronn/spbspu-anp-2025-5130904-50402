@@ -1,10 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 namespace dirko
 {
   const size_t MAX_SIZE = 10000;
-  std::istream &inputMtx(std::istream &input, int *matrix, const size_t rows, const size_t cols)
+  std::istream &inputMtx(std::istream &input, int *matrix, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows * cols; ++i)
     {
@@ -12,14 +13,9 @@ namespace dirko
     }
     return input;
   }
-  void doLftBotClk(const int *matrix, int *result, const size_t rows, const size_t cols)
+  void doLftBotClk(const int *matrix, int *result, size_t rows, size_t cols)
   {
     const size_t elements = rows * cols;
-    if (elements < 1)
-    {
-      return;
-    }
-
     for (size_t i = 0; i < elements; ++i)
     {
       result[i] = matrix[i];
@@ -57,7 +53,7 @@ namespace dirko
       }
     }
   }
-  bool doLwrTriMtx(const int *matrix, const size_t rows, const size_t cols)
+  bool doLwrTriMtx(const int *matrix, size_t rows, size_t cols)
   {
     const size_t min = (rows > cols) ? cols : rows;
     if (min < 2)
@@ -78,7 +74,7 @@ namespace dirko
     }
     return true;
   }
-  std::ostream &output(std::ostream &output, const int *matrix, const size_t rows, const size_t cols)
+  std::ostream &output(std::ostream &output, const int *matrix, size_t rows, size_t cols)
   {
     output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i)
@@ -106,7 +102,7 @@ int main(int argc, char **argv)
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-  int mode = std::stoi(argv[1]);
+  int mode = atoi(argv[1]);
   if (mode < 1 || mode > 2)
   {
     std::cerr << "First parameter is out of range\n";
@@ -130,11 +126,11 @@ int main(int argc, char **argv)
     std::cerr << "Cant alloc\n";
     return 3;
   }
+  int staticMatrix[dirko::MAX_SIZE]{};
   bool result2 = false;
   int *matrix = nullptr;
   if (mode == 1)
   {
-    static int staticMatrix[dirko::MAX_SIZE]{};
     matrix = staticMatrix;
   }
   else
@@ -145,6 +141,7 @@ int main(int argc, char **argv)
     }
     catch (const std::bad_alloc &e)
     {
+      delete[] result1;
       std::cerr << "Cant alloc\n";
       return 3;
     }
@@ -152,18 +149,12 @@ int main(int argc, char **argv)
   dirko::inputMtx(fin, matrix, rows, cols);
   dirko::doLftBotClk(matrix, result1, rows, cols);
   result2 = dirko::doLwrTriMtx(matrix, rows, cols);
-  if (mode == 2)
+  if (fin.fail())
   {
-    delete[] matrix;
-  }
-  if (fin.eof())
-  {
-    delete[] result1;
-    std::cerr << "Not enougth data\n";
-    return 2;
-  }
-  else if (fin.fail())
-  {
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
     delete[] result1;
     std::cerr << "Cant read\n";
     return 2;
@@ -173,4 +164,8 @@ int main(int argc, char **argv)
   dirko::output(fout, result1, rows, cols) << '\n';
   fout << std::boolalpha << result2 << '\n';
   delete[] result1;
+  if (mode == 2)
+  {
+    delete[] matrix;
+  }
 }
