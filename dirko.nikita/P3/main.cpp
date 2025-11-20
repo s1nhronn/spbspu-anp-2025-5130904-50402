@@ -13,12 +13,18 @@ namespace dirko
     }
     return input;
   }
-  void doLftBotClk(const int *matrix, int *result, size_t rows, size_t cols)
+  void copyMtx(const int *matrix, int *result, size_t rows, size_t cols)
   {
-    const size_t elements = rows * cols;
-    for (size_t i = 0; i < elements; ++i)
+    for (size_t i = 0; i < rows * cols; ++i)
     {
       result[i] = matrix[i];
+    }
+  }
+  void doLftBotClk(int *result, size_t rows, size_t cols)
+  {
+    if (cols * rows == 0)
+    {
+      return;
     }
     size_t decrement = 1;
     size_t left = 0, right = cols - 1;
@@ -147,7 +153,8 @@ int main(int argc, char **argv)
     }
   }
   dirko::inputMtx(fin, matrix, rows, cols);
-  dirko::doLftBotClk(matrix, result1, rows, cols);
+  dirko::copyMtx(matrix, result1, rows, cols);
+  dirko::doLftBotClk(result1, rows, cols);
   result2 = dirko::doLwrTriMtx(matrix, rows, cols);
   if (fin.fail())
   {
