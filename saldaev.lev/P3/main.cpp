@@ -154,6 +154,12 @@ int main(int argc, char **argv)
   saldaev::doLftBotClk(matrix, rows, cols);
 
   std::ofstream output(argv[3]);
+  if (!output.is_open())
+  {
+    std::cerr << "Cant open output file\n";
+    return 2;
+  }
+
   output << res1 << "\n" << rows << " " << cols;
   for (size_t i = 0; i < rows * cols; ++i)
   {
