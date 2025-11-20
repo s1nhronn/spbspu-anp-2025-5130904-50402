@@ -74,7 +74,7 @@ int main(int argc, char ** argv)
     return 1;
   }
 
-  if (novikov::isDigit(argv[1])) {
+  if (!novikov::isDigit(argv[1])) {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
