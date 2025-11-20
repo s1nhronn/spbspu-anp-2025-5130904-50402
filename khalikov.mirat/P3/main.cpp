@@ -7,7 +7,8 @@ namespace khalikov
   void output_mtx(std::ostream & out, const int * a, size_t n, size_t m);
   size_t input_mtx(std::istream & in, int * a, size_t n, size_t m);
   size_t count_seddle(const int * a, size_t n, size_t m);
-  int * spiral(const int * a, int * res, size_t n, size_t m, size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t &c);
+  int * spiral(const int * a, int * res, size_t n, size_t m,
+  size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t &c);
   int * spiral(const int * a, int * res, size_t n, size_t m);
 }
 
@@ -96,7 +97,8 @@ size_t khalikov::count_seddle(const int * a, size_t n, size_t m)
   return count;
 }
 
-int * khalikov::spiral(const int * a, int * res, size_t n, size_t m, size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t &c)
+int * khalikov::spiral(const int * a, int * res, size_t n, size_t m,
+size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t &c)
 {
   if (st_row > end_row || st_col > end_col)
   {
