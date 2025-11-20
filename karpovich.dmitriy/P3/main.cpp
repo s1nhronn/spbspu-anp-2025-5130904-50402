@@ -85,7 +85,7 @@ namespace karpovich
   }
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
   namespace karp = karpovich;
   if (argc != 4) {
@@ -94,7 +94,7 @@ int main(int argc, char ** argv)
   }
 
   char* endptr = nullptr;
-  size_t num = std::strtol(argv[1], &endptr, 10);
+  size_t num = std::strtol(argv[1], std::addressof(endptr), 10);
   if (endptr == argv[1] || *endptr != '\0') {
     std::cerr << "First parameter is not a number\n";
     return 1;
@@ -141,7 +141,9 @@ int main(int argc, char ** argv)
   karp::inputFunc(input, active_arr, size);
   if (!input) {
     std::cerr << "Failed to read matrix data\n";
-    if (is_dynamic) delete[] active_arr;
+    if (is_dynamic) {
+      delete[] active_arr;
+    }
     return 2;
   }
 
