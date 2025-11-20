@@ -1,17 +1,11 @@
 #include <iostream>
 #include <fstream>
 
-
 bool proverka(const char* str);
 void output_mtx(std::ostream & out, const int * a, size_t n, size_t m);
-void input_mtx(std::istream & in, int * a, size_t n, size_t m);
+size_t input_mtx(std::istream & in, int * a, size_t n, size_t m);
 size_t count_seddle(const int * a, size_t n, size_t m);
 int * spiral(const int * a, int * res, size_t n, size_t m);
-
-
-
-
-
 
 bool proverka(const char* str)
 {
@@ -50,12 +44,18 @@ void output_mtx(std::ostream & out, const int * a, size_t n, size_t m)
   }
 }
 
-void input_mtx(std::istream & in, int * a, size_t n, size_t m)
+size_t input_mtx(std::istream & in, int * a, size_t n, size_t m)
 {
+  size_t count = 0;
   for (size_t i = 0; i < n*m; ++i)
   {
-    in >> a[i];
+    if(!(in >> a[i]))
+    {
+      break;
+    }
+    count++;
   }
+  return count;
 }
 
 size_t count_seddle(const int * a, size_t n, size_t m)
@@ -177,6 +177,8 @@ int main(int argc, char ** argv)
   std::ifstream input(argv[2]);
   size_t n = 0;
   size_t m = 0;
+  size_t elements = 0;
+  std::string extra;
   input >> n >> m;
   if (input.fail())
   {
@@ -186,7 +188,13 @@ int main(int argc, char ** argv)
   if (*argv[1] == '1')
   {
     int a[10000] = {};
-    input_mtx(input, a, n, m);
+    elements = input_mtx(input, a, n, m);
+    if (elements != n*m || input >> extra)
+    {
+      std::cerr << "Input error" << "\n";
+      input.close();
+      return 2;
+    }
     input.close();
     std::ofstream output(argv[3]);
     output_mtx(output, a, n, m);
@@ -216,11 +224,19 @@ int main(int argc, char ** argv)
       delete[] res;
       return 2;
     }
-    input_mtx(input, b, n, m);
+    elements = input_mtx(input, b, n, m);
+    if (elements != n*m || input >> extra)
+    {
+      std::cerr << "Input error" << "\n";
+      delete[] res;
+      delete[] b;
+      input.close();
+      return 2;
+    }
     input.close();
     std::ofstream output(argv[3]);
     output_mtx(output, b, n, m);
-    std::cout << "\n";
+    output << "\n";
     res = spiral(b, res, n, m);
     output_mtx(output, res, n, m);
     delete[] res;
