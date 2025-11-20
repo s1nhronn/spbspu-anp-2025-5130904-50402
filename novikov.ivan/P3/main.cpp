@@ -180,4 +180,5 @@ int main(int argc, char ** argv)
   } catch (std::bad_alloc &) {
     std::cerr << "Memory can not be allocated\n";
     return 2;
+  }
 }
