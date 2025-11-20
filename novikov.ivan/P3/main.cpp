@@ -19,7 +19,7 @@ namespace novikov {
   int minSum(int ** mtx, size_t r, size_t c)
   {
     int sum;
-    int min = std::numeric_limits<int>::max();
+    int min = std::numeric_limits< int >::max();
     if (r + c < 2) {
       return 0;
     }
@@ -46,6 +46,8 @@ namespace novikov {
       }
     }
   }
+
+  const size_t max_length = 10000;
 }
 
 int main(int argc, char ** argv)
@@ -53,7 +55,8 @@ int main(int argc, char ** argv)
   if (argc < 4) {
     std::cerr << "Not enough arguments\n";
     return 1;
-  } else if (argc > 4) {
+  }
+  if (argc > 4) {
     std::cerr << "Too many arguments\n";
     return 1;
   }
@@ -82,6 +85,15 @@ int main(int argc, char ** argv)
   std::ifstream input(argv[2]);
   std::ofstream output(argv[3]);
 
+  if (!input.is_open()) {
+    std::cerr << "Failed to open input file\n";
+    return 2;
+  }
+  if (!output.is_open()) {
+    std::cerr << "Failed to open output file\n";
+    return 2;
+  }
+
   size_t rows, cols;
   input >> rows >> cols;
   if (input.eof()) {
@@ -91,7 +103,7 @@ int main(int argc, char ** argv)
 
   try {
     if (firstarg == 1) {
-      if (rows * cols > 10000) {
+      if (rows * cols > novikov::max_length) {
         std::cerr << "Matrix is too large\n";
         return 2;
       }
@@ -107,13 +119,12 @@ int main(int argc, char ** argv)
             std::cerr << "Wrong matrix format\n";
             return 2;
           }
+          if (input.fail()) {
+            std::cerr << "Invalid input\n";
+            return 2;
+          }
           ++count;
         }
-      }
-
-      if (rows * cols != count) {
-        std::cerr << "Wrong matrix format\n";
-        return 2;
       }
 
       for (size_t i = 0; i < rows; ++i) {
@@ -123,10 +134,10 @@ int main(int argc, char ** argv)
       int min = novikov::minSum(mtx, rows, cols);
       novikov::addPeripheral(mtx, rows, cols);
 
-      output << min << " " << rows << " " << cols << " ";
+      output << min << " " << rows << " " << cols;
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
-          output << mtx[i][j] << " ";
+          output << " " << mtx[i][j];
         }
       }
     } else if (firstarg == 2) {
@@ -155,19 +166,13 @@ int main(int argc, char ** argv)
         }
       }
 
-      if (rows * cols != count) {
-        std::cerr << "Wrong matrix format\n";
-        novikov::remove(mtx, rows);
-        return 2;
-      }
-
       int min = novikov::minSum(mtx, rows, cols);
       novikov::addPeripheral(mtx, rows, cols);
 
-      output << min << " " << rows << " " << cols << " ";
+      output << min << " " << rows << " " << cols;
       for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
-          output << mtx[i][j] << " ";
+          output << " " << mtx[i][j];
         }
       }
       novikov::remove(mtx, rows);
@@ -175,13 +180,4 @@ int main(int argc, char ** argv)
   } catch (std::bad_alloc &) {
     std::cerr << "Memory can not be allocated\n";
     return 2;
-  } catch (std::exception & e) {
-    std::cerr << e.what() << "\n";
-    return 2;
-  }
-
-  if (input.fail()) {
-    std::cerr << "Invalid input\n";
-    return 2;
-  }
 }
