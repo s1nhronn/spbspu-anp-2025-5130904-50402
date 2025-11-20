@@ -1,9 +1,8 @@
-#include <algorithm>
-#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <cstring>
+#include <cstdlib>
 
 namespace shirokov
 {
@@ -16,7 +15,7 @@ namespace shirokov
   size_t transformIndexes(size_t i, size_t j, size_t n);
   void cutMatrix(int *matrix, size_t m, size_t n);
   const size_t MATRIX_SIZE = 10000;
-} // namespace shirokov
+}
 
 int main(int argc, char **argv)
 {
@@ -41,7 +40,7 @@ int main(int argc, char **argv)
   int num = 0;
   try
   {
-    num = std::stoi(argv[1]);
+    num = std::atoi(argv[1]);
   }
   catch (const std::out_of_range &e)
   {
