@@ -101,68 +101,50 @@ int main(int argc, char ** argv)
     return 2;
   }
 
+  int static_mtx[novikov::max_length] = {};
+  int * mtx = nullptr;
+
   try {
     if (argv[1][0] == '1') {
       if (rows * cols > novikov::max_length) {
         std::cerr << "Matrix is too large\n";
         return 2;
       }
-
-      int mtx[novikov::max_length];
-
-      for (size_t i = 0; i < rows * cols; ++i) {
-        input >> mtx[i];
-        if (input.eof()) {
-          std::cerr << "Wrong matrix format\n";
-          return 2;
-        }
-        if (input.fail()) {
-          std::cerr << "Invalid input\n";
-          return 2;
-        }
-      }
-
-      int min = novikov::minSum(mtx, rows, cols);
-      novikov::addPeripheral(mtx, rows, cols);
-
-      output << min << " " << rows << " " << cols;
-      for (size_t i = 0; i < rows * cols; ++i) {
-        output << " " << mtx[i];
-      }
+      mtx = static_mtx;
     } else if (argv[1][0] == '2') {
-      int * mtx = nullptr;
-      try {
-        mtx = new int[rows * cols];
-      } catch (std::bad_alloc &) {
-        delete[] mtx;
-        throw;
-      }
-
-      for (size_t i = 0; i < rows * cols; ++i) {
-        input >> mtx[i];
-        if (input.eof()) {
-          std::cerr << "Wrong matrix format\n";
+      mtx = new int[rows * cols];
+    }
+    for (size_t i = 0; i < rows * cols; ++i) {
+      input >> mtx[i];
+      if (input.eof()) {
+        std::cerr << "Wrong matrix format\n";
+        if (argv[1][0] == '2') {
           delete[] mtx;
-          return 2;
         }
-        if (input.fail()) {
-          std::cerr << "Invalid input\n";
+        return 2;
+      }
+      if (input.fail()) {
+        std::cerr << "Invalid input\n";
+        if (argv[1][0] == '2') {
           delete[] mtx;
-          return 2;
         }
+        return 2;
       }
+    }
 
-      int min = novikov::minSum(mtx, rows, cols);
-      novikov::addPeripheral(mtx, rows, cols);
+    int min = novikov::minSum(mtx, rows, cols);
+    novikov::addPeripheral(mtx, rows, cols);
 
-      output << min << " " << rows << " " << cols;
-      for (size_t i = 0; i < rows * cols; ++i) {
-        output << " " << mtx[i];
-      }
+    output << min << " " << rows << " " << cols;
+    for (size_t i = 0; i < rows * cols; ++i) {
+      output << " " << mtx[i];
+    }
+    if (argv[1][0] == '2') {
       delete[] mtx;
     }
   } catch (std::bad_alloc &) {
     std::cerr << "Memory can not be allocated\n";
+    delete[] mtx;
     return 2;
   }
 }
