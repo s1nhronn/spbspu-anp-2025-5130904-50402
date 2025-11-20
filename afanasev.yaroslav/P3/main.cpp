@@ -90,25 +90,25 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments" << '\n';
     return 1;
   }
-  if (!strcmp(argv[1], "2") && !strcmp(argv[1], "1"))
+  if (!std::strcmp(argv[1], "2") && !std::strcmp(argv[1], "1"))
   {
     std::cerr << "First parameter is out of range" << '\n';
     return 1;
   }
 
-  long long r_1 = 0, c_1 = 0;
+  long long r1 = 0, c1 = 0;
   std::ifstream input(argv[2]);
-  input >> r_1 >> c_1;
+  input >> r1 >> c1;
 
-  if (input.fail() || r_1 < 0 || c_1 < 0)
+  if (input.fail() || r1 < 0 || c1 < 0)
   {
     std::cerr << "Incorrect input" << '\n';
     return 2;
   }
 
-  size_t r = r_1, c = c_1;
+  size_t r = r1, c = c1;
 
-  if (strcmp(argv[1], "2"))
+  if (std::strcmp(argv[1], "2"))
   {
     long long * mtx = reinterpret_cast< long long * >(malloc(r * c * sizeof(long long)));
 
@@ -129,21 +129,19 @@ int main(int argc, char ** argv)
       }
     }
 
-    long long min = 0;
-    long long max = 0;
-    min = afanasev::doCntLocMin(mtx, r, c);
-    max = afanasev::doCntLocMax(mtx, r, c);
+    long long min = afanasev::doCntLocMin(mtx, r, c);
+    long long max = afanasev::doCntLocMax(mtx, r, c);
 
     free(mtx);
 
     std::ofstream output(argv[3]);
     if (!output) {
-        std::cerr << "Can not opun output file" << '\n';
-        return 1;
+      std::cerr << "Can not opun output file" << '\n';
+      return 1;
     }
     output << min << ' ' << max << '\n';
   }
-  else if (strcmp(argv[1], "1"))
+  else if (std::strcmp(argv[1], "1"))
   {
     const size_t size_mtx = 10000;
     long long mtx[size_mtx] = {};
@@ -157,15 +155,13 @@ int main(int argc, char ** argv)
         return 2;
       }
     }
-    long long min = 0;
-    long long max = 0;
-    min = afanasev::doCntLocMin(mtx, r, c);
-    max = afanasev::doCntLocMax(mtx, r, c);
+    long long min = afanasev::doCntLocMin(mtx, r, c);
+    long long max = afanasev::doCntLocMax(mtx, r, c);
 
     std::ofstream output(argv[3]);
     if (!output) {
-        std::cerr << "Can not opun output file" << '\n';
-        return 1;
+      std::cerr << "Can not opun output file" << '\n';
+      return 1;
     }
     output << min << ' ' << max << '\n';
   }
