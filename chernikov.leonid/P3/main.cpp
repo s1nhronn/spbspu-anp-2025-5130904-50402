@@ -1,9 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
-#include <string>
 #include <cstring>
-#include <limits>
 namespace chernikov
 {
   bool isDownTriangleMatrix (const int * a, size_t rows, size_t cols);
@@ -43,29 +40,23 @@ int main (int argc, char ** argv)
     output << '0' << std::endl;
     return 0;
   }
-  /*if (rows < 0 || cols < 0)
-  {
-    std::cerr << "Invalid matrix dimensions\n";
-    input.close();
-    return 2;
-  }*/
-  bool isDynamic = false;
+  bool isDynamic = 0;
   int * a = nullptr;
   int nums[MAX_SIZE] = {};
   if (strcmp(argv[1], "1") == 0)
   {
     a = nums;
-    isDynamic = false;
+    isDynamic = 0;
   }
   else if (strcmp(argv[1], "2") == 0)
   {
     a = reinterpret_cast< int * >(malloc(sizeof(int) * (rows * cols)));
-    isDynamic = true;
     if (a == nullptr)
     {
       std::cerr << "Memory allocation failed\n";
       return 2;
     }
+    isDynamic = 1;
   }
   else
   {
@@ -86,19 +77,6 @@ int main (int argc, char ** argv)
     }
     ++col;
   }
-  /*if (col != ((rows * cols) - 1))
-  {
-    std::cerr << "Not enough data";
-    if (isDynamic == true)
-    {
-      free(a);
-      return 2;
-    }
-    else
-    {
-      return 2;
-    }
-  }*/
   input.close();
 
   bool lwr_tri_mtx = chernikov::isDownTriangleMatrix(a, rows, cols);
@@ -108,7 +86,7 @@ int main (int argc, char ** argv)
   output << "lwr_tri_mtx = " << lwr_tri_mtx << '\n';
   output.close();
 
-  if (isDynamic == true)
+  if (isDynamic)
   {
     free(a);
     a = nullptr;
@@ -120,15 +98,15 @@ bool chernikov::isDownTriangleMatrix(const int * a, size_t rows, size_t cols)
 {
   if (rows == 0 && cols == 0)
   {
-    return false;
+    return 0;
   }
   if (a == nullptr)
   {
-    return false;
+    return 0;
   }
   if (rows != cols)
   {
-    return false;
+    return 0;
   }
   for (size_t i = 0; i < rows; ++i)
   {
@@ -137,11 +115,11 @@ bool chernikov::isDownTriangleMatrix(const int * a, size_t rows, size_t cols)
       size_t index = i * cols + j;
       if (a[index] != 0)
       {
-        return false;
+        return 0;
       }
     }
   }
-  return true;
+  return 1;
 }
 
 size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
@@ -180,14 +158,14 @@ bool chernikov::isParNum(char * p)
 {
   if (p == nullptr)
   {
-    return false;
+    return 0;
   }
   for (size_t i = 0; p[i] != '\0'; ++i)
   {
-     if (!std::isdigit(static_cast<unsigned char>(p[i])))
+     if (p[i] < '0' || p[i] > '9')
      {
-       return false;
+       return 0;
      }
   }
-  return true;
+  return 1;
 }
