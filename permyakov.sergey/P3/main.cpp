@@ -8,7 +8,7 @@ namespace permyakov
   size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr);
   void lft_top_clk(int * arr1, int * arr, size_t n, size_t m);
   void lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m);
-  void arrInFromFile(int * arr, size_t & s, std::ifstream & in);
+  bool arrInFromFile(int * arr, std::ifstream & in, size_t n, size_t m);
   void arrOutInFile(int * arr, size_t n, size_t m, std::ofstream & out);
 }
 
@@ -42,18 +42,11 @@ int main (int argc, char ** argv)
   }
   int * arr1 = nullptr;
   int * arr2 = nullptr;
-  size_t s = 0;
   const size_t SIZE_OF_MATRIX = 10000;
   if (task == 1) {
     int arr[SIZE_OF_MATRIX]{};
-    per::arrInFromFile(arr, s, input);
-    if (!input.eof()) {
-      std::cerr << "Invalid array format\n";
-      return 2;
-    }
-    input.close();
-    if (s != n * m) {
-      std::cerr << "Failure to define array";
+    if (per::arrInFromFile(arr, input, n, m)) {
+      std::cerr << "Failure to define array\n";
       return 2;
     }
     try{
@@ -77,15 +70,8 @@ int main (int argc, char ** argv)
       std::cerr << "Failure to allocate memory\n";
       return 3;
     }
-    per::arrInFromFile(d_arr, s, input);
-    if (!input.eof()) {
-      std::cerr << "Invalid array format\n";
-      free(d_arr);
-      return 2;
-    }
-    input.close();
-    if (s != n * m) {
-      std::cerr << "Failure to define array";
+    if (per::arrInFromFile(d_arr, input, n, m)) {
+      std::cerr << "Failure to define array\n";
       free(d_arr);
       return 2;
     }
@@ -187,11 +173,16 @@ void permyakov::lft_bot_cnt (int * arr2, int * arr, size_t n, size_t m)
   }
 }
 
-void permyakov::arrInFromFile (int * arr, size_t & s, std::ifstream & in)
+bool permyakov::arrInFromFile (int * arr, std::ifstream & in, size_t n, size_t m)
 {
+  size_t s = 0;
   for (size_t num = 0; in >> num; ++s) {
     arr[s] = num;
   }
+  if (!in.eof() || s != n * m) {
+    return true;
+  }
+  return false;
 }
 
 void permyakov::arrOutInFile (int * arr, size_t n, size_t m, std::ofstream & out)
