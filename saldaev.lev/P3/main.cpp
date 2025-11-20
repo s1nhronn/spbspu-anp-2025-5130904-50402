@@ -75,7 +75,7 @@ namespace saldaev
       }
       bottom--;
     }
-    c += 1;
+    c++;
     matrix[y * cols + x] -= c;
   }
 }
@@ -104,8 +104,8 @@ int main(int argc, char **argv)
   }
   else
   {
-    return 1;
     std::cerr << "First parameter is unacceptable\n";
+    return 1;
   }
 
   std::ifstream input(argv[2]);
@@ -149,8 +149,7 @@ int main(int argc, char **argv)
   saldaev::doLftBotClk(matrix, rows, cols);
 
   std::ofstream output(argv[3]);
-  output << res1 << "\n"
-         << rows << " " << cols;
+  output << res1 << "\n" << rows << " " << cols;
   for (size_t i = 0; i < rows * cols; ++i)
   {
     output << " " << matrix[i];
