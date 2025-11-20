@@ -16,6 +16,19 @@ namespace novikov {
     delete[] mtx;
   }
 
+  bool isDigit(const char * str)
+  {
+    if (str == nullptr) {
+      return false;
+    }
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+      if (!(str[i] >= '0' && str[i] <= '9')) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   int minSum(int ** mtx, size_t r, size_t c)
   {
     int sum;
@@ -61,23 +74,12 @@ int main(int argc, char ** argv)
     return 1;
   }
 
-  int firstarg;
-
-  try {
-    firstarg = std::stoi(argv[1]);
-    if (argv[1] != std::to_string(firstarg)) {
-      std::cerr << "First parameter is not a number\n";
-      return 1;
-    }
-  } catch (std::invalid_argument &) {
+  if (novikov::isDigit(argv[1])) {
     std::cerr << "First parameter is not a number\n";
-    return 1;
-  } catch (std::out_of_range &) {
-    std::cerr << "First parameter is out of range\n";
     return 1;
   }
 
-  if (firstarg != 1 && firstarg != 2) {
+  if (argv[1][0] != '1' && argv[1][0] != '2') {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
@@ -100,9 +102,13 @@ int main(int argc, char ** argv)
     std::cerr << "Not enough data\n";
     return 2;
   }
+  if (input.fail()) {
+    std::cerr << "Invalid input\n";
+    return 2;
+  }
 
   try {
-    if (firstarg == 1) {
+    if (argv[1][0] == '1') {
       if (rows * cols > novikov::max_length) {
         std::cerr << "Matrix is too large\n";
         return 2;
@@ -140,7 +146,7 @@ int main(int argc, char ** argv)
           output << " " << mtx[i][j];
         }
       }
-    } else if (firstarg == 2) {
+    } else if (argv[1][0] == '2') {
       int ** mtx = new int * [rows];
 
       for (size_t i = 0; i < rows; ++i) {
@@ -160,6 +166,10 @@ int main(int argc, char ** argv)
           if (input.eof()) {
             std::cerr << "Wrong matrix format\n";
             novikov::remove(mtx, rows);
+            return 2;
+          }
+          if (input.fail()) {
+            std::cerr << "Invalid input\n";
             return 2;
           }
           ++count;
