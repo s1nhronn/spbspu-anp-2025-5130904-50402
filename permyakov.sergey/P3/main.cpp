@@ -4,12 +4,12 @@
 
 namespace permyakov
 {
-  void movePointToEnd(int * arr, size_t & ij, size_t & cnt, size_t end,
+  void movePointToEnd (int * arr, size_t & ij, size_t & cnt, size_t end,
   size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr);
-  void lft_top_clk(int * arr1, int * arr, size_t n, size_t m);
-  void lft_bot_cnt(int * arr2, int * arr, size_t n, size_t m);
-  bool arrInFromFile(int * arr, std::ifstream & in, size_t n, size_t m);
-  void arrOutInFile(int * arr, size_t n, size_t m, std::ofstream & out);
+  void lftTopClk (int * arr1, int * arr, size_t n, size_t m);
+  void lftBotCnt (int * arr2, int * arr, size_t n, size_t m);
+  std::ifstream & arrInFromFile (std::ifstream & in, int * arr, size_t n, size_t m);
+  std::ofstream & arrOutInFile (std::ofstream & out, int * arr, size_t n, size_t m);
 }
 
 int main (int argc, char ** argv)
@@ -45,7 +45,7 @@ int main (int argc, char ** argv)
   const size_t SIZE_OF_MATRIX = 10000;
   if (task == 1) {
     int arr[SIZE_OF_MATRIX]{};
-    if (per::arrInFromFile(arr, input, n, m)) {
+    if (!per::arrInFromFile(input, arr, n, m)) {
       std::cerr << "Failure to define array\n";
       return 2;
     }
@@ -62,15 +62,15 @@ int main (int argc, char ** argv)
       free(arr1);
       return 3;
     }
-    per::lft_top_clk(arr1, arr, n, m);
-    per::lft_bot_cnt(arr2, arr, n, m);
+    per::lftTopClk(arr1, arr, n, m);
+    per::lftBotCnt(arr2, arr, n, m);
   } else {
     int * d_arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
     if (d_arr == nullptr) {
       std::cerr << "Failure to allocate memory\n";
       return 3;
     }
-    if (per::arrInFromFile(d_arr, input, n, m)) {
+    if (!per::arrInFromFile(input, d_arr, n, m)) {
       std::cerr << "Failure to define array\n";
       free(d_arr);
       return 2;
@@ -90,15 +90,15 @@ int main (int argc, char ** argv)
       free(d_arr);
       return 3;
     }
-    per::lft_top_clk(arr1, d_arr, n, m);
-    per::lft_bot_cnt(arr2, d_arr, n, m);
+    per::lftTopClk(arr1, d_arr, n, m);
+    per::lftBotCnt(arr2, d_arr, n, m);
     free(d_arr);
   }
 
   std::ofstream output(argv[3]);
-  per::arrOutInFile(arr1, n, m, output);
-  output << "\n";
-  per::arrOutInFile(arr2, n, m, output);
+  per::arrOutInFile(output, arr1, n, m);
+  output << '\n';
+  per::arrOutInFile(output, arr2, n, m);
   free(arr1);
   free(arr2);
 }
@@ -121,7 +121,7 @@ size_t & i, size_t & j, size_t m, bool isCntInc, bool isIncr)
   }
 }
 
-void permyakov::lft_top_clk (int * arr1, int * arr, size_t n, size_t m)
+void permyakov::lftTopClk (int * arr1, int * arr, size_t n, size_t m)
 {
   if (n * m == 0) {
     return;
@@ -147,7 +147,7 @@ void permyakov::lft_top_clk (int * arr1, int * arr, size_t n, size_t m)
   }
 }
 
-void permyakov::lft_bot_cnt (int * arr2, int * arr, size_t n, size_t m)
+void permyakov::lftBotCnt (int * arr2, int * arr, size_t n, size_t m)
 {
   if (n * m == 0) {
     return;
@@ -173,22 +173,25 @@ void permyakov::lft_bot_cnt (int * arr2, int * arr, size_t n, size_t m)
   }
 }
 
-bool permyakov::arrInFromFile (int * arr, std::ifstream & in, size_t n, size_t m)
+std::ifstream & permyakov::arrInFromFile (std::ifstream & in, int * arr, size_t n, size_t m)
 {
   size_t s = 0;
-  for (size_t num = 0; in >> num; ++s) {
-    arr[s] = num;
+  int h = 0;
+  for (; in >> h; ++s) {
+    arr[s] = h;
   }
-  if (!in.eof() || s != n * m) {
-    return true;
+  in.clear();
+  if (s != m * n) {
+    in >> h;
   }
-  return false;
+  return in;
 }
 
-void permyakov::arrOutInFile (int * arr, size_t n, size_t m, std::ofstream & out)
+std::ofstream & permyakov::arrOutInFile (std::ofstream & out, int * arr, size_t n, size_t m)
 {
-  out << n << " " << m;
+  out << n << ' ' << m;
   for (size_t i = 0; i < n * m; ++i) {
-    out << " " << arr[i];
+    out << ' ' << arr[i];
   }
+  return out;
 }
