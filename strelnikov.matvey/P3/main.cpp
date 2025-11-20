@@ -45,7 +45,7 @@ namespace strelnikov {
     int cnt = 1;
 
     while (left <= right && top <= bot) {
-      for (long long j = (long long)left; j <= (long long)right && j >= 0; ++j) {
+      for (long long j = static_cast< long long >(left); j <= static_cast< long long >(right) && j >= 0; ++j) {
         mtx[bot * c + j] += cnt++;
       }
       if (bot == 0) {
@@ -54,7 +54,7 @@ namespace strelnikov {
       --bot;
 
       if (left <= right) {
-        for (long long i = (long long)bot; i >= (long long)top; --i) {
+        for (long long i = static_cast< long long >(bot); i >= static_cast< long long >(top); --i) {
           mtx[i * c + right] += cnt++;
         }
         if (right == 0) {
@@ -64,14 +64,14 @@ namespace strelnikov {
       }
 
       if (top <= bot && left <= right) {
-        for (long long j = (long long)right; j >= (long long)left && j >= 0; --j) {
+        for (long long j = static_cast< long long >(right); j >= static_cast< long long >(left) && j >= 0; --j) {
           mtx[top * c + j] += cnt++;
         }
         ++top;
       }
 
       if (left <= right && top <= bot) {
-        for (long long i = (long long)top; i <= (long long)bot; ++i) {
+        for (long long i = static_cast< long long >(top); i <= static_cast< long long >(bot); ++i) {
           mtx[i * c + left] += cnt++;
         }
         ++left;
@@ -104,7 +104,7 @@ namespace strelnikov {
     return cnt;
   }
 
-} // namespace strelnikov
+}
 int main(int argc, char* argv[])
 {
   if (argc > 4) {
@@ -172,6 +172,7 @@ int main(int argc, char* argv[])
   strelnikov::doLftBotCnt(mtx, r, c);
   out << dig << '\n';
   strelnikov::output(out, mtx, r, c);
+  out << '\n';
   if (pr == 2) {
     delete[] mtx;
   }
