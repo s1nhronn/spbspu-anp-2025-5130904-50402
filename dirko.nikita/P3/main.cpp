@@ -103,17 +103,12 @@ int main(int argc, char **argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  if (argv[1][1] != '\0' || argv[1][0] > '9' || argv[1][0] < '0')
+  if (argv[1][1] != '\0' || argv[1][0] > '2' || argv[1][0] < '1')
   {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
-  int mode = atoi(argv[1]);
-  if (mode < 1 || mode > 2)
-  {
-    std::cerr << "First parameter is out of range\n";
-    return 1;
-  }
+  int mode = std::atoi(argv[1]);
   std::ifstream fin(argv[2]);
   if (!fin.is_open())
   {
@@ -122,18 +117,7 @@ int main(int argc, char **argv)
   }
   size_t rows = 0, cols = 0;
   fin >> rows >> cols;
-  int *result1 = nullptr;
-  try
-  {
-    result1 = new int[rows * cols];
-  }
-  catch (std::bad_alloc &e)
-  {
-    std::cerr << "Cant alloc\n";
-    return 3;
-  }
   int staticMatrix[dirko::MAX_SIZE]{};
-  bool result2 = false;
   int *matrix = nullptr;
   if (mode == 1)
   {
@@ -147,7 +131,6 @@ int main(int argc, char **argv)
     }
     catch (const std::bad_alloc &e)
     {
-      delete[] result1;
       std::cerr << "Cant alloc\n";
       return 3;
     }
@@ -159,14 +142,27 @@ int main(int argc, char **argv)
     {
       delete[] matrix;
     }
-    delete[] result1;
     std::cerr << "Cant read\n";
     return 2;
   }
   fin.close();
+  int *result1 = nullptr;
+  try
+  {
+    result1 = new int[rows * cols];
+  }
+  catch (std::bad_alloc &e)
+  {
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
+    std::cerr << "Cant alloc\n";
+    return 3;
+  }
   dirko::copyMtx(matrix, result1, rows, cols);
   dirko::doLftBotClk(result1, rows, cols);
-  result2 = dirko::doLwrTriMtx(matrix, rows, cols);
+  bool result2 = dirko::doLwrTriMtx(matrix, rows, cols);
   std::ofstream fout(argv[3]);
   if (!fout.is_open())
   {
