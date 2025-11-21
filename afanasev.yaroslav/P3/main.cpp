@@ -122,6 +122,10 @@ int main(int argc, char ** argv)
       return 2;
     }
   }
+  else if (!std::strcmp(argv[1], "1"))
+  {
+    mtx = fix_mtx;
+  }
 
   for (size_t i = 0; i < (r * c); i++)
   {
