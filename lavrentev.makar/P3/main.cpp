@@ -82,6 +82,7 @@ int main(int argc, char** argv)
   if (lavrentev::inputFile(input, matrix, total).fail())
   {
     std::cerr << "Couldn't read the matrix" << '\n';
+    free(arr);
     return 2;
   }
 
@@ -93,6 +94,7 @@ int main(int argc, char** argv)
   if (!output.is_open())
   {
     std::cerr << "Couldn't open output file" << '\n';
+    free(arr);
     return 4;
   }
 
