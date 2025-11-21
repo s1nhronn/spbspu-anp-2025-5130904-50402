@@ -1,16 +1,12 @@
-#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <cstring>
-#include <limits>
-#include <cstdlib>
 
 namespace lavrentev
 {
   size_t cntLocMin(int* arr, size_t x, size_t y);
   size_t numColLsr(int* arr, size_t x, size_t y);
-  std::istream &inputFile(std::istream& in, int* m, size_t lng);
+  std::istream& inputFile(std::istream& in, int* m, size_t lng);
 }
 
 int main(int argc, char** argv)
@@ -29,12 +25,12 @@ int main(int argc, char** argv)
   }
 
   int num = 0;
-  char* endPtr;
+  char* endPtr = nullptr;
 
   num = strtol(argv[1], &endPtr, 10);
   if (*endPtr != '\0')
   {
-    std::cerr << "First parameter is not a number";
+    std::cerr << "First parameter is not a number" << '\n';
     return 1;
   }
   if (num != 1 && num != 2)
@@ -60,7 +56,7 @@ int main(int argc, char** argv)
   }
 
   size_t total = x * y;
-  int arr2 [staticSize];
+  int arr2[staticSize];
   int* arr = nullptr;
   int* matrix = nullptr;
 
@@ -72,20 +68,17 @@ int main(int argc, char** argv)
   {
     int total_for_memory = x * y;
     arr = reinterpret_cast< int* >(malloc(total_for_memory * sizeof(int)));
+    if (arr == nullptr)
+    {
+      std::cerr << "Memory allocation fail" << "\n";
+      return 3;
+    }
     matrix = arr;
   }
 
-  try
+  if (lavrentev::inputFile(input, matrix, total).fail())
   {
-    if (lavrentev::inputFile(input, matrix, total).fail())
-    {
-      throw std::logic_error("Couldn't read the matrix");
-    }
-  }
-  catch (const std::logic_error &e)
-  {
-    std::cerr << e.what() << '\n';
-    free(arr);
+    std::cerr << "Couldn't read the matrix" << '\n';
     return 2;
   }
 
@@ -93,6 +86,12 @@ int main(int argc, char** argv)
   size_t ans11 = lavrentev::numColLsr(matrix, x, y);
 
   std::ofstream output(argv[3]);
+
+  if (!output.is_open())
+  {
+    std::cerr << "Couldn't open output file" << '\n';
+    return 4;
+  }
 
   output << "Answer for var_2: " << ans2 << '\n';
   output << "Answer for var_11: " << ans11 << '\n';
@@ -173,7 +172,7 @@ size_t lavrentev::numColLsr(int* arr, size_t x, size_t y)
   return ans11;
 }
 
-std::istream &lavrentev::inputFile(std::istream& in, int* m, size_t lng)
+std::istream& lavrentev::inputFile(std::istream& in, int* m, size_t lng)
 {
   for (size_t i = 0; i < lng; i++)
   {
