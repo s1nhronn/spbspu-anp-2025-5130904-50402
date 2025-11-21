@@ -151,7 +151,7 @@ int main(int argc, char **argv)
   {
     result1 = new int[rows * cols];
   }
-  catch (std::bad_alloc &e)
+  catch (const std::bad_alloc &e)
   {
     if (mode == 2)
     {
