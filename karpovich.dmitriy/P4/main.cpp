@@ -117,21 +117,11 @@ int main() {
   }
   karp::repsym(str, data, s);
 
-  const size_t max_len = 1000;
-  char* str2 = reinterpret_cast< char* >(malloc(max_len + 1));
-  if (!str2) {
-    std::free(data);
-    std::free(str);
-    std::cerr << "Failed to alloc memory for str2";
-    return 1;
-  }
-  std::cin >> str2;
-  size_t s2 = 0;
-  for (size_t i = 0; str2[i] != 0; ++i) {
-    ++s2;
-  }
 
-  char* data2 = reinterpret_cast< char* >(malloc(s + s2 + 1));
+  size_t s2 = 4;
+  const char* str2 = "def ";
+
+  char* data2 = reinterpret_cast<char*>(malloc(s + s2 + 1));
   if (!data2) {
     std::free(data);
     std::free(str);
