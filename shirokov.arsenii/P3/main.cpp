@@ -1,7 +1,7 @@
+#include <cerrno>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <cstring>
 #include <cstdlib>
 #include <limits>
 
@@ -9,11 +9,9 @@ namespace shirokov
 {
   std::istream &input(std::istream &in, int *m, size_t lng);
   std::ostream &outputMatrix(std::ostream &out, const int *matrix, size_t m, size_t n);
-  int *copy(const int *a, size_t k);
   void spiral(int *matrix, size_t m, size_t n);
   bool isTriangularMatrix(int *matrix, size_t m, size_t n);
   size_t transformIndexes(size_t i, size_t j, size_t n);
-  void cutMatrix(int *matrix, size_t m, size_t n);
   int stoi(const char *n);
   const size_t MATRIX_SIZE = 10000;
 }
@@ -30,14 +28,6 @@ int main(int argc, char **argv)
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  for (size_t i = 0; i < std::strlen(argv[1]); ++i)
-  {
-    if (argv[1][i] < '0' || argv[1][i] > '9')
-    {
-      std::cerr << "First parameter is not a number\n";
-      return 1;
-    }
-  }
   int num = 0;
   try
   {
@@ -46,6 +36,11 @@ int main(int argc, char **argv)
   catch (const std::out_of_range &e)
   {
     std::cerr << "First parameter is out of range\n";
+    return 1;
+  }
+  catch (const std::logic_error &)
+  {
+    std::cerr << "First parameter is not a number\n";
     return 1;
   }
   if (num != 1 && num != 2)
@@ -91,16 +86,16 @@ int main(int argc, char **argv)
     delete[] matrix;
     return 2;
   }
-  int *res1 = shirokov::copy(matrix, m * n);
-  shirokov::spiral(res1, m, n);
   bool res2 = shirokov::isTriangularMatrix(matrix, m, n);
+  int *res1 = matrix;
+  shirokov::spiral(res1, m, n);
   out << "Решение варианта 1:\n";
   shirokov::outputMatrix(out, res1, m, n) << '\n';
   out << "Решение варианта 2:\n" << (res2 ? "true" : "false");
-  delete[] res1;
   if (num == 2)
   {
-    delete[] matrix;
+    delete[] res1;
+    matrix = nullptr;
   }
 }
 
@@ -110,11 +105,16 @@ int shirokov::stoi(const char *n)
   const int INT_MIN = std::numeric_limits< int >::min();
 
   char *end;
+  errno = 0;
   long val = strtol(n, &end, 10);
 
-  if (val > INT_MAX || val < INT_MIN)
+  if (*end != '\0')
   {
-    throw std::out_of_range("Parameter is out of range");
+    throw std::logic_error("");
+  }
+  if (val > INT_MAX || val < INT_MIN || errno == ERANGE)
+  {
+    throw std::out_of_range("");
   }
 
   int out = static_cast< int >(val);
@@ -123,7 +123,6 @@ int shirokov::stoi(const char *n)
 
 std::istream &shirokov::input(std::istream &in, int *m, size_t lng)
 {
-  in.seekg(3);
   for (size_t i = 0; i < lng; i++)
   {
     in >> m[i];
@@ -142,20 +141,10 @@ std::ostream &shirokov::outputMatrix(std::ostream &out, const int *matrix, size_
   {
     for (size_t j = 0; j < n; j++)
     {
-      out << ' ' << matrix[i * n + j];
+      out << ' ' << matrix[transformIndexes(i, j, n)];
     }
   }
   return out;
-}
-
-int *shirokov::copy(const int *a, size_t k)
-{
-  int *b = new int[k];
-  for (size_t i = 0; i < k; ++i)
-  {
-    b[i] = a[i];
-  }
-  return b;
 }
 
 size_t shirokov::transformIndexes(size_t i, size_t j, size_t n)
@@ -220,43 +209,22 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
   }
 }
 
-void shirokov::cutMatrix(int *matrix, size_t m, size_t n)
-{
-  if (m == n)
-  {
-    return;
-  }
-  size_t minn = std::min(m, n);
-  int *temp = new int[minn * minn];
-  for (size_t i = 0; i < minn; ++i)
-  {
-    for (size_t j = 0; j < minn; ++j)
-    {
-      temp[transformIndexes(i, j, minn)] = matrix[transformIndexes(i, j, n)];
-    }
-  }
-  delete[] matrix;
-  matrix = temp;
-}
-
 bool shirokov::isTriangularMatrix(int *matrix, size_t m, size_t n)
 {
   if (m == 0 || n == 0)
   {
     return false;
   }
-  shirokov::cutMatrix(matrix, m, n);
-  bool flag = true;
-  for (size_t i = 0; i < m - 1; ++i)
+  size_t minn = m < n ? m : n;
+  for (size_t i = 0; i < minn - 1; ++i)
   {
-    for (size_t j = i + 1; j < n; ++j)
+    for (size_t j = i + 1; j < minn; ++j)
     {
-      if (matrix[shirokov::transformIndexes(i, j, n)] != 0)
+      if (matrix[transformIndexes(i, j, n)] != 0)
       {
-        flag = false;
-        break;
+        return false;
       }
     }
   }
-  return flag;
+  return true;
 }
