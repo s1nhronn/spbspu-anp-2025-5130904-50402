@@ -2,7 +2,11 @@
 #include <fstream>
 #include <string>
 #include <cstring>
-const size_t MAXOS = 10000;
+namespace terentev
+{
+  void minmax(const int* a, size_t n, size_t m, std::ostream& output);
+  const size_t MAXOS = 10000;
+}
 int main(int argc, char** argv)
 {
   if (argc < 4)
@@ -37,7 +41,7 @@ int main(int argc, char** argv)
     return 2;
   }
   std::ofstream output(argv[3]);
-  if (!output)
+  if (!output.is_open())
   {
     std::cerr << "Failed to open output file\n";
     return 2;
@@ -46,11 +50,6 @@ int main(int argc, char** argv)
   if (!(input >> n >> m))
   {
     std::cerr << "Failed to read matrix dimensions\n";
-    return 2;
-  }
-  if (n == 1 || m == 1)
-  {
-    std::cerr << "Array cannot exist\n";
     return 2;
   }
   if ((n * m) > 10000)
@@ -70,7 +69,7 @@ int main(int argc, char** argv)
   }
   if (std::stoi(argv[1]) == 1)
   {
-    int a[MAXOS] = {};
+    int a[terentev::MAXOS] = {};
     for (size_t i = 0; i < n * m; ++i)
     {
       input >> a[i];
@@ -80,64 +79,7 @@ int main(int argc, char** argv)
         return 2;
       }
     }
-    size_t ix = m + 1;
-    size_t kolmin = 0;
-    size_t kolmax = 0;
-    int min = a[m + 1];
-    int max = a[m + 1];
-    while (ix < n * m - 1 - m)
-    {
-      if (ix % m == m - 1)
-      {
-        ix = ix + 2;
-      }
-      if (ix % m == 0)
-      {
-        ix = ix + 1;
-      }
-      else
-      {
-        bool ifi = true;
-        if (a[ix] >= a[ix - m - 1]) ifi = false;
-        if (a[ix] >= a[ix - m]) ifi = false;
-        if (a[ix] >= a[ix - m + 1]) ifi = false;
-        if (a[ix] >= a[ix - 1]) ifi = false;
-        if (a[ix] >= a[ix + 1]) ifi = false;
-        if (a[ix] >= a[ix + m - 1]) ifi = false;
-        if (a[ix] >= a[ix + m]) ifi = false;
-        if (a[ix] >= a[ix + m + 1]) ifi = false;
-        if (ifi)
-        {
-          min = a[ix];
-        }
-        ifi = true;
-        if (a[ix] <= a[ix - m - 1]) ifi = false;
-        if (a[ix] <= a[ix - m]) ifi = false;
-        if (a[ix] <= a[ix - m + 1]) ifi = false;
-        if (a[ix] <= a[ix - 1]) ifi = false;
-        if (a[ix] <= a[ix + 1]) ifi = false;
-        if (a[ix] <= a[ix + m - 1]) ifi = false;
-        if (a[ix] <= a[ix + m]) ifi = false;
-        if (a[ix] <= a[ix + m + 1]) ifi = false;
-        if (ifi)
-        {
-          max = a[ix];
-        }
-        ix = ix + 1;
-      }
-    }
-    for (size_t p = m; p < n * m - m; ++p)
-    {
-      if (a[p] == min && p % m != 0 && p % m != m - 1)
-      {
-        kolmin = kolmin + 1;
-      }
-      if (a[p] == max && p % m != 0 && p % m != m - 1)
-      {
-        kolmax = kolmax + 1;
-      }
-    }
-    output << kolmin << '\n' << kolmax << '\n';
+    terentev::minmax(a, n, m, output);
   }
   else
   {
@@ -147,11 +89,9 @@ int main(int argc, char** argv)
       std::cerr << "bad_alloc\n";
       return 3;
     }
-    size_t count = 0;
     for (size_t i = 0; i < n * m; ++i)
     {
       input >> a[i];
-      count = count + 1;
       if (!input)
       {
         std::cerr << "Failed to read array element\n";
@@ -159,69 +99,68 @@ int main(int argc, char** argv)
         return 2;
       }
     }
-    if (count != n * m)
-    {
-      std::cerr << " Invalid number of array elements\n";
-      return 2;
-    }
-    size_t ix = m + 1;
-    int min = a[m + 1];
-    int max = a[m + 1];
-    size_t kolmin = 0;
-    size_t kolmax = 0;
-    while (ix < n * m - 1 - m)
-    {
-      if (ix % m == 0)
-      {
-        ix = ix + 1;
-      }
-      if (ix % m == m - 1)
-      {
-        ix = ix + 2;
-      }
-      else
-      {
-        bool ififi = true;
-        if (a[ix] >= a[ix - m - 1]) ififi = false;
-        if (a[ix] >= a[ix - m]) ififi = false;
-        if (a[ix] >= a[ix - m + 1]) ififi = false;
-        if (a[ix] >= a[ix - 1]) ififi = false;
-        if (a[ix] >= a[ix + 1]) ififi = false;
-        if (a[ix] >= a[ix + m - 1]) ififi = false;
-        if (a[ix] >= a[ix + m]) ififi = false;
-        if (a[ix] >= a[ix + m + 1]) ififi = false;
-        if (ififi)
-        {
-          min = a[ix];
-        }
-        ififi = true;
-        if (a[ix] <= a[ix - m - 1]) ififi = false;
-        if (a[ix] <= a[ix - m]) ififi = false;
-        if (a[ix] <= a[ix - m + 1]) ififi = false;
-        if (a[ix] <= a[ix - 1]) ififi = false;
-        if (a[ix] <= a[ix + 1]) ififi = false;
-        if (a[ix] <= a[ix + m - 1]) ififi = false;
-        if (a[ix] <= a[ix + m]) ififi = false;
-        if (a[ix] <= a[ix + m + 1]) ififi = false;
-        if (ififi)
-        {
-          max = a[ix];
-        }
-        ix = ix + 1;
-      }
-    }
-    for (size_t p = m; p < n * m - m; ++p)
-    {
-      if (a[p] == min && p % m != 0 && p % m != m - 1)
-      {
-        kolmin = kolmin + 1;
-      }
-      if (a[p] == max && p % m != 0 && p % m != m - 1)
-      {
-        kolmax = kolmax + 1;
-      }
-    }
-    output << kolmin << '\n' << kolmax << '\n';
+    terentev::minmax(a, n, m, output);
     free(a);
   }
+}
+void terentev::minmax(const int* a, size_t n, size_t m, std::ostream & output)
+{
+  size_t ix = m + 1;
+  size_t kolmin = 0;
+  size_t kolmax = 0;
+  int min = a[m + 1];
+  int max = a[m + 1];
+  while (ix < n * m - 1 - m)
+  {
+    if (ix % m == 0)
+    {
+      ix = ix + 1;
+    }
+    else if (ix % m == m - 1)
+    {
+      ix = ix + 2;
+    }
+    else
+    {
+      bool ifi = true;
+      if (a[ix] >= a[ix - m - 1]) ifi = false;
+      if (a[ix] >= a[ix - m]) ifi = false;
+      if (a[ix] >= a[ix - m + 1]) ifi = false;
+      if (a[ix] >= a[ix - 1]) ifi = false;
+      if (a[ix] >= a[ix + 1]) ifi = false;
+      if (a[ix] >= a[ix + m - 1]) ifi = false;
+      if (a[ix] >= a[ix + m]) ifi = false;
+      if (a[ix] >= a[ix + m + 1]) ifi = false;
+      if (ifi)
+      {
+        min = a[ix];
+      }
+      ifi = true;
+      if (a[ix] <= a[ix - m - 1]) ifi = false;
+      if (a[ix] <= a[ix - m]) ifi = false;
+      if (a[ix] <= a[ix - m + 1]) ifi = false;
+      if (a[ix] <= a[ix - 1]) ifi = false;
+      if (a[ix] <= a[ix + 1]) ifi = false;
+      if (a[ix] <= a[ix + m - 1]) ifi = false;
+      if (a[ix] <= a[ix + m]) ifi = false;
+      if (a[ix] <= a[ix + m + 1]) ifi = false;
+      if (ifi)
+      {
+        max = a[ix];
+      }
+      ix = ix + 1;
+    }
+  }
+  for (size_t p = m; p < n * m - m; ++p)
+  {
+    if (a[p] == min && p % m != 0 && p % m != m - 1)
+    {
+      kolmin = kolmin + 1;
+    }
+    if (a[p] == max && p % m != 0 && p % m != m - 1)
+    {
+      kolmax = kolmax + 1;
+    }
+  }
+  output << kolmin << '\n' << kolmax << '\n';
 }
