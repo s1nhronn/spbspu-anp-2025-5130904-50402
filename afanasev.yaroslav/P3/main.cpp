@@ -146,7 +146,7 @@ int main(int argc, char ** argv)
     }
     mtx = local_mtx;
   }
-  
+
   long long min = afanasev::doCntLocMin(mtx, r, c);
   long long max = afanasev::doCntLocMax(mtx, r, c);
 
