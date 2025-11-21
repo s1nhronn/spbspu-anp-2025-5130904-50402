@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <cstdlib>
+#include <limits>
 
 namespace shirokov
 {
@@ -13,6 +14,7 @@ namespace shirokov
   bool isTriangularMatrix(int *matrix, size_t m, size_t n);
   size_t transformIndexes(size_t i, size_t j, size_t n);
   void cutMatrix(int *matrix, size_t m, size_t n);
+  int stoi(const char *n);
   const size_t MATRIX_SIZE = 10000;
 }
 
@@ -30,7 +32,7 @@ int main(int argc, char **argv)
   }
   for (size_t i = 0; i < std::strlen(argv[1]); ++i)
   {
-    if (!std::isdigit(static_cast< unsigned char >(argv[1][i])))
+    if (argv[1][i] < '0' || argv[1][i] > '9')
     {
       std::cerr << "First parameter is not a number\n";
       return 1;
@@ -39,7 +41,7 @@ int main(int argc, char **argv)
   int num = 0;
   try
   {
-    num = std::stoi(argv[1]);
+    num = shirokov::stoi(argv[1]);
   }
   catch (const std::out_of_range &e)
   {
@@ -102,6 +104,23 @@ int main(int argc, char **argv)
   }
 }
 
+int shirokov::stoi(const char *n)
+{
+  const int INT_MAX = std::numeric_limits< int >::max();
+  const int INT_MIN = std::numeric_limits< int >::min();
+
+  char *end;
+  long val = strtol(n, &end, 10);
+
+  if (val > INT_MAX || val < INT_MIN)
+  {
+    throw std::out_of_range("Parameter is out of range");
+  }
+
+  int out = static_cast< int >(val);
+  return out;
+}
+
 std::istream &shirokov::input(std::istream &in, int *m, size_t lng)
 {
   in.seekg(3);
@@ -119,20 +138,11 @@ std::istream &shirokov::input(std::istream &in, int *m, size_t lng)
 std::ostream &shirokov::outputMatrix(std::ostream &out, const int *matrix, size_t m, size_t n)
 {
   out << m << ' ' << n;
-  if (m != 0 && n != 0)
-  {
-    out << ' ';
-  }
   for (size_t i = 0; i < m; i++)
   {
     for (size_t j = 0; j < n; j++)
     {
-      if (i == m - 1 && j == n - 1)
-      {
-        out << matrix[i * n + j];
-        break;
-      }
-      out << matrix[i * n + j] << ' ';
+      out << ' ' << matrix[i * n + j];
     }
   }
   return out;
