@@ -1,6 +1,9 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <cstring>
+#include <cstdlib>
+#include <limits>
 
 namespace lavrentev
 {
