@@ -10,7 +10,6 @@ namespace karpovich
   {
     for (size_t i = 0; i < size; ++i) {
       if (!(input >> arr[i])) {
-        input.setstate(std::ios::failbit);
         return input;
       }
     }
