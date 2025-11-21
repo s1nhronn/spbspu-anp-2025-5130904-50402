@@ -4,7 +4,7 @@
 
 namespace dirko
 {
-  const char *find(const char *start, const char *end, const char target)
+  const char *find(const char *start, const char *end, char target)
   {
     for (const char *ch = start; ch < end; ++ch)
     {
@@ -18,12 +18,12 @@ namespace dirko
   char *getLine(std::istream &in, size_t &size)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
-    char *str = nullptr;
-    char ch = 0;
     if (isSkipWp)
     {
       in >> std::noskipws;
     }
+    char *str = nullptr;
+    char ch = 0;
     while (in >> ch && ch != '\n')
     {
       char *temp = reinterpret_cast< char * >(malloc(size + 1));
@@ -66,7 +66,7 @@ namespace dirko
     ++size;
     return str;
   }
-  size_t doDifLat(const char *str, const size_t size)
+  size_t doDifLat(const char *str, size_t size)
   {
     size_t count = 0;
     char seen[26] = {};
@@ -83,7 +83,7 @@ namespace dirko
     }
     return count;
   }
-  char *doUppLow(const char *source, char *distention, const size_t size)
+  char *doUppLow(const char *source, char *distention, size_t size)
   {
     for (size_t i = 0; i < size; ++i)
     {
