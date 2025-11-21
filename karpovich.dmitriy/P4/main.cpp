@@ -55,18 +55,19 @@ namespace karpovich
   }
   void repsym(const char* str, char* data, const size_t size)
   {
+    size_t MAX_ascii = 256;
     if (!str || !data) {
       data[0] = 0;
       return;
     }
 
-    int repeat[256] = {};
+    int repeat[MAX_ascii] = {};
     for (size_t i = 0; i < size && str[i] != 0; ++i) {
       unsigned char c = static_cast< unsigned char >(str[i]);
       ++repeat[c];
     }
 
-    int saw[256] = {};
+    int saw[MAX_ascii] = {};
     size_t pos = 0;
     for (size_t i = 0; i < size && str[i] != 0; ++i) {
       unsigned char c = static_cast< unsigned char >(str[i]);
@@ -121,7 +122,7 @@ int main() {
   size_t s2 = 4;
   const char* str2 = "def ";
 
-  char* data2 = reinterpret_cast<char*>(malloc(s + s2 + 1));
+  char* data2 = reinterpret_cast< char* >(malloc(s + s2 + 1));
   if (!data2) {
     std::free(data);
     std::free(str);
