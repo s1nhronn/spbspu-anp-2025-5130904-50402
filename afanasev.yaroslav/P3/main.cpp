@@ -109,7 +109,7 @@ int main(int argc, char ** argv)
   size_t r = r1, c = c1;
   long long * mtx = nullptr;
 
-  if (std::strcmp(argv[1], "2"))
+  if (!std::strcmp(argv[1], "2"))
   {
     mtx = reinterpret_cast< long long * >(malloc(r * c * sizeof(long long)));
 
@@ -130,7 +130,7 @@ int main(int argc, char ** argv)
       }
     }
   }
-  else if (std::strcmp(argv[1], "1"))
+  else if (!std::strcmp(argv[1], "1"))
   {
     const size_t size_mtx = 10000;
     mtx[size_mtx] = {};
@@ -149,7 +149,7 @@ int main(int argc, char ** argv)
   long long min = afanasev::doCntLocMin(mtx, r, c);
   long long max = afanasev::doCntLocMax(mtx, r, c);
 
-  if (std::strcmp(argv[1], "2"))
+  if (!std::strcmp(argv[1], "2"))
   {
     free(mtx);
   }
