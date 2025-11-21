@@ -36,38 +36,36 @@ namespace lachugin {
       }
     }
   }
-  int *LFT_BOT_CLK (int **mtx, long long rows, long long cols, int *res1) {
+  int *LFT_BOT_CLK (int *mtx, long long rows, long long cols, int *res1) {
     int d = 1;
-    long long k = 0;
     long long n = 0;
     while (d < rows * cols+1) {
-      for (long long i = (rows-1)-n; i >= 0+n; i--) {   // up
-        mtx[i][0+n] -= d;
+      for (long long i = cols*(rows-1-n)+n; i >= n*(cols+1); i=-cols) {   // up
+        mtx[i] -= d;
         d++;
       }
       if (d == rows * cols+1) {
         break;
       }
-      k++;
-      for (long long i = 0+k; i < cols-n; i++) { // right
-        mtx[0+n][i] -= d;
+      for (long long i = n*(cols+1)+1; i <= cols*(1+n)-n-1; i++) { // right
+        mtx[i] -= d;
         d++;
       }
       if (d == rows * cols+1) {
         break;
       }
-      for (long long  i= 0+k; i < rows-n; i++) {   // down
-        mtx[i][(cols-1)-n] -= d;
+      for (long long i=cols*(2+n)-n-1; i <= cols*(rows-n)-n-1 ; i+=cols) {   // down
+        mtx[i] -= d;
         d++;
       }
       if (d == rows * cols+1) {
         break;
+      }
+      for (long long i = cols*(rows-n)-n-2; i > cols*(rows-1-n)+n; i--) {   // left
+        mtx[i] -= d;
+        d++;
       }
       n++;
-      for (long long  i = (cols-1)-n; i >= 0+n; i--) {   // left
-        mtx[(rows-1)-(n-1)][i] -= d;
-        d++;
-      }
     }
 
     convert_int(mtx, rows, cols, res1);
