@@ -107,10 +107,11 @@ int main(int argc, char ** argv)
   }
 
   size_t r = r1, c = c1;
+  long long * mtx = nullptr;
 
   if (std::strcmp(argv[1], "2"))
   {
-    long long * mtx = reinterpret_cast< long long * >(malloc(r * c * sizeof(long long)));
+    mtx = reinterpret_cast< long long * >(malloc(r * c * sizeof(long long)));
 
     if (mtx == nullptr)
     {
@@ -128,23 +129,11 @@ int main(int argc, char ** argv)
         return 2;
       }
     }
-
-    long long min = afanasev::doCntLocMin(mtx, r, c);
-    long long max = afanasev::doCntLocMax(mtx, r, c);
-
-    free(mtx);
-
-    std::ofstream output(argv[3]);
-    if (!output) {
-      std::cerr << "Can not opun output file" << '\n';
-      return 1;
-    }
-    output << min << ' ' << max << '\n';
   }
   else if (std::strcmp(argv[1], "1"))
   {
     const size_t size_mtx = 10000;
-    long long mtx[size_mtx] = {};
+    mtx[size_mtx] = {};
 
     for (size_t i = 0; i < (r * c); i++)
     {
@@ -155,15 +144,21 @@ int main(int argc, char ** argv)
         return 2;
       }
     }
-    long long min = afanasev::doCntLocMin(mtx, r, c);
-    long long max = afanasev::doCntLocMax(mtx, r, c);
-
-    std::ofstream output(argv[3]);
-    if (!output) {
-      std::cerr << "Can not opun output file" << '\n';
-      return 1;
-    }
-    output << min << ' ' << max << '\n';
   }
+
+  long long min = afanasev::doCntLocMin(mtx, r, c);
+  long long max = afanasev::doCntLocMax(mtx, r, c);
+
+  if (std::strcmp(argv[1], "2"))
+  {
+    free(mtx);
+  }
+
+  std::ofstream output(argv[3]);
+  if (!output) {
+    std::cerr << "Can not opun output file" << '\n';
+    return 1;
+  }
+  output << min << ' ' << max << '\n';
   return 0;
 }
