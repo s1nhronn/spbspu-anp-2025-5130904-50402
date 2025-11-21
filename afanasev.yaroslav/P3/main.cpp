@@ -90,7 +90,7 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments" << '\n';
     return 1;
   }
-  if (!std::strcmp(argv[1], "2") && !std::strcmp(argv[1], "1"))
+  if (std::strcmp(argv[1], "2") && std::strcmp(argv[1], "1"))
   {
     std::cerr << "First parameter is out of range" << '\n';
     return 1;
@@ -133,19 +133,20 @@ int main(int argc, char ** argv)
   else if (!std::strcmp(argv[1], "1"))
   {
     const size_t size_mtx = 10000;
-    mtx[size_mtx] = {};
+    long long local_mtx[size_mtx] = {};
 
     for (size_t i = 0; i < (r * c); i++)
     {
-      input >> mtx[i];
+      input >> local_mtx[i];
       if (input.fail())
       {
         std::cerr << "Incorrect input" << '\n';
         return 2;
       }
     }
+    mtx = local_mtx;
   }
-
+  
   long long min = afanasev::doCntLocMin(mtx, r, c);
   long long max = afanasev::doCntLocMax(mtx, r, c);
 
