@@ -159,7 +159,7 @@ bool chernikov::isParNum(const char * p)
     return 0;
   }
   const size_t MAX_CHECK = 32;
-  for (size_t i = 0; i < 32 && p[i] != '\0'; ++i)
+  for (size_t i = 0; i < MAX_CHECK && p[i] != '\0'; ++i)
   {
      if (p[i] < '0' || p[i] > '9')
      {
