@@ -152,16 +152,16 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
   return count;
 }
 
-bool chernikov::isParNum(const char * p)
+bool chernikov::isParNum(const char * a)
 {
-  if (p == nullptr)
+  if (a == nullptr)
   {
     return 0;
   }
   const size_t MAX_CHECK = 32;
-  for (size_t i = 0; i < MAX_CHECK && p[i] != '\0'; ++i)
+  for (size_t i = 0; i < MAX_CHECK && a[i] != '\0'; ++i)
   {
-     if (p[i] < '0' || p[i] > '9')
+     if (a[i] < '0' || a[i] > '9')
      {
        return 0;
      }
