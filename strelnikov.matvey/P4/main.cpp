@@ -3,7 +3,7 @@
 
 void addSymb(char*& str, size_t& s, char ch)
 {
-  char* tmp = reinterpret_cast<char*>(malloc(s + 1));
+  char* tmp = reinterpret_cast<char*>(malloc(s + 2));
   if (tmp == nullptr) {
     if (str) {
       free(str);
@@ -14,11 +14,15 @@ void addSymb(char*& str, size_t& s, char ch)
   for (size_t i = 0; i < s; ++i) {
     tmp[i] = str[i];
   }
+
+  tmp[s] = ch;
+  tmp[s+1] = '\0';
+
   if (str) {
     free(str);
   }
+
   str = tmp;
-  str[s] = ch;
   ++s;
 }
 
@@ -29,6 +33,8 @@ char* getString(std::istream& in, size_t& s)
     in >> std::noskipws;
   }
   char* res = nullptr;
+  s = 0;
+
   char ch;
   while (in >> ch) {
     if (ch == '\n') {
@@ -36,7 +42,7 @@ char* getString(std::istream& in, size_t& s)
     }
     try {
       addSymb(res, s, ch);
-    } catch (const std::exception& e) {
+    } catch (const std::bad_alloc& e) {
       if (res) {
         free(res);
       }
@@ -49,6 +55,7 @@ char* getString(std::istream& in, size_t& s)
   }
   try {
     addSymb(res, s, '\0');
+    --s;
   } catch (const std::exception& e) {
     if (res) {
       free(res);
@@ -63,7 +70,7 @@ int doHasSam(char* str1, size_t s1, char* str2, size_t s2)
 {
   for (size_t i = 0; i < s1; ++i) {
     for (size_t j = 0; j < s2; ++j) {
-      if (str1[i] = str2[j]) {
+      if (str1[i] == str2[j]) {
         return 1;
       }
     }
@@ -71,48 +78,37 @@ int doHasSam(char* str1, size_t s1, char* str2, size_t s2)
   return 0;
 }
 
-char* doDgtSnd(char* str1, size_t s1, char* str2, size_t s2)
+char* doDgtSnd(const char* str1, size_t s1, const char* str2, size_t s2)
 {
   char* a = nullptr;
-  size_t size = 0;
+  size_t cnt = 0;
+
   for (size_t i = 0; i < s2; ++i) {
-    if (isdigit(str2[i])) {
-      char* tmp = reinterpret_cast<char*>(malloc(size + 1));
-      if (!tmp) {
-        if (a) {
-          free(a);
-        }
-        std::cerr << "Bad alloc\n";
+    if (isdigit(static_cast<unsigned char>(str2[i]))) {
+      try {
+        addSymb(a, cnt, str2[i]);
+      } catch (const std::bad_alloc& e) {
+        free(a);
         return nullptr;
       }
-      for (size_t j = 0; j < size; ++j) {
-        tmp[j] = a[j];
-      }
-      tmp[size] = str2[i];
-      if (a) {
-        free(a);
-      }
-      a = tmp;
-      ++size;
     }
   }
 
-  char* res = reinterpret_cast<char*>(malloc(s1 + size));
+  char* res = reinterpret_cast<char*>(malloc(s1 + cnt + 1));
   if (!res) {
-    if (a) {
-      free(a);
-    }
+    free(a);
     return nullptr;
   }
+
   for (size_t i = 0; i < s1; ++i) {
     res[i] = str1[i];
   }
-  for (size_t i = s1; i < s1 + size; ++i) {
-    res[i] = a[i - s1];
+  for (size_t i = 0; i < cnt; ++i) {
+    res[s1 + i] = a[i];
   }
-  if (a) {
-    free(a);
-  }
+
+  res[s1 + cnt] = '\0';
+  free(a);
   return res;
 }
 
@@ -120,35 +116,43 @@ int main()
 {
   size_t s1 = 0, s2 = 0; 
   char* str1 = nullptr, *str2 = nullptr; 
-  try { 
-    str1 = getString(std::cin, s1);
-  } catch (const std::bad_alloc& e){
-    std::cerr << e.what() << '\n';
-    return 1;
-  } catch (const std::logic_error& e) {
-    std::cerr << e.what() << '\n';
-    return 2;
-  } 
-
   try {
+    str1 = getString(std::cin, s1);
     str2 = getString(std::cin, s2);
-  } catch (const std::bad_alloc& e) { 
-    std::cerr << e.what() << '\n';
+  } catch (const std::bad_alloc& e) {
+    std::cerr << e.what() << "\n";
+    if (str1) {
+      free(str1);
+    }
+    if (str2) {
+      free(str2);
+    }
     return 1;
   } catch (const std::logic_error& e) {
-    std::cerr << e.what() << '\n';
+    std::cerr << e.what() << "\n";
+    if (str1) {
+      free(str1);
+    }
+    if (str2) {
+      free(str2);
+    }
     return 2;
-  } 
+  }
+
   int hasCommon = doHasSam(str1, s1, str2, s2);
   std::cout << hasCommon << '\n';
+
   char* result2 = doDgtSnd(str1, s1, str2, s2);
   if (!result2) {
     std::cerr << "Memory allocation failed\n";
     free(str1);
     return 1;
   }
+
   std::cout << result2 << '\n';
+  
   free(str1);
+  free(str2);
   free(result2);
   return 0;
 }
