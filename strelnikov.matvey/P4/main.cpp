@@ -59,10 +59,11 @@ char* getString(std::istream& in, size_t& s)
   return res;
 }
 
-int doHasSam(char * str1, size_t s1, char * str2, size_t s2){
-  for(size_t i = 0; i < s1; ++i){
-    for(size_t j = 0; j < s2; ++j){
-      if(str1[i] = str2[j]){
+int doHasSam(char* str1, size_t s1, char* str2, size_t s2)
+{
+  for (size_t i = 0; i < s1; ++i) {
+    for (size_t j = 0; j < s2; ++j) {
+      if (str1[i] = str2[j]) {
         return 1;
       }
     }
@@ -70,25 +71,52 @@ int doHasSam(char * str1, size_t s1, char * str2, size_t s2){
   return 0;
 }
 
-void doDgtSnt();
+char* doDgtSnd(char* str1, size_t s1, char* str2, size_t s2)
+{
+  char* a = nullptr;
+  size_t size = 0;
+  for (size_t i = 0; i < s2; ++i) {
+    if (isdigit(str2[i])) {
+      char* tmp = reinterpret_cast<char*>(malloc(size + 1));
+      if (!tmp) {
+        if (a) {
+          free(a);
+        }
+        std::cerr << "Bad alloc\n";
+        return nullptr;
+      }
+      for (size_t j = 0; j < size; ++j) {
+        tmp[j] = a[j];
+      }
+      tmp[size] = str2[i];
+      if (a) {
+        free(a);
+      }
+      a = tmp;
+      ++size;
+    }
+  }
+
+  char* res = reinterpret_cast<char*>(malloc(s1 + size));
+  if (!res) {
+    if (a) {
+      free(a);
+    }
+    return nullptr;
+  }
+  for (size_t i = 0; i < s1; ++i) {
+    res[i] = str1[i];
+  }
+  for (size_t i = s1; i < s1 + size; ++i) {
+    res[i] = a[i - s1];
+  }
+  if (a) {
+    free(a);
+  }
+  return res;
+}
 
 int main()
 {
-  size_t s = 0;
-  char* str = nullptr;
-  try {
-    str = getString(std::cin, s);
-  } catch (const std::exception& e) {
-    std::cerr << e.what() << '\n';
-    return 2;
-  }
-
-  for (size_t i = 0; i < s; ++i) {
-    std::cout << str[i];
-  }
-  std::cout << '\n' << s << '\n';
-  if (str) {
-    free(str);
-  }
   return 0;
 }
