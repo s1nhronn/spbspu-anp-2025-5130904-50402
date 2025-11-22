@@ -5,7 +5,7 @@ namespace chernikov
 {
   bool isDownTriangleMatrix(const int * a, size_t rows, size_t cols);
   size_t localMaxQuantity(const int * a, size_t rows, size_t cols);
-  bool isParNum(char * a);
+  bool isParNum(const char * a);
 }
 
 int main(int argc, char ** argv)
@@ -40,15 +40,15 @@ int main(int argc, char ** argv)
     output << '0' << '\n';
     return 0;
   }
-  bool isDynamic = 0;
+  bool isArrayDynamic = 0;
   int * a = nullptr;
   int nums[MAX_SIZE] = {};
-  if (strcmp(argv[1], "1") == 0)
+  if (std::strcmp(argv[1], "1") == 0)
   {
     a = nums;
-    isDynamic = 0;
+    isArrayDynamic = 0;
   }
-  else if (strcmp(argv[1], "2") == 0)
+  else if (std::strcmp(argv[1], "2") == 0)
   {
     a = reinterpret_cast< int * >(malloc(sizeof(int) * (rows * cols)));
     if (a == nullptr)
@@ -56,7 +56,7 @@ int main(int argc, char ** argv)
       std::cerr << "Memory allocation failed\n";
       return 2;
     }
-    isDynamic = 1;
+    isArrayDynamic = 1;
   }
   else
   {
@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
     if (!(input >> a[i]))
     {
       std::cerr << "Failed to count element\n";
-      if (isDynamic)
+      if (isArrayDynamic)
       {
         free(a);
       }
@@ -84,7 +84,7 @@ int main(int argc, char ** argv)
   output << "lwr_tri_mtx = " << lwr_tri_mtx << '\n';
   output.close();
 
-  if (isDynamic)
+  if (isArrayDynamic)
   {
     free(a);
     a = nullptr;
@@ -152,13 +152,14 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
   return count;
 }
 
-bool chernikov::isParNum(char * p)
+bool chernikov::isParNum(const char * p)
 {
   if (p == nullptr)
   {
     return 0;
   }
-  for (size_t i = 0; p[i] != '\0'; ++i)
+  const size_t MAX_CHECK = 32;
+  for (size_t i = 0; i < 32 && p[i] != '\0'; ++i)
   {
      if (p[i] < '0' || p[i] > '9')
      {
