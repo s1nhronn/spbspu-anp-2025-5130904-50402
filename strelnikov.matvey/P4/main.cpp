@@ -59,6 +59,19 @@ char* getString(std::istream& in, size_t& s)
   return res;
 }
 
+int doHasSam(char * str1, size_t s1, char * str2, size_t s2){
+  for(size_t i = 0; i < s1; ++i){
+    for(size_t j = 0; j < s2; ++j){
+      if(str1[i] = str2[j]){
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+void doDgtSnt();
+
 int main()
 {
   size_t s = 0;
