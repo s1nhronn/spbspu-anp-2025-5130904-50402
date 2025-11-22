@@ -160,10 +160,10 @@ int main(int argc, char **argv)
     return 2;
   }
 
-  output << res1 << "\n" << rows << " " << cols;
+  output << res1 << '\n' << rows << ' ' << cols;
   for (size_t i = 0; i < rows * cols; ++i)
   {
-    output << " " << matrix[i];
+    output << ' ' << matrix[i];
   }
 
   if (mode == 2)
