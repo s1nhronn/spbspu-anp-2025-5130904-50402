@@ -118,5 +118,37 @@ char* doDgtSnd(char* str1, size_t s1, char* str2, size_t s2)
 
 int main()
 {
+  size_t s1 = 0, s2 = 0; 
+  char* str1 = nullptr, *str2 = nullptr; 
+  try { 
+    str1 = getString(std::cin, s1);
+  } catch (const std::bad_alloc& e){
+    std::cerr << e.what() << '\n';
+    return 1;
+  } catch (const std::logic_error& e) {
+    std::cerr << e.what() << '\n';
+    return 2;
+  } 
+
+  try {
+    str2 = getString(std::cin, s2);
+  } catch (const std::bad_alloc& e) { 
+    std::cerr << e.what() << '\n';
+    return 1;
+  } catch (const std::logic_error& e) {
+    std::cerr << e.what() << '\n';
+    return 2;
+  } 
+  int hasCommon = doHasSam(str1, s1, str2, s2);
+  std::cout << hasCommon << '\n';
+  char* result2 = doDgtSnd(str1, s1, str2, s2);
+  if (!result2) {
+    std::cerr << "Memory allocation failed\n";
+    free(str1);
+    return 1;
+  }
+  std::cout << result2 << '\n';
+  free(str1);
+  free(result2);
   return 0;
 }
