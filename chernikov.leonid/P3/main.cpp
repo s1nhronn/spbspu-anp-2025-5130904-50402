@@ -3,12 +3,12 @@
 #include <cstring>
 namespace chernikov
 {
-  bool isDownTriangleMatrix (const int * a, size_t rows, size_t cols);
-  size_t localMaxQuantity (const int * a, size_t rows, size_t cols);
-  bool isParNum (char * a);
+  bool isDownTriangleMatrix(const int * a, size_t rows, size_t cols);
+  size_t localMaxQuantity(const int * a, size_t rows, size_t cols);
+  bool isParNum(char * a);
 }
 
-int main (int argc, char ** argv)
+int main(int argc, char ** argv)
 {
   if (argc < 4 || argc > 4)
   {
@@ -36,8 +36,8 @@ int main (int argc, char ** argv)
   if (rows == 0 && cols == 0)
   {
     std::ofstream output(argv[3]);
-    output << '0' << std::endl;
-    output << '0' << std::endl;
+    output << '0' << '\n';
+    output << '0' << '\n';
     return 0;
   }
   bool isDynamic = 0;
@@ -63,7 +63,6 @@ int main (int argc, char ** argv)
     std::cerr << "Parameter 2 is set incorrectly\n";
     return 2;
   }
-  size_t col = 0;
   for (size_t i = 0; i < (rows * cols); ++i)
   {
     if (!(input >> a[i]))
@@ -75,7 +74,6 @@ int main (int argc, char ** argv)
       }
       return 2;
     }
-    ++col;
   }
   input.close();
 
