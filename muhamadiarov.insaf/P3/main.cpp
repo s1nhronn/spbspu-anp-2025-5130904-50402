@@ -213,7 +213,7 @@ bool muhamadiarov::toCheckParam(int argc, char* argv[])
       if (ch[i] < '0' || ch[i] > '9')
       {
         std::cerr << "First parameter is not a number\n";
-	return false;
+        return false;
       }
     }
   }
