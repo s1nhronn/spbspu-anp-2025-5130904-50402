@@ -1,8 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include <cstring>
-#include <cstdlib>
-#include <memory>
 
 namespace lavrentev
 {
@@ -26,10 +23,9 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  int num = 0;
   char* endPtr = nullptr;
 
-  num = std::strtol(argv[1], std::addressof(endPtr), 10);
+  int num = std::strtol(argv[1], std::addressof(endPtr), 10);
   if (*endPtr != '\0')
   {
     std::cerr << "First parameter is not a number" << '\n';
