@@ -17,7 +17,7 @@ namespace lachugin {
     int d = 1;
     long long n = 0;
     while (d < rows * cols+1) {
-      for (long long i = cols*(rows-1-n)+n; i >= n*(cols+1); i=-cols) {
+      for (long long i = cols*(rows-1-n)+n; i >= n*(cols+1); i-=cols) {
         mtx[i] -= d;
         d++;
       }
@@ -86,7 +86,10 @@ namespace lachugin {
         sum += mtx[i+1+c];
       }
     }
-    return sum / k;
+    double arf_mean = sum/k;
+    int temp = arf_mean*10;
+    double res = temp/10.0;
+    return res;
   }
   void BLT_SMT_MTR (const int *mtx, long long rows, long long cols, double *res2){
     fopy(res2, mtx, rows, cols);
