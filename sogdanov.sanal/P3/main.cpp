@@ -3,7 +3,6 @@
 #include <cstdlib>
 namespace sogdanov
 {
-  const size_t SIZE = 10000;
   std::istream & readMatrix(std::ifstream & input, int * mtx, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows * cols ; i++) {
@@ -75,16 +74,9 @@ namespace sogdanov
     }
     return maxSum;
   }
-  int * createMatrix(int num, size_t rows, size_t cols)
+  int * createMatrix(size_t rows, size_t cols)
   {
-    if (num == 1) {
-      int mtx[SIZE] = {};
-      return mtx;
-    }
-    if (num == 2) {
-      return reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
-    }
-    return nullptr;
+    return reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
   }
   void rm(char num, int * mtx)
   {
@@ -130,7 +122,14 @@ int main(int argc, char ** argv)
     std::cerr << "Incorrect Matrix Sizes\n";
     return 2;
   }
-  int * mtx = sogdanov::createMatrix(num, rows, cols);
+  const int SIZE = 10000;
+  int mtx_on_stack[SIZE] = {};
+  int * mtx = nullptr;
+  if (num == 1) {
+    mtx = mtx_on_stack;
+  } else if (num == 2) {
+    int * mtx = sogdanov::createMatrix(rows, cols);
+  }
   if (mtx == nullptr) {
     std::cerr << "Memory allocation failed\n";
     return 2;
