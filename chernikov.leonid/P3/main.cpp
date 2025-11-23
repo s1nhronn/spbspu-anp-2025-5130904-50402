@@ -137,12 +137,12 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
     {
       int t = a[j + i * cols];
       if (t > a[(j - 1) + (i - 1) * cols] &&
-      t > a[j + (i - 1) * cols] &&
-      t > a[(j + 1) + (i - 1) * cols] &&
-      t > a[(j - 1) + i * cols] &&
-      t > a[(j + 1) + i * cols] &&
-      t > a[(j - 1) + (i + 1) * cols] &&
-      t > a[j + (i + 1) * cols] &&
+      t > a[j + (i - 1) * cols]           &&
+      t > a[(j + 1) + (i - 1) * cols]     &&
+      t > a[(j - 1) + i * cols]           &&
+      t > a[(j + 1) + i * cols]           &&
+      t > a[(j - 1) + (i + 1) * cols]     &&
+      t > a[j + (i + 1) * cols]           &&
       t > a[(j + 1) + (i + 1) * cols])
       {
         count++;
