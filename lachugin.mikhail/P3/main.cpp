@@ -2,7 +2,7 @@
 #include <fstream>
 namespace lachugin {
   void make(std::ifstream& fin,long long rows, long long cols, int *mtx){
-    fin.ignore(2);
+    fin>>rows>>cols;
     for (long long i = 0; i < rows*cols; i++) {
       fin >> mtx[i];
       if (fin.eof()) {
@@ -121,6 +121,7 @@ namespace lachugin {
     fin.close();
     LFT_BOT_CLK(res1, rows, cols);
     fin.open(infile);
+    fin.clear();
     make(fin, rows, cols, mtx);
     BLT_SMT_MTR(mtx, rows, cols, res2);
     fin.close();
@@ -160,13 +161,12 @@ int main(int argc, char ** argv) {
     return 1;
   }
   fin.close();
-  std::ofstream output(argv[3]);
   if (prmt == 2) {
     int *res1 = new int[rows*cols];
     double *res2 = new double[rows*cols];
     int *mtx = new int[rows*cols];
     try {
-      lachugin::doall(argv[1], argv[2], rows, cols, res1, res2, mtx);
+      lachugin::doall(argv[2], argv[3], rows, cols, res1, res2, mtx);
       delete [] res1;
       delete [] res2;
       delete [] mtx;
@@ -183,7 +183,7 @@ int main(int argc, char ** argv) {
     double res2[10000];
     int mtx[10000];
     try {
-      lachugin::doall(argv[1], argv[2], rows, cols, res1, res2, mtx);
+      lachugin::doall(argv[2], argv[3], rows, cols, res1, res2, mtx);
     } catch (std::logic_error &e) {
       std::cerr<<e.what()<<'\n';
       return 2;
