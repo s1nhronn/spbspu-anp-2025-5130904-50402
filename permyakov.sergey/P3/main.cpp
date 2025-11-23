@@ -42,9 +42,9 @@ int main(int argc, char ** argv)
   int * arr = nullptr;
   int * arr1 = nullptr;
   int * arr2 = nullptr;
+  const size_t SIZE_OF_MATRIX = 10000;
+  int cArr[SIZE_OF_MATRIX]{};
   if (task == 1) {
-    const size_t SIZE_OF_MATRIX = 10000;
-    int cArr[SIZE_OF_MATRIX]{};
     arr = cArr;
   } else {
     try {
@@ -85,7 +85,6 @@ int main(int argc, char ** argv)
 
   std::ofstream output(argv[3]);
   per::arrOutInFile(output, arr1, n, m);
-  output << '\n';
   per::arrOutInFile(output, arr2, n, m);
   free(arr1);
   free(arr2);
@@ -105,25 +104,25 @@ void permyakov::lftTopClk(int * arr1, int * arr, size_t n, size_t m)
   size_t lef = 0, rig = m - 1, top = 0, bot = n - 1;
   size_t cnt = 1, i = 0, j = 0;
   while (cnt < n * m) {
-    while(j < rig){
+    while (j < rig) {
       arr1[i * m + j] -= cnt;
       cnt++;
       j++;
     }
     top++;
-    while(i < bot){
+    while (i < bot) {
       arr1[i * m + j] -= cnt;
       cnt++;
       i++;
     }
     rig--;
-    while(j > lef){
+    while (j > lef) {
       arr1[i * m + j] -= cnt;
       cnt++;
       j--;
     }
     bot--;
-    while(i > top){
+    while (i > top) {
       arr1[i * m + j] -= cnt;
       cnt++;
       i--;
@@ -146,25 +145,25 @@ void permyakov::lftBotCnt(int * arr2, int * arr, size_t n, size_t m)
   size_t lef = 0, rig = m - 1, top = 0, bot = n - 1;
   size_t cnt = 1, i = n - 1, j = 0;
   while (cnt < n * m) {
-    while(j < rig){
+    while (j < rig) {
       arr2[i * m + j] += cnt;
       cnt++;
       j++;
     }
     bot--;
-    while(i > top){
+    while (i > top) {
       arr2[i * m + j] += cnt;
       cnt++;
       i--;
     }
     rig--;
-    while(j > lef){
+    while (j > lef) {
       arr2[i * m + j] += cnt;
       cnt++;
       j--;
     }
     top++;
-    while(i < bot){
+    while (i < bot) {
       arr2[i * m + j] += cnt;
       cnt++;
       i++;
@@ -190,5 +189,6 @@ std::ofstream & permyakov::arrOutInFile(std::ofstream & out, int * arr, size_t n
   for (size_t i = 0; i < n * m; ++i) {
     out << ' ' << arr[i];
   }
+  out << '\n';
   return out;
 }
