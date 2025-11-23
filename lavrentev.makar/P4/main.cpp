@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstring>
 
-namespace pFourFunc
+namespace lavrentev
 {
   size_t dif_lat(char * ans, std::string s);
   void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
@@ -38,8 +38,8 @@ int main()
     return 1;
   }
 
-  pFourFunc::uni_two(s, s2, ex, ex2, result);
-  int ans_7 = pFourFunc::dif_lat(ans, s);
+  lavrentev::uni_two(s, s2, ex, ex2, result);
+  int ans_7 = lavrentev::dif_lat(ans, s);
 
   std::cout << "Ans 7: " << ans_7 << "\n";
   std::cout << "Ans 12: " << result << "\n";
@@ -48,7 +48,7 @@ int main()
   delete[] result;
 }
 
-size_t pFourFunc::dif_lat(char * ans, std::string s)
+size_t lavrentev::dif_lat(char * ans, std::string s)
 {
   size_t ex = s.size();
 
@@ -89,7 +89,7 @@ size_t pFourFunc::dif_lat(char * ans, std::string s)
   return answer;
 }
 
-void pFourFunc::uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
+void lavrentev::uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result)
 {
   size_t min;
   size_t max;
