@@ -40,8 +40,6 @@ int main(int argc, char ** argv)
     return 2;
   }
   int * arr = nullptr;
-  int * arr1 = nullptr;
-  int * arr2 = nullptr;
   const size_t SIZE_OF_MATRIX = 10000;
   int cArr[SIZE_OF_MATRIX]{};
   if (task == 1) {
@@ -60,8 +58,8 @@ int main(int argc, char ** argv)
     }
     return 2;
   }
-  arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));;
-  arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
+  int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));;
+  int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
   if (arr1 == nullptr || arr2 == nullptr) {
     std::cerr << "Failure to allocate memory\n";
     if (arr1 != nullptr) {
