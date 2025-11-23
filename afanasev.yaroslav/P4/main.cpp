@@ -57,13 +57,13 @@ namespace afanasev {
   }
 
   // Удаление букв из переданной строки
-  void deletingLetters(const char * str, const char * vowels, char * out, size_t str_l, size_t & out1_l)
+  void deletingLetters(const char * str, const char * let, char * out, size_t str_l, size_t & out1_l)
   {
     size_t i = 0;
 
     while (str[i] != '\0' && out1_l < str_l - 1)
     {
-      if (!strchr(vowels, str[i]))
+      if (!strchr(let, str[i]))
       {
         out[out1_l] = str[i];
         out1_l++;
@@ -90,7 +90,8 @@ int main()
   try
   {
     str = afanasev::getline(std::cin, str_lenght_link);
-  } catch (...)
+  }
+  catch (...)
   {
     std::cerr << "Incorrect input or get memory failed" << '\n';
     return 1;
@@ -114,6 +115,29 @@ int main()
     std::cout << output1[i];
   }
   std::cout << '\n';
+  delete[] output1;
+
+
+  // Удаление заданных букв
+  size_t output2_lenght = 0;
+  size_t & output2_lenght_link = output2_lenght;
+  const char * let = "abcd";
+  char * output2 = nullptr;
+  output2 = new char[str_lenght];
+  if (output2 == nullptr)
+  {
+    delete[] str;
+    std::cerr << "Get memory failed" << '\n';
+    return 1;
+  }
+  afanasev::deletingLetters(str, let, output2, str_lenght, output2_lenght_link);
+
+  for (size_t i = 0; i < output2_lenght_link; i++)
+  {
+    std::cout << output2[i];
+  }
+  std::cout << '\n';
+  delete[] output2;
 
   return 0;
 }
