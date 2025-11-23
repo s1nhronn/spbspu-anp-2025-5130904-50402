@@ -2,8 +2,8 @@
 #include <cctype>
 #include <cstring>
 
-namespace afanasev {
-  // Возвращает указатель на массив из char
+namespace afanasev
+{
   char * getline(std::istream & input, size_t & size)
   {
     bool isSkipWp = input.flags() & std::ios::skipws;
@@ -56,7 +56,6 @@ namespace afanasev {
     return str;
   }
 
-  // Удаление букв из переданной строки
   void deletingLetters(const char * str, const char * let, char * out, size_t str_l, size_t & out1_l)
   {
     size_t i = 0;
@@ -73,7 +72,6 @@ namespace afanasev {
     out[out1_l] = '\0';
   }
 
-  // Удаляет из переданной строки все гласные
   void deleteVowels(const char * str, char * output, size_t size, size_t & output1)
   {
     const char * vowels = "aeiouyAEIOUY";
@@ -83,7 +81,6 @@ namespace afanasev {
 
 int main()
 {
-  // Считываем строку
   size_t str_lenght = 0;
   size_t & str_lenght_link = str_lenght;
   char * str = nullptr;
@@ -97,7 +94,6 @@ int main()
     return 1;
   }
 
-  // Удаление гласных
   size_t output1_lenght = 0;
   size_t & output1_lenght_link = output1_lenght;
   char * output1 = nullptr;
@@ -109,7 +105,6 @@ int main()
     return 1;
   }
   afanasev::deleteVowels(str, output1, str_lenght, output1_lenght_link);
-
   for (size_t i = 0; i < output1_lenght_link; i++)
   {
     std::cout << output1[i];
@@ -117,8 +112,6 @@ int main()
   std::cout << '\n';
   delete[] output1;
 
-
-  // Удаление заданных букв
   size_t output2_lenght = 0;
   size_t & output2_lenght_link = output2_lenght;
   const char * let = "abcd";
@@ -131,7 +124,6 @@ int main()
     return 1;
   }
   afanasev::deletingLetters(str, let, output2, str_lenght, output2_lenght_link);
-
   for (size_t i = 0; i < output2_lenght_link; i++)
   {
     std::cout << output2[i];
@@ -141,67 +133,3 @@ int main()
 
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-/*
-#include <iostream>
-#include <iomanip>
-
-namespace afanasev
-{
-  size_t getline(std::istream & in, char * data, size_t size)
-  {
-    bool is_skipws = in.flags() & std::ios_base::skipws;
-    if (is_skipws)
-    {
-      in >> std::noskipws;
-    }
-    size_t i = 0;
-    for (; in && i < size; i++)
-    {
-      in >> data[i];
-    }
-    data[i] = 0;
-    if (is_skipws)
-    {
-      in >> std::skipws;
-    }
-    in >> std::skipws;
-    return i;
-  }
-}
-
-int main()
-{
-  char str[] = "!!!!!";
-  size_t str_size = 5;
-
-  char del_str[] = "abc";
-
-
-  size_t k = afanasev::getline(std::cin, str, str_size);
-
-  str[k] = 0;
-
-  std::cout << str << "\n";
-
-  
-  //только пробелы
-  std::cin >> std::noskipws;
-
-  for (size_t i = 0; i < str_size; i++)
-  {
-    std::cin >> str[i];
-  }
-  
-
-}
-*/
