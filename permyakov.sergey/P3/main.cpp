@@ -47,11 +47,10 @@ int main(int argc, char ** argv)
   if (task == 1) {
     arr = cArr;
   } else {
-    try {
-      arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-    } catch (std::bad_alloc()) {
-    std::cerr << "Failure to allocate memoty\n";
-    return 3;
+    arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
+    if (arr == nullptr) {
+      std::cerr << "Failure to allocate memoty\n";
+      return 3;
     }
   }
   if (!per::arrInFromFile(input, arr, n, m)) {
@@ -61,20 +60,16 @@ int main(int argc, char ** argv)
     }
     return 2;
   }
-  try {
-    arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));;
-  } catch (std::bad_alloc()) {
-    std::cerr << "Failure to allocate memoty\n";
-    if (task == 2) {
-      free(arr);
-    }
-    return 3;
-  }
-  try {
-    arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-  } catch (std::bad_alloc()) {
+  arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));;
+  arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
+  if (arr1 == nullptr || arr2 == nullptr) {
     std::cerr << "Failure to allocate memory\n";
-    free(arr1);
+    if (arr1 != nullptr) {
+      free(arr1);
+    }
+    if (arr2 != nullptr) {
+      free(arr2);
+    }
     if (task == 2) {
       free(arr);
     }
