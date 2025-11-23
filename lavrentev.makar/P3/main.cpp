@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <cstdlib>
 
 namespace lavrentev
 {
