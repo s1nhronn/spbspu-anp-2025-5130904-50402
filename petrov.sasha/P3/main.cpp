@@ -1,63 +1,53 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 namespace petrov
 {
-  void LFT_BOT_CNT(int** a, size_t r, size_t c);
-  void FLL_INC_WAV(int** a, size_t rows, size_t cols);
-  void rm(int** mtx, size_t rows);
-
-  void rm(int** mtx, size_t rows)
+  void lftBotCnt(int* a, size_t r, size_t c);
+  void fllIncWav(int* a, size_t rows, size_t cols);
+  void rm(int* mtx)
   {
-    if (!mtx) return;
-    for (size_t i = 0; i < rows; i++){
-      delete[] mtx[i];
+    if (!mtx) {
+      return;
     }
     delete[] mtx;
   }
 
-  bool readMTX(std::ifstream& in, int** a, size_t rows, size_t cols)
+  std::ifstream& readMTX(std::ifstream& in, int* a, size_t rows, size_t cols)
   {
     size_t elements = 0;
     for (size_t i = 0; i < rows; ++i)
     {
       for (size_t j = 0; j < cols; ++j)
       {
-        if (!(in >> a[i][j]))
+        if (!(in >> a[i*cols + j]))
         {
-          if (elements < rows * cols)
-          {
-            std::cerr << "Invalid matrix data\n";
-          }
-          return false;
+          in.setstate(std::ios::failbit);
+          throw std::runtime_error("Failed to read matrix element");
         }
         elements++;
       }
     }
-    if (elements < rows * cols)
-    {
-      std::cerr << "Invalid matrix data\n";
-      return false;
-    }
     int temp;
     if (in >> temp)
     {
-      std::cerr << "Too many arguments for array\n";
-      return false;
+      in.setstate(std::ios::failbit);
+      throw std::runtime_error("Too many arguments for array");
     }
-    return true;
+    return in;
   }
 
-  bool writeMTX(std::ofstream& out, int** a, size_t rows, size_t cols)
+  std::ofstream& writeMTX(std::ofstream& out, int* a, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows; i++)
     {
       for (size_t j = 0; j < cols; j++)
       {
-        out << " " << a[i][j];
+        out << a[i* cols + j] << " ";
       }
     }
-    return true;
+    return out;
   }
 
   bool stat(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
@@ -65,15 +55,20 @@ namespace petrov
     if (rows == 0 || cols == 0) {
       return true;
     }
-    int arr[100][100] = {0};
-    int* arr_ptr[100];
-    for (size_t i = 0; i < rows; ++i)
-    {
-      arr_ptr[i] = arr[i];
+    int arr[rows*cols] = {0};
+    try {
+      readMTX(in, arr, rows, cols);
+    } catch (const std::exception& e) {
+      std::cerr << e.what() << "\n";
     }
-    if (!readMTX(in, arr_ptr, rows, cols)) return false;
-    LFT_BOT_CNT(arr_ptr, rows, cols);
-    return writeMTX(out, arr_ptr, rows, cols);
+    lftBotCnt(arr, rows, cols);
+    try {
+      writeMTX(out, arr, rows, cols);
+    } catch (const std::exception& e) {
+      std::cerr << e.what() << "\n";
+      return false;
+    }
+    return true;
   }
 
   bool dyn(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
@@ -81,112 +76,109 @@ namespace petrov
     if (rows == 0 || cols == 0) {
       return true;
     }
-    int** a = nullptr;
-    try
-    {
-      a = new int*[rows];
-      for (size_t i = 0; i < rows; ++i) {
-        a[i] = new int[cols]();
-      }
-    } catch (...) {
-      rm(a, rows);
+    int* a = nullptr;
+    try {
+      a = new int[rows*cols];
+    } catch (const std::bad_alloc& e) {
+      rm(a);
       std::cerr << "Memory allocation failed\n";
       return false;
     }
-    if (!readMTX(in, a, rows, cols)) {
-      rm(a, rows);
+    try {
+      readMTX(in, a, rows, cols);
+    } catch(const std::exception& e) {
+      rm(a);
+      std::cerr << e.what() << "\n";
       return false;
     }
-    FLL_INC_WAV(a, rows, cols);
-    bool result = writeMTX(out, a, rows, cols);
-    rm(a, rows);
-    return result;
+    fllIncWav(a, rows, cols);
+    try {
+      writeMTX(out, a, rows, cols);
+    } catch(const std::exception& e) {
+      rm(a);
+      std::cerr << e.what() << "\n";
+      return false;
+    }
+    rm(a);
+    return true;
   }
 
-  void LFT_BOT_CNT(int** a, size_t r, size_t c)
+  void lftBotCnt(int* a, size_t r, size_t c)
   {
     size_t counter = 1;
     size_t up = 0, down = r - 1, left = 0, right = c - 1;
     while (up <= down && left <= right) {
-        for (size_t i = down; i >= up && i < r; --i) {
-            a[i][left] += counter++;
-            if (i == 0) {
-              break;
-            }
+        for (size_t i = down; (i!= 0) && i >= up; --i) {
+            a[i*c + left] += counter++;
         }
         left++;
         if (left > right) {
           break;
         }
-        for (size_t j = left; j <= right && j < c; ++j) {
-            a[up][j] += counter++;
+        for (size_t j = left; j <= right; ++j) {
+            a[up * c + j] += counter++;
         }
         up++;
         if (up > down) {
           break;
         }
-        for (size_t i = up; i <= down && i < r; ++i) {
-            a[i][right] += counter++;
+        for (size_t i = up; i <= down; ++i) {
+            a[i*c + right] += counter++;
         }
         right--;
         if (left > right) {
           break;
         }
-        for (size_t j = right; j >= left && j < c; --j) {
-            a[down][j] += counter++;
-            if (j == 0) {
-              break;
-            }
+        for (size_t j = right;(j!= 0) && j >= left; --j) {
+            a[down*c + j] += counter++;
         }
         down--;
     }
 }
-  void FLL_INC_WAV(int** a, size_t rows, size_t cols)
+  void fllIncWav(int* a, size_t rows, size_t cols)
   {
     size_t min_data = (rows < cols) ? rows : cols;
     size_t borders = (min_data + 1) / 2;
     for (size_t border =  0; border < borders; ++border) {
       int counter = border + 1;
       for (size_t j = border; j < cols - border; ++j) {
-        a[border][j] += counter;
+        a[border*cols + j] += counter;
       }
       for (size_t i = border + 1; i < rows - border; ++i) {
-        a[i][cols - 1 - border] += counter;
+        a[i*cols + (cols - 1 - border)] += counter;
       }
       if (border < rows - 1 - border) {
-        for (size_t j = cols - 2 - border; j >= border; j--) {
-          a[rows - 1 - border][j] += counter;
-          if (j == 0) {
-            break;
-          }
+        for (size_t j = cols - 2 - border; (j != 0) && j >= border; j--) {
+          a[(rows - 1 - border) * cols + j] += counter;
         }
       }
       if (border < cols - 1 - border) {
-        for (size_t i = rows - 2 - border; i > border; i--) {
-          a[i][border] += counter;
-          if (i == 0) {
-            break;
-          }
+        for (size_t i = rows - 2 - border; (i != 0) && i > border; i--) {
+          a[i*cols + border] += counter;
         }
       }
     }
   }
 }
 
-int main(int argc, char const** argv)
+int main(int argc, char ** argv)
 {
   if (argc != 4) {
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
   int var = 0;
-  try {
-    var = std::stoi(argv[1]);
-  }
-  catch (...) {
+  char* endptr;
+  long temp = std::strtol(argv[1], &endptr, 10);
+  if (argv[1] == endptr) {
     std::cerr << "First parameter is not a number\n";
     return 1;
   }
+  if (*endptr != '\0') {
+    std::cerr << "First parameter contains invalid symbols\n";
+    return 1;
+  }
+  var = static_cast<int>(temp);
   if (var != 1 && var != 2) {
     std::cerr << "First parameter is out of range\n";
     return 1;
@@ -202,13 +194,12 @@ int main(int argc, char const** argv)
     std::cerr << "Invalid matrix data\n";
     return 2;
   }
-  output << rows << " " << cols;
+  output << rows << " " << cols << " ";
   bool success = true;
   if (var == 1) {
     success = petrov::stat(input, output, rows, cols);
   } else {
     success = petrov::dyn(input, output, rows, cols);
   }
-  input.close();
   return success ? 0 : 2;
 }
