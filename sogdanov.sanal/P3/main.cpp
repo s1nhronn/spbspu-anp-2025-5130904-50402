@@ -128,7 +128,7 @@ int main(int argc, char ** argv)
   if (num == 1) {
     mtx = mtx_on_stack;
   } else if (num == 2) {
-    int * mtx = sogdanov::createMatrix(rows, cols);
+    mtx = sogdanov::createMatrix(rows, cols);
   }
   if (mtx == nullptr) {
     std::cerr << "Memory allocation failed\n";
