@@ -12,7 +12,7 @@ namespace novikov {
     return current_row * cols + current_col;
   }
 
-  int minSum(int * mtx, size_t r, size_t c)
+  int minSum(const int * mtx, size_t r, size_t c)
   {
     int sum = 0;
     int min = std::numeric_limits< int >::max();
