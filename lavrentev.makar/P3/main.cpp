@@ -1,196 +1,134 @@
 #include <fstream>
 #include <iostream>
-#include <string>
 
-bool is_digit(char * str);
-int str_to_int(char * str);
-int my_pow(int a, int b);
-size_t cnt_loc_min(int * arr, size_t x, size_t y);
-size_t num_col_lsr(int * arr, size_t x, size_t y);
-void input_file(std::istream &in, int *m, size_t lng);
-
-int main(int argc, char **argv)
+namespace lavrentev
 {
+  size_t cntLocMin(const int* arr, size_t x, size_t y);
+  size_t numColLsr(const int* arr, size_t x, size_t y);
+  std::istream& inputFile(std::istream& in, int* m, size_t lng);
+}
+
+int main(int argc, char** argv)
+{
+  const size_t staticSize = 10000;
+
   if (argc < 4)
   {
-    std::cerr << "Not enough arguments\n";
+    std::cerr << "Not enough arguments" << '\n';
     return 1;
   }
   if (argc > 4)
   {
-    std::cerr << "Too many arguments\n";
+    std::cerr << "Too many arguments" << '\n';
     return 1;
   }
-  if (!is_digit(argv[1]))
+
+  char* endPtr = nullptr;
+
+  int num = std::strtol(argv[1], std::addressof(endPtr), 10);
+  if (*endPtr != '\0')
   {
-    std::cerr << "First parameter is not a number\n";
-    return 1;
-  }
-  int num = 0;
-  try
-  {
-    num = str_to_int(argv[1]);
-  } catch (const std::overflow_error &e)
-  {
-    std::cerr << e.what() << '\n';
+    std::cerr << "First parameter is not a number" << '\n';
     return 1;
   }
   if (num != 1 && num != 2)
   {
-    std::cerr << "First parameter is out of range\n";
+    std::cerr << "First parameter is out of range" << '\n';
     return 1;
+  }
+
+  std::ifstream input(argv[2]);
+
+  if (!input.is_open())
+  {
+    std::cerr << "Uncorrect file" << '\n';
+    return 2;
   }
 
   size_t x, y;
 
-  std::ifstream input(argv[2]);
-
-  if(!input.is_open())
-  {
-    std::cerr << "Uncorrect file" << "\n";
-    return 2;
-  }
-
-  if (input.peek() == std::ifstream::traits_type::eof())
-  {
-    std::cerr << "Input file is empty" << "\n";
-    return 2;
-  }
-
   if (!(input >> x >> y))
   {
-    std::cerr << "Uncorrect file" << "\n";
+    std::cerr << "Uncorrect file" << '\n';
     return 2;
   }
 
   size_t total = x * y;
+  int arr2[staticSize];
+  int* arr = nullptr;
+  int* matrix = nullptr;
 
-  int arr2[10000] = {};
-  int total_for_memory = static_cast<int>(x) * static_cast<int>(y);
-  int *arr = static_cast<int*>(malloc(total_for_memory * sizeof(int)));
-
-  size_t ans_2;
-  size_t ans_11;
-
-  int *matrix = nullptr;
-  try
+  if (num == 1)
   {
-    if (num == 1)
-    {
-      input_file(input, arr2, total);
-      matrix = arr2;
-      free(arr);
-    }
-    else
-    {
-      input_file(input, arr, total);
-      matrix = arr;
-    }
-  } catch (const std::logic_error &e)
+    matrix = arr2;
+  }
+  else
   {
-    std::cerr << e.what() << '\n';
+    int total_for_memory = x * y;
+    arr = reinterpret_cast< int* >(malloc(total_for_memory * sizeof(int)));
+    if (arr == nullptr)
+    {
+      std::cerr << "Memory allocation fail" << "\n";
+      return 3;
+    }
+    matrix = arr;
+  }
+
+  if (lavrentev::inputFile(input, matrix, total).fail())
+  {
+    std::cerr << "Couldn't read the matrix" << '\n';
     free(arr);
     return 2;
   }
 
-  ans_2 = cnt_loc_min(matrix, x, y);
-  ans_11 = num_col_lsr(matrix, x, y);
+  size_t ans2 = lavrentev::cntLocMin(matrix, x, y);
+  size_t ans11 = lavrentev::numColLsr(matrix, x, y);
 
-  std::ofstream output;
-  output.open(argv[3]);
+  std::ofstream output(argv[3]);
 
-  output << "Answer for var_2: " << ans_2 << "\n";
-  output << "Answer for var_11: " << ans_11 << "\n";
-  if(num == 2)
+  if (!output.is_open())
   {
+    std::cerr << "Couldn't open output file" << '\n';
     free(arr);
+    return 4;
   }
+
+  output << "Answer for var_2: " << ans2 << '\n';
+  output << "Answer for var_11: " << ans11 << '\n';
+
+  free(arr);
 }
 
-
-
-bool is_digit(char * str)
+size_t lavrentev::cntLocMin(const int* arr, size_t x, size_t y)
 {
-  size_t len = std::strlen(str);
-  for (size_t i = 0; i < len; i++)
-  {
-    if (!('0' <= str[i] && str[i] <= '9'))
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
-int str_to_int(char *str)
-{
-  int res = 0;
-  int iLimit = std::numeric_limits<int>::max();
-  size_t len = std::strlen(str);
-
-  for (size_t i = 0; i < len; i++)
-  {
-    int temp = 0;
-    temp = my_pow(10, len - i - 1);
-    if ((str[i] - '0') > iLimit / temp)
-    {
-      throw std::overflow_error("First parameter is out of range");
-    }
-    res += (str[i] - '0') * temp;
-  }
-  return res;
-}
-
-int my_pow(int a, int b)
-{
-  if (a == 0 || a == 1)
-  {
-    return a;
-  }
-  int res = 1;
-  for (int i = 0; i < b; i++)
-  {
-    if (res > std::numeric_limits<int>::max() / a)
-    {
-      throw std::overflow_error("First parameter is out of range");
-    }
-    res *= a;
-  }
-  return res;
-}
-
-size_t cnt_loc_min(int * arr, size_t x, size_t y){
-
-  size_t ans_2 = 0;
+  size_t ans2 = 0;
   size_t total = x * y;
 
   for (size_t i = y + 1; i < total - y; ++i)
   {
-    try
+    if ((i % y != 0) && (i % y != y - 1))
     {
-      if ((arr[i] < arr[i + 1]) && (arr[i] < arr[i - 1]) &&
-          (arr[i] < arr[i + y]) && (arr[i] < arr[i - y]) &&
-          (arr[i] < arr[i + y + 1]) && (arr[i] < arr[i - y - 1]) &&
-          (arr[i] < arr[i + y - 1]) && (arr[i] < arr[i - y + 1]))
-          {
-        ans_2 += 1;
+      bool b1 = (arr[i] < arr[i + 1]) && (arr[i] < arr[i - 1]);
+      b1 = b1 && (arr[i] < arr[i + y]) && (arr[i] < arr[i - y]);
+      b1 = b1 && (arr[i] < arr[i + y + 1]) && (arr[i] < arr[i - y - 1]);
+      b1 = b1 && (arr[i] < arr[i + y - 1]) && (arr[i] < arr[i - y + 1]);
+      if (b1)
+      {
+        ++ans2;
       }
-    } catch (const std::out_of_range &)
-    {
-      continue;
     }
   }
 
-  return ans_2;
+  return ans2;
 }
 
-size_t num_col_lsr(int * arr, size_t x, size_t y)
+size_t lavrentev::numColLsr(const int* arr, size_t x, size_t y)
 {
-  int ans_11 = 0;
+  int ans11 = 0;
   size_t total = x * y;
   int max_length = 0;
-
   int mas[y][2];
+
   for (size_t i = 0; i < y; ++i)
   {
     mas[i][0] = -1;
@@ -204,14 +142,16 @@ size_t num_col_lsr(int * arr, size_t x, size_t y)
     {
       mas[j][0] = j + 1;
       mas[j][1] = 1;
-    }else
+    }
+    else
     {
       if (arr[i] == arr[i - y])
       {
         ++mas[j][1];
-      } else
+      }
+      else
       {
-        if(mas[j][1] > max_length)
+        if (mas[j][1] > max_length)
         {
           max_length = mas[j][1];
         }
@@ -220,28 +160,27 @@ size_t num_col_lsr(int * arr, size_t x, size_t y)
     }
   }
 
-  
-
   for (size_t i = 0; i < y; ++i)
   {
     if (max_length < mas[i][1])
     {
-      ans_11 = mas[i][0];
+      ans11 = mas[i][0];
       max_length = mas[i][1];
     }
   }
-  
-  return ans_11;
+
+  return ans11;
 }
 
-void input_file(std::istream &in, int *m, size_t lng)
+std::istream& lavrentev::inputFile(std::istream& in, int* m, size_t lng)
 {
   for (size_t i = 0; i < lng; i++)
   {
     in >> m[i];
     if (in.fail())
     {
-      throw std::logic_error("Couldn't read the matrix");
+      return in;
     }
   }
+  return in;
 }
