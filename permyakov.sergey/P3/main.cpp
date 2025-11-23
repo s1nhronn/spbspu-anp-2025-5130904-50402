@@ -80,7 +80,9 @@ int main(int argc, char ** argv)
 
   std::ofstream output(argv[3]);
   per::arrOutInFile(output, arr1, n, m);
+  output << '\n';
   per::arrOutInFile(output, arr2, n, m);
+  output << '\n';
   free(arr1);
   free(arr2);
   if (task == 2) {
@@ -184,6 +186,5 @@ std::ofstream & permyakov::arrOutInFile(std::ofstream & out, int * arr, size_t n
   for (size_t i = 0; i < n * m; ++i) {
     out << ' ' << arr[i];
   }
-  out << '\n';
   return out;
 }
