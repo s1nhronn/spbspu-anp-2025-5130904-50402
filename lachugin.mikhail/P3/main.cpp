@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
-namespace lachugin {
-  void make(std::ifstream& fin,long long rows, long long cols, int *mtx){
-    fin>>rows>>cols;
+namespace lachugin
+{
+  void make(std::ifstream& fin,long long rows, long long cols, int *mtx)
+  {
+    fin.ignore(2);
     for (long long i = 0; i < rows*cols; i++) {
       fin >> mtx[i];
       if (fin.eof()) {
@@ -13,7 +15,8 @@ namespace lachugin {
       }
     }
   }
-  void LFT_BOT_CLK (int *mtx, long long rows, long long cols) {
+  void LFT_BOT_CLK (int *mtx, long long rows, long long cols)
+  {
     int d = 1;
     long long n = 0;
     while (d < rows * cols+1) {
@@ -45,12 +48,14 @@ namespace lachugin {
       n++;
     }
   }
-  void fopy (double *ptr, const int *mtx, long long r, long long c){
+  void fopy (double *ptr, const int *mtx, long long r, long long c)
+  {
     for (long long i = 0; i < r*c; i++) {
       ptr[i] = mtx[i];
     }
   }
-  double circle(const int *mtx, long long i, long long r, long long c){
+  double circle(const int *mtx, long long i, long long r, long long c)
+  {
     double k = 0;
     double sum = 0;
     long long row = i / c;
@@ -86,18 +91,20 @@ namespace lachugin {
         sum += mtx[i+1+c];
       }
     }
-    double arf_mean = sum/k;
-    int temp = arf_mean*10;
+    double arf_Mean = sum/k;
+    int temp = arf_Mean*10;
     double res = temp/10.0;
     return res;
   }
-  void BLT_SMT_MTR (const int *mtx, long long rows, long long cols, double *res2){
+  void BLT_SMT_MTR (const int *mtx, long long rows, long long cols, double *res2)
+  {
     fopy(res2, mtx, rows, cols);
     for (long long i = 0; i < rows*cols; i++) {
       res2[i] = circle(mtx, i, rows, cols);
     }
   }
-  void output(std::ofstream& output, long long rows, long long cols, int *res1, double *res2) {
+  void output(std::ofstream& output, long long rows, long long cols, int *res1, double *res2)
+  {
     output << rows << ' ' << cols << ' ';
     for (long long i = 0; i < rows * cols; ++i) {
       if (i == rows*cols-1) {
@@ -118,7 +125,8 @@ namespace lachugin {
     output << '\n';
     output.close();
   }
-  void doall (char *infile, char *outfile, long long rows, long long cols, int *res1, double *res2, int *mtx) {
+  void doall (char *infile, char *outfile, long long rows, long long cols, int *res1, double *res2, int *mtx)
+  {
     std::ifstream fin(infile);
     make(fin, rows, cols, res1);
     fin.close();
@@ -132,7 +140,8 @@ namespace lachugin {
     lachugin::output(output, rows, cols, res1, res2);
   }
 }
-int main(int argc, char ** argv) {
+int main(int argc, char ** argv)
+{
   if (argc < 4) {
     std::cerr << "Not enough arguments\n";
     return 1;
@@ -141,15 +150,10 @@ int main(int argc, char ** argv) {
     std::cerr << "Too many arguments\n";
     return 1;
   }
-  int prmt = 0;
-  try{
-    prmt = std::stoi(argv[1]);
-  } catch (const std::invalid_argument& e){
-    std::cerr << "First parameter is not a number\n";
-    return 1;
-  }
-  if (prmt != 2 && prmt != 1){
-    std::cerr << "First parameter is out of range\n";
+  char *endFrstArg = nullptr;;
+  long prmt = std::strtol(argv[1], std::addressof(endFrstArg), 10);
+  if (!(prmt == 1 || prmt == 2) || *endFrstArg != '\0') {
+    std::cerr << "First argument is not correct\n";
     return 1;
   }
   std::ifstream fin(argv[2]);
@@ -168,7 +172,8 @@ int main(int argc, char ** argv) {
     int *res1 = new int[rows*cols];
     double *res2 = new double[rows*cols];
     int *mtx = new int[rows*cols];
-    try {
+    try
+    {
       lachugin::doall(argv[2], argv[3], rows, cols, res1, res2, mtx);
       delete [] res1;
       delete [] res2;
@@ -185,7 +190,8 @@ int main(int argc, char ** argv) {
     int res1[10000];
     double res2[10000];
     int mtx[10000];
-    try {
+    try
+    {
       lachugin::doall(argv[2], argv[3], rows, cols, res1, res2, mtx);
     } catch (std::logic_error &e) {
       std::cerr<<e.what()<<'\n';
