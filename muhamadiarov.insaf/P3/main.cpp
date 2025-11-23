@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     }
   }
   else if (argv[1][0] == '2')
-  {  
+  {
     ptr = reinterpret_cast< int* >(malloc(rows * colons * sizeof(int)));
     if (ptr == nullptr)
     {
