@@ -60,6 +60,7 @@ namespace petrov
       readMTX(in, arr, rows, cols);
     } catch (const std::exception& e) {
       std::cerr << e.what() << "\n";
+      return false;
     }
     lftBotCnt(arr, rows, cols);
     try {
