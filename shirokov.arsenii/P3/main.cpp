@@ -54,10 +54,10 @@ int main(int argc, char **argv)
   size_t lng = m * n;
 
   int *matrix = nullptr;
-  int a[shirokov::MATRIX_SIZE] = {};
+  int static_buffer[shirokov::MATRIX_SIZE] = {};
   if (num == 1)
   {
-    matrix = a;
+    matrix = static_buffer;
   }
   else
   {
