@@ -56,22 +56,28 @@ namespace afanasev {
     return str;
   }
 
+  // Удаление букв из переданной строки
+  void deletingLetters(const char * str, const char * vowels, char * out, size_t str_l, size_t & out1_l)
+  {
+    size_t i = 0;
+
+    while (str[i] != '\0' && out1_l < str_l - 1)
+    {
+      if (!strchr(vowels, str[i]))
+      {
+        out[out1_l] = str[i];
+        out1_l++;
+      }
+      i++;
+    }
+    out[out1_l] = '\0';
+  }
+
   // Удаляет из переданной строки все гласные
   void deleteVowels(const char * str, char * output, size_t size, size_t & output1)
   {
     const char * vowels = "aeiouyAEIOUY";
-    size_t i = 0;
-
-    while (str[i] != '\0' && output1 < size - 1)
-    {
-      if (!strchr(vowels, str[i]))
-      {
-        output[output1] = str[i];
-        output1++;
-      }
-      i++;
-    }
-    output[output1] = '\0';
+    deletingLetters(str, vowels, output, size, output1);
   }
 }
 
@@ -109,13 +115,6 @@ int main()
   }
   std::cout << '\n';
 
-  
-/*
-  for (size_t i = 0; i < str_lenght; i++)
-  {
-    std::cout << str[i];
-  }
-*/
   return 0;
 }
 
