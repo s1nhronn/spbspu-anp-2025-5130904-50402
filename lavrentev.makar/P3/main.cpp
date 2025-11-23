@@ -1,14 +1,13 @@
 #include <fstream>
 #include <iostream>
-#include <stdexcept>
 #include <cstring>
 #include <cstdlib>
-#include <limits>
+#include <memory>
 
 namespace lavrentev
 {
-  size_t cntLocMin(int* arr, size_t x, size_t y);
-  size_t numColLsr(int* arr, size_t x, size_t y);
+  size_t cntLocMin(const int* arr, size_t x, size_t y);
+  size_t numColLsr(const int* arr, size_t x, size_t y);
   std::istream& inputFile(std::istream& in, int* m, size_t lng);
 }
 
@@ -30,7 +29,7 @@ int main(int argc, char** argv)
   int num = 0;
   char* endPtr = nullptr;
 
-  num = strtol(argv[1], &endPtr, 10);
+  num = std::strtol(argv[1], std::addressof(endPtr), 10);
   if (*endPtr != '\0')
   {
     std::cerr << "First parameter is not a number" << '\n';
@@ -104,7 +103,7 @@ int main(int argc, char** argv)
   free(arr);
 }
 
-size_t lavrentev::cntLocMin (int* arr, size_t x, size_t y)
+size_t lavrentev::cntLocMin(const int* arr, size_t x, size_t y)
 {
   size_t ans2 = 0;
   size_t total = x * y;
@@ -127,7 +126,7 @@ size_t lavrentev::cntLocMin (int* arr, size_t x, size_t y)
   return ans2;
 }
 
-size_t lavrentev::numColLsr(int* arr, size_t x, size_t y)
+size_t lavrentev::numColLsr(const int* arr, size_t x, size_t y)
 {
   int ans11 = 0;
   size_t total = x * y;
