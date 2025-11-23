@@ -6,13 +6,13 @@
 
 namespace shirokov
 {
+  const size_t MATRIX_SIZE = 10000;
   std::istream &input(std::istream &in, int *m, size_t lng);
   std::ostream &outputMatrix(std::ostream &out, const int *matrix, size_t m, size_t n);
   void spiral(int *matrix, size_t m, size_t n);
-  bool isTriangularMatrix(int *matrix, size_t m, size_t n);
+  bool isTriangularMatrix(const int *matrix, size_t m, size_t n);
   size_t transformIndexes(size_t i, size_t j, size_t n);
   int stoi(const char *n);
-  const size_t MATRIX_SIZE = 10000;
 }
 
 int main(int argc, char **argv)
@@ -43,7 +43,6 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  size_t lng = 0;
   size_t m, n;
   std::ifstream in(argv[2]);
   in >> m >> n;
@@ -52,7 +51,7 @@ int main(int argc, char **argv)
     std::cerr << "Couldn't read the size of matrix" << '\n';
     return 2;
   }
-  lng = m * n;
+  size_t lng = m * n;
 
   int *matrix = nullptr;
   int a[shirokov::MATRIX_SIZE] = {};
@@ -87,7 +86,7 @@ int main(int argc, char **argv)
   shirokov::spiral(matrix, m, n);
   out << "Решение варианта 1:\n";
   shirokov::outputMatrix(out, matrix, m, n) << '\n';
-  out << "Решение варианта 2:\n" << (res2 ? "true" : "false");
+  out << "Решение варианта 2:\n" << (res2 ? "true" : "false") << '\n';
   if (num == 2)
   {
     delete[] matrix;
@@ -196,7 +195,7 @@ void shirokov::spiral(int *matrix, size_t m, size_t n)
   }
 }
 
-bool shirokov::isTriangularMatrix(int *matrix, size_t m, size_t n)
+bool shirokov::isTriangularMatrix(const int *matrix, size_t m, size_t n)
 {
   if (m == 0 || n == 0)
   {
