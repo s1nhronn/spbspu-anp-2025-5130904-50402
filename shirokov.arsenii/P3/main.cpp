@@ -1,6 +1,6 @@
-#include <cerrno>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <cstdlib>
 #include <limits>
@@ -83,19 +83,20 @@ int main(int argc, char **argv)
   if (!out.is_open())
   {
     std::cerr << "Couldn't open the output file\n";
-    delete[] matrix;
+    if (num == 2)
+    {
+      delete[] matrix;
+    }
     return 2;
   }
   bool res2 = shirokov::isTriangularMatrix(matrix, m, n);
-  int *res1 = matrix;
-  shirokov::spiral(res1, m, n);
+  shirokov::spiral(matrix, m, n);
   out << "Решение варианта 1:\n";
-  shirokov::outputMatrix(out, res1, m, n) << '\n';
+  shirokov::outputMatrix(out, matrix, m, n) << '\n';
   out << "Решение варианта 2:\n" << (res2 ? "true" : "false");
   if (num == 2)
   {
-    delete[] res1;
-    matrix = nullptr;
+    delete[] matrix;
   }
 }
 
@@ -104,15 +105,14 @@ int shirokov::stoi(const char *n)
   const int INT_MAX = std::numeric_limits< int >::max();
   const int INT_MIN = std::numeric_limits< int >::min();
 
-  char *end;
-  errno = 0;
-  long val = strtol(n, &end, 10);
+  char *end = nullptr;
+  long val = std::strtol(n, std::addressof(end), 10);
 
   if (*end != '\0')
   {
     throw std::logic_error("");
   }
-  if (val > INT_MAX || val < INT_MIN || errno == ERANGE)
+  if (val > INT_MAX || val < INT_MIN)
   {
     throw std::out_of_range("");
   }
