@@ -33,11 +33,6 @@ int main(int argc, char **argv)
   {
     num = shirokov::stoi(argv[1]);
   }
-  catch (const std::out_of_range &e)
-  {
-    std::cerr << "First parameter is out of range\n";
-    return 1;
-  }
   catch (const std::logic_error &)
   {
     std::cerr << "First parameter is not a number\n";
@@ -111,10 +106,6 @@ int shirokov::stoi(const char *n)
   if (*end != '\0')
   {
     throw std::logic_error("");
-  }
-  if (val > INT_MAX || val < INT_MIN)
-  {
-    throw std::out_of_range("");
   }
 
   int out = static_cast< int >(val);
