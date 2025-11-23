@@ -55,20 +55,58 @@ namespace afanasev {
 
     return str;
   }
+
+  // Удаляет из переданной строки все гласные
+  void delete_vowels(const char * str, char * output, size_t size)
+  {
+    const char * vowels = "aeiouAEIOU";
+    size_t i = 0;
+    size_t j = 0;
+
+    while (str[i] != '\0' && j < size - 1)
+    {
+      if (!strchr(vowels, str[i]))
+      {
+        output[j] = str[i];
+        j++;
+      }
+      i++;
+    }
+    output[j] = '\0';
+  }
 }
 
-int main() {
+int main()
+{
 
   // Считываем строку
   size_t str_lenght = 0;
   size_t & str_lenght_link = str_lenght;
-  char * str = afanasev::getline(std::cin, str_lenght_link);
-
-  // Проверка на случай пустой строки
-  if (str == 0) {
-    std::cerr << "Null string" << '\n';
+  char * str = nullptr;
+  try
+  {
+    str = afanasev::getline(std::cin, str_lenght_link);
+  } catch (...)
+  {
+    std::cerr << "Incorrect input or get memory failed" << '\n';
     return 1;
   }
+
+  // Удаление гласных
+  char * output1 = nullptr;
+  output1 = new char[str_lenght];
+  if (output1 == nullptr)
+  {
+    delete[] str;
+    std::cerr << "Get memory failed" << '\n';
+    return 1;
+  }
+
+  for (size_t i = 0; i < str_lenght; i++)
+  {
+    std::cout << str[i];
+  }
+  
   return 0;
 }
 
