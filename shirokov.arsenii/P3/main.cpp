@@ -3,7 +3,6 @@
 #include <memory>
 #include <stdexcept>
 #include <cstdlib>
-#include <limits>
 
 namespace shirokov
 {
@@ -97,9 +96,6 @@ int main(int argc, char **argv)
 
 int shirokov::stoi(const char *n)
 {
-  const int INT_MAX = std::numeric_limits< int >::max();
-  const int INT_MIN = std::numeric_limits< int >::min();
-
   char *end = nullptr;
   long val = std::strtol(n, std::addressof(end), 10);
 
