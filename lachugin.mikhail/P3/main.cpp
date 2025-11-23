@@ -4,7 +4,7 @@ namespace lachugin
 {
   void make(std::ifstream& fin,long long rows, long long cols, int *mtx)
   {
-    fin.ignore(2);
+    fin >> rows >> cols;
     for (long long i = 0; i < rows*cols; i++) {
       fin >> mtx[i];
       if (fin.eof()) {
