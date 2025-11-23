@@ -3,7 +3,7 @@
 
 namespace lavrentev
 {
-  size_t dif_lat(char * ans, std::string s);
+  size_t dif_lat(char* ans, std::string s);
   void uni_two(std::string s, std::string s2, size_t ex, size_t ex2, char* result);
 }
 
@@ -13,7 +13,7 @@ int main()
   std::getline(std::cin, s);
 
   size_t ex = s.size();
-  char * ans = new char[ex];
+  char* ans = new char[ex];
   if (ans == nullptr)
   {
     std::cerr << "Memory allocation fail" << "\n";
@@ -24,7 +24,7 @@ int main()
   std::getline(std::cin, s2);
 
   size_t ex2 = s2.size();
-  char * ans2 = new char[ex2];
+  char* ans2 = new char[ex2];
   if (ans2 == nullptr)
   {
     std::cerr << "Memory allocation fail" << "\n";
@@ -48,10 +48,9 @@ int main()
   delete[] result;
 }
 
-size_t lavrentev::dif_lat(char * ans, std::string s)
+size_t lavrentev::dif_lat(char* ans, std::string s)
 {
   size_t ex = s.size();
-
   size_t answer = 0;
 
   for (size_t i = 0; i < ex; ++i)
@@ -75,7 +74,6 @@ size_t lavrentev::dif_lat(char * ans, std::string s)
     {
       ans[i] = s[i];
     }
-   
   }
 
   for (size_t i = 0; i < ex; ++i)
