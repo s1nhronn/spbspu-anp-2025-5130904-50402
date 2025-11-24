@@ -21,6 +21,11 @@ namespace muhamadiarov
 
 int main(int argc, char* argv[])
 {
+  if (argc == 1)
+  {
+    std::cerr << "Not arguments\n";
+    return 1;
+  }
   namespace muh = muhamadiarov;
   bool checkparam = muh::toCheckParam(argc, argv);
   if (!checkparam)
