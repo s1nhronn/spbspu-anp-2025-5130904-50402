@@ -227,10 +227,12 @@ int main(int argc, char **argv)
       res2 = new double[rows*cols];
       mtx = new int[rows*cols];
       lachugin::make(fin, rows, cols, res1);
-      if (fin.fail()) {
+      if (fin.fail())
+      {
         throw std::logic_error("Can't read\n");
       }
-      if (fin.eof()) {
+      if (fin.eof())
+      {
         throw std::logic_error("Not enough data\n");
       }
       fin.close();
@@ -268,10 +270,12 @@ int main(int argc, char **argv)
     try
     {
       lachugin::make(fin, rows, cols, res1);
-      if (fin.fail()) {
+      if (fin.fail())
+      {
         throw std::logic_error("Can't read\n");
       }
-      if (fin.eof()) {
+      if (fin.eof())
+      {
         throw std::logic_error("Not enough data\n");
       }
       fin.close();
