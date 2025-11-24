@@ -4,10 +4,8 @@ namespace lachugin
 {
   void make(std::ifstream &fin, size_t rows, size_t cols, int *mtx)
   {
-    fin >> rows >> cols;
     for (size_t i = 0; i < rows*cols; i++)
     {
-      fin >> mtx[i];
       if (fin.eof())
       {
         break;
@@ -16,6 +14,7 @@ namespace lachugin
       {
         break;
       }
+      fin >> mtx[i];
     }
   }
   void LFT_BOT_CLK(int *mtx, size_t rows, size_t cols)
