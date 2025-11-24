@@ -21,9 +21,9 @@ namespace muhamadiarov
 
 int main(int argc, char* argv[])
 {
-  if (argc == 1)
+  if (argc < 4)
   {
-    std::cerr << "Not enough arguments\n";
+    std::cerr << "Not enough data\n";
     return 1;
   }
   namespace muh = muhamadiarov;
@@ -36,6 +36,11 @@ int main(int argc, char* argv[])
   if (!input)
   {
     std::cerr << "Error is openning file\n";
+    return 2;
+  }
+  if (input.eof())
+  {
+    std::cerr << "Input file is empty\n";
     return 2;
   }
   int rows, colons = 0;
