@@ -13,6 +13,13 @@ int main()
   std::getline(std::cin, s);
 
   size_t ex = s.size();
+
+  if(ex == 0)
+  {
+    std::cerr << "Invalid string";
+    return 1;
+  }
+
   char* ans = new char[ex];
   if (ans == nullptr)
   {
@@ -22,8 +29,14 @@ int main()
 
   std::string s2;
   std::getline(std::cin, s2);
-
   size_t ex2 = s2.size();
+
+  if(ex2 == 0)
+  {
+    std::cerr << "Invalid string";
+    return 1;
+  }
+
   char* ans2 = new char[ex2];
   if (ans2 == nullptr)
   {
