@@ -16,7 +16,7 @@ void addSymb(char*& str, size_t& s, char ch)
   }
 
   tmp[s] = ch;
-  tmp[s+1] = '\0';
+  tmp[s + 1] = '\0';
 
   if (str) {
     free(str);
@@ -114,8 +114,8 @@ char* doDgtSnd(const char* str1, size_t s1, const char* str2, size_t s2)
 
 int main()
 {
-  size_t s1 = 0, s2 = 0; 
-  char* str1 = nullptr, *str2 = nullptr; 
+  size_t s1 = 0, s2 = 0;
+  char *str1 = nullptr, *str2 = nullptr;
   try {
     str1 = getString(std::cin, s1);
     str2 = getString(std::cin, s2);
@@ -150,7 +150,7 @@ int main()
   }
 
   std::cout << result2 << '\n';
-  
+
   free(str1);
   free(str2);
   free(result2);
