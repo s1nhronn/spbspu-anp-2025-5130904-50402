@@ -232,11 +232,7 @@ void muhamadiarov::inputMatric(int* ptr, int r, int c, std::istream &input)
   for (int i = 0; i < r * c; ++i)
   {
     input >> ptr[i];
-    if (ptr[i] > muh::maxInt() || ptr[i] < muh::minInt())
-    {
-      throw std::logic_error("The number is not int\n");
-    }
-    else if (input.eof())
+    if (input.eof())
     {
       throw std::logic_error("Not enough the numbers of elements\n");
     }
