@@ -18,39 +18,44 @@ namespace lachugin
   void LFT_BOT_CLK (int *mtx, size_t rows, size_t cols)
   {
     int d = 1;
+    size_t k = 0;
     size_t n = 0;
-    while (d < rows * cols+1) {
+    while (k < rows * cols+1) {
       for (size_t i = cols*(rows-1-n)+n; i >= n*(cols+1); i-=cols) {
         mtx[i] -= d;
         d++;
+        k++;
       }
-      if (d == rows * cols+1) {
+      if (k == rows * cols+1) {
         break;
       }
       for (size_t i = n*(cols+1)+1; i <= cols*(1+n)-n-1; i++) {
         mtx[i] -= d;
         d++;
+        k++;
       }
-      if (d == rows * cols+1) {
+      if (k == rows * cols+1) {
         break;
       }
       for (size_t i=cols*(2+n)-n-1; i <= cols*(rows-n)-n-1 ; i+=cols) {
         mtx[i] -= d;
         d++;
+        k++;
       }
-      if (d == rows * cols+1) {
+      if (k == rows * cols+1) {
         break;
       }
       for (size_t i = cols*(rows-n)-n-2; i > cols*(rows-1-n)+n; i--) {
         mtx[i] -= d;
         d++;
+        k++;
       }
       n++;
     }
   }
   void fopy (double *ptr, const int *mtx, size_t r, size_t c)
   {
-    for (long long i = 0; i < r*c; i++) {
+    for (size_t i = 0; i < r*c; i++) {
       ptr[i] = mtx[i];
     }
   }
