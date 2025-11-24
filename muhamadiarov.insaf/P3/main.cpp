@@ -14,7 +14,6 @@ namespace muhamadiarov
   long long toFindMaxRight(int* ptr, int order);
   long long toFindMaxinLeft(int* ptr, int order);
   long long maxSumMdg(int* ptr, int order);
-  bool toCheckParam(int argc, char* argv[]);
   bool checkSizeMatric(int r, int c);
   void inputMatric(int* ptr, int r, int c, std::istream &input);
 }
@@ -22,9 +21,29 @@ namespace muhamadiarov
 int main(int argc, char* argv[])
 {
   namespace muh = muhamadiarov;
-  bool checkparam = muh::toCheckParam(argc, argv);
-  if (!checkparam)
+  if (argc > 4)
   {
+    std::cerr << "Too many arguments\n";
+    return 1;
+  }
+  if (argc < 4)
+  {
+    std::cerr << "Not enough arguments\n";
+    return 1;
+  }
+  int mode = 0;
+  try
+  {
+    mode = std::stoi(argv[1]);
+  }
+  catch (std::out_of_range &e)
+  {
+    std::cerr << "First parameter  is not a number\n";
+    return 1;
+  }
+  if (mode < 1 || mode > 2)
+  {
+    std::cerr << "First parameter is out of range\n";
     return 1;
   }
   std::ifstream input(argv[2]);
@@ -35,12 +54,13 @@ int main(int argc, char* argv[])
   }
   int rows, colons = 0;
   input >> rows >> colons;
-  bool isSizeWrong = muh::checkSizeMatric(rows, colons);
   if (input.eof() || input.fail())
   {
     std::cerr << "Error is openning file\n";
     return 2;
   }
+  bool isSizeWrong = muh::checkSizeMatric(rows, colons);
+  if (input.eof() || input.fail())
   if (isSizeWrong)
   {
     std::cerr << "Wrong size of matric\n";
@@ -55,10 +75,9 @@ int main(int argc, char* argv[])
     output << 0;
     return 0;
   }
-  char mode = argv[1][0];
   int arr[10000];
   int* ptr = nullptr;
-  if (mode == '1')
+  if (mode == 1)
   {
     ptr = arr;
     try
@@ -71,7 +90,7 @@ int main(int argc, char* argv[])
       return 2;
     }
   }
-  else if (argv[1][0] == '2')
+  else if (mode == 2)
   {
     ptr = reinterpret_cast< int* >(malloc(rows * colons * sizeof(int)));
     if (ptr == nullptr)
@@ -98,7 +117,7 @@ int main(int argc, char* argv[])
   if(!output)
   {
     std::cerr << "Error in opening file\n";
-    if (argv[1][0] == '2')
+    if (mode == 2)
     {
       free(ptr);
     }
@@ -108,7 +127,7 @@ int main(int argc, char* argv[])
   output << '\n';
   output << res2;
   output.close();
-  if (mode == '2')
+  if (mode == 2)
   {
     free(ptr);
   }
@@ -185,43 +204,6 @@ void muhamadiarov::outMatric(std::ofstream &output, int r, int c, int* res1)
   {
     output << res1[i] << " ";
   }
-}
-
-bool muhamadiarov::toCheckParam(int argc, char* argv[])
-{
-  if (argc < 4)
-  {
-    std::cerr << "Not enough arguments\n";
-    return false;
-  }
-  if (argc > 4)
-  {
-    std::cerr << "Too many arguments\n";
-    return false;
-  }
-  const char* ch = argv[1];
-  for (int i = 0; ch[i] != '\0'; ++i)
-  {
-    if (i == 0)
-    {
-      if (ch[i] < '0' || ch[i] > '9')
-      {
-        std::cerr << "First parameter is not a number\n";
-        return false;
-      }
-    }
-  }
-  if (argv[1][0] < '0' || argv[1][0] > '9')
-  {
-    std::cerr << "First parameter is not a number\n";
-    return false;
-  }
-  if (argv[1][0] > '2')
-  {
-    std::cerr << "First parameter is out of range\n";
-    return false;
-  }
-  return true;
 }
 
 int muhamadiarov::maxInt()
