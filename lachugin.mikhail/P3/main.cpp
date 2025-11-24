@@ -2,10 +2,10 @@
 #include <fstream>
 namespace lachugin
 {
-  void make(std::ifstream& fin,long long rows, long long cols, int *mtx)
+  void make(std::ifstream& fin, size_t rows, size_t cols, int *mtx)
   {
     fin >> rows >> cols;
-    for (long long i = 0; i < rows*cols; i++) {
+    for (size_t i = 0; i < rows*cols; i++) {
       fin >> mtx[i];
       if (fin.eof()) {
         throw std::logic_error("Not enough data\n");
@@ -15,51 +15,51 @@ namespace lachugin
       }
     }
   }
-  void LFT_BOT_CLK (int *mtx, long long rows, long long cols)
+  void LFT_BOT_CLK (int *mtx, size_t rows, size_t cols)
   {
     int d = 1;
-    long long n = 0;
+    size_t n = 0;
     while (d < rows * cols+1) {
-      for (long long i = cols*(rows-1-n)+n; i >= n*(cols+1); i-=cols) {
+      for (size_t i = cols*(rows-1-n)+n; i >= n*(cols+1); i-=cols) {
         mtx[i] -= d;
         d++;
       }
       if (d == rows * cols+1) {
         break;
       }
-      for (long long i = n*(cols+1)+1; i <= cols*(1+n)-n-1; i++) {
+      for (size_t i = n*(cols+1)+1; i <= cols*(1+n)-n-1; i++) {
         mtx[i] -= d;
         d++;
       }
       if (d == rows * cols+1) {
         break;
       }
-      for (long long i=cols*(2+n)-n-1; i <= cols*(rows-n)-n-1 ; i+=cols) {
+      for (size_t i=cols*(2+n)-n-1; i <= cols*(rows-n)-n-1 ; i+=cols) {
         mtx[i] -= d;
         d++;
       }
       if (d == rows * cols+1) {
         break;
       }
-      for (long long i = cols*(rows-n)-n-2; i > cols*(rows-1-n)+n; i--) {
+      for (size_t i = cols*(rows-n)-n-2; i > cols*(rows-1-n)+n; i--) {
         mtx[i] -= d;
         d++;
       }
       n++;
     }
   }
-  void fopy (double *ptr, const int *mtx, long long r, long long c)
+  void fopy (double *ptr, const int *mtx, size_t r, size_t c)
   {
     for (long long i = 0; i < r*c; i++) {
       ptr[i] = mtx[i];
     }
   }
-  double circle(const int *mtx, long long i, long long r, long long c)
+  double circle(const int *mtx, size_t i, size_t r, size_t c)
   {
     double k = 0;
     double sum = 0;
-    long long row = i / c;
-    long long col = i % c;
+    size_t row = i / c;
+    size_t col = i % c;
     if (row > 0) {
       if (col > 0) {
         k++;
@@ -96,17 +96,17 @@ namespace lachugin
     double res = temp/10.0;
     return res;
   }
-  void BLT_SMT_MTR (const int *mtx, long long rows, long long cols, double *res2)
+  void BLT_SMT_MTR (const int *mtx, size_t rows, size_t cols, double *res2)
   {
     fopy(res2, mtx, rows, cols);
-    for (long long i = 0; i < rows*cols; i++) {
+    for (size_t i = 0; i < rows*cols; i++) {
       res2[i] = circle(mtx, i, rows, cols);
     }
   }
-  void output(std::ofstream& output, long long rows, long long cols, int *res1, double *res2)
+  void output(std::ofstream& output, size_t rows, size_t cols, int *res1, double *res2)
   {
     output << rows << ' ' << cols << ' ';
-    for (long long i = 0; i < rows * cols; ++i) {
+    for (size_t i = 0; i < rows * cols; ++i) {
       if (i == rows*cols-1) {
         output << res1[i];
       } else {
@@ -115,7 +115,7 @@ namespace lachugin
     }
     output << '\n';
     output << rows << ' ' << cols << ' ';
-    for (long long i = 0; i < rows * cols; ++i) {
+    for (size_t i = 0; i < rows * cols; ++i) {
       if (i == rows*cols-1) {
         output << res2[i];
       } else {
@@ -125,7 +125,7 @@ namespace lachugin
     output << '\n';
     output.close();
   }
-  void doall (char *infile, char *outfile, long long rows, long long cols, int *res1, double *res2, int *mtx)
+  void doall (char *infile, char *outfile, size_t rows, size_t cols, int *res1, double *res2, int *mtx)
   {
     std::ifstream fin(infile);
     make(fin, rows, cols, res1);
@@ -161,7 +161,7 @@ int main(int argc, char ** argv)
      std::cerr << "Error opening file\n";
     return 1;
   }
-  long long rows = 0, cols = 0;
+  size_t rows = 0, cols = 0;
   fin >> rows >> cols;
   if (fin.fail()) {
     std::cerr <<  "Error reading file\n";
