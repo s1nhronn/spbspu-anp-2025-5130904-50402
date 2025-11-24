@@ -114,18 +114,14 @@ char* doDgtSnd(const char* str1, size_t s1, const char* str2, size_t s2)
 
 int main()
 {
-  size_t s1 = 0, s2 = 0;
-  char *str1 = nullptr, *str2 = nullptr;
+  size_t s1 = 0;
+  char *str1 = nullptr;
   try {
     str1 = getString(std::cin, s1);
-    str2 = getString(std::cin, s2);
   } catch (const std::bad_alloc& e) {
     std::cerr << e.what() << "\n";
     if (str1) {
       free(str1);
-    }
-    if (str2) {
-      free(str2);
     }
     return 1;
   } catch (const std::logic_error& e) {
@@ -133,16 +129,13 @@ int main()
     if (str1) {
       free(str1);
     }
-    if (str2) {
-      free(str2);
-    }
     return 2;
   }
-
-  int hasCommon = doHasSam(str1, s1, str2, s2);
+  char strHas[] = {'a','b','c'};
+  int hasCommon = doHasSam(str1, s1, strHas, 3);
   std::cout << hasCommon << '\n';
-
-  char* result2 = doDgtSnd(str1, s1, str2, s2);
+  char strDgt[] = {'g','1','h','2','k'};
+  char* result2 = doDgtSnd(str1, s1, strDgt, 5);
   if (!result2) {
     std::cerr << "Memory allocation failed\n";
     free(str1);
@@ -152,7 +145,6 @@ int main()
   std::cout << result2 << '\n';
 
   free(str1);
-  free(str2);
   free(result2);
   return 0;
 }
