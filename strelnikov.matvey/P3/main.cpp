@@ -10,29 +10,23 @@ namespace strelnikov {
     return (a && (a[0] == '1' || a[0] == '2') && a[1] == '\0');
   }
 
-  bool input(std::ifstream& in, int* a, size_t r, size_t c)
+  std::istream& input(std::istream& in, int* a, size_t r, size_t c)
   {
     for (size_t i = 0; i < r; ++i) {
       for (size_t j = 0; j < c; ++j) {
         in >> a[i * c + j];
-        if (!in) {
-          return false;
-        }
       }
     }
-    return true;
+    return in;
   }
 
-  void output(std::ofstream& out, int* a, size_t r, size_t c)
+  std::ostream& output(std::ostream& out, int* a, size_t r, size_t c)
   {
-    for (size_t i = 0; i < r; ++i) {
-      for (size_t j = 0; j < c; ++j) {
-        out << a[i * c + j];
-        if (!(i == r - 1 && j == c - 1)) {
-          out << ' ';
-        }
-      }
+    out << r << ' ' << c;
+    for (size_t i = 0; i < r * c; ++i) {
+      out << ' ' << a[i];
     }
+    return out;
   }
 
   void doLftBotCnt(int* mtx, size_t r, size_t c)
@@ -43,9 +37,8 @@ namespace strelnikov {
     size_t top = 0, left = 0;
     size_t bot = r - 1, right = c - 1;
     int cnt = 1;
-
     while (left <= right && top <= bot) {
-      for (long long j = static_cast< long long >(left); j <= static_cast< long long >(right) && j >= 0; ++j) {
+      for (size_t j = left; j <= right; ++j) {
         mtx[bot * c + j] += cnt++;
       }
       if (bot == 0) {
@@ -54,24 +47,22 @@ namespace strelnikov {
       --bot;
 
       if (left <= right) {
-        for (long long i = static_cast< long long >(bot); i >= static_cast< long long >(top); --i) {
-          mtx[i * c + right] += cnt++;
+        for (size_t i = bot+1; i >= top && i > 0; --i) {
+          mtx[(i-1) * c + right] += cnt++;
         }
         if (right == 0) {
           break;
         }
         --right;
       }
-
       if (top <= bot && left <= right) {
-        for (long long j = static_cast< long long >(right); j >= static_cast< long long >(left) && j >= 0; --j) {
-          mtx[top * c + j] += cnt++;
+        for (size_t j = right+1; j >= left && j > 0; --j) {
+          mtx[top * c + j-1] += cnt++;
         }
         ++top;
       }
-
       if (left <= right && top <= bot) {
-        for (long long i = static_cast< long long >(top); i <= static_cast< long long >(bot); ++i) {
+        for (size_t i = top; i <= bot; ++i) {
           mtx[i * c + left] += cnt++;
         }
         ++left;
@@ -79,7 +70,7 @@ namespace strelnikov {
     }
   }
 
-  size_t doCntNzrDig(int* mtx, size_t r, size_t c)
+  size_t doCntNzrDig(const int* mtx, size_t r, size_t c)
   {
     size_t min = (r < c) ? r : c;
     size_t cnt = 0;
@@ -104,7 +95,7 @@ namespace strelnikov {
     return cnt;
   }
 
-}
+} // namespace strelnikov
 int main(int argc, char* argv[])
 {
   if (argc > 4) {
@@ -141,25 +132,25 @@ int main(int argc, char* argv[])
   int* mtx = nullptr;
   int static_mtx[strelnikov::static_max];
   if (pr == 1) {
-    if (!(strelnikov::input(in, static_mtx, r, c))) {
-      std::cerr << "Wrong format\n";
-      return 2;
-    }
     mtx = static_mtx;
-    in.close();
   } else {
     try {
       mtx = new int[r * c];
     } catch (const std::bad_alloc& e) {
       return 2;
     }
-    if (!(strelnikov::input(in, mtx, r, c))) {
-      std::cerr << "Wrong format\n";
-      delete[] mtx;
-      return 2;
-    }
-    in.close();
   }
+
+  strelnikov::input(in, mtx, r, c);
+  if (in.fail()) {
+    std::cerr << "Wrong format\n";
+    if (pr == 2) {
+      delete[] mtx;
+    }
+    return 2;
+  }
+  in.close();
+
   std::ofstream out(argv[3]);
   if (!out.is_open()) {
     std::cerr << "Cannot open output file\n";
