@@ -217,6 +217,11 @@ bool muhamadiarov::toCheckParam(int argc, char* argv[])
       }
     }
   }
+  if (argv[1][0] < '0' || argv[1][0] > '9')
+  {
+    std::cerr << "First parameter is not a number\n";
+    return false;
+  }
   if (argv[1][0] > '2')
   {
     std::cerr << "First parameter is out of range\n";
@@ -255,11 +260,11 @@ void muhamadiarov::inputMatric(int* ptr, int r, int c, std::istream &input)
     {
       throw std::out_of_range("The number is not int\n");
     }
-    if (input.eof())
+    else if (input.eof())
     {
       throw std::logic_error("Not enough the numbers of elements\n");
     }
-    if (input.fail())
+    else if (input.fail())
     {
       throw std::logic_error("Wrong working read\n");
     }
