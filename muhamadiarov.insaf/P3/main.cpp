@@ -23,14 +23,13 @@ int main(int argc, char* argv[])
 {
   if (argc == 1)
   {
-    std::cerr << "Not arguments\n";
+    std::cerr << "Not enough arguments\n";
     return 1;
   }
   namespace muh = muhamadiarov;
   bool checkparam = muh::toCheckParam(argc, argv);
   if (!checkparam)
   {
-    std::cerr << "Wrong input data\n";
     return 1;
   }
   std::ifstream input(argv[2]);
@@ -54,6 +53,7 @@ int main(int argc, char* argv[])
     std::ofstream output(argv[3], std::ios::app);
     output << 0 << ' ' << 0 << '\n';
     output << 0;
+    return 0;
   }
   char mode = argv[1][0];
   int arr[10000];
