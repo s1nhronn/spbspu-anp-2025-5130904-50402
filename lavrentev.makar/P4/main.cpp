@@ -23,7 +23,7 @@ int main()
   char* ans = new char[ex];
   if (ans == nullptr)
   {
-    std::cerr << "Memory allocation fail" << "\n";
+    std::cerr << "Memory allocation fail" << '\n';
     return 1;
   }
 
@@ -34,7 +34,7 @@ int main()
   char* ans2 = new char[ex2];
   if (ans2 == nullptr)
   {
-    std::cerr << "Memory allocation fail" << "\n";
+    std::cerr << "Memory allocation fail" << '\n';
     delete[] ans;
     return 1;
   }
@@ -42,7 +42,7 @@ int main()
   char* result = new char[ex + ex2];
   if (result == nullptr)
   {
-    std::cerr << "Memory allocation fail" << "\n";
+    std::cerr << "Memory allocation fail" << '\n';
     delete[] ans;
     delete[] ans2;
     return 1;
@@ -51,8 +51,13 @@ int main()
   lavrentev::uni_two(s, s2, ex, ex2, result);
   int ans_7 = lavrentev::dif_lat(ans, s);
 
-  std::cout << "Ans 7: " << ans_7 << "\n";
-  std::cout << "Ans 12: " << result << "\n";
+  std::cout << "Ans 7: " << ans_7 << '\n';
+  std::cout << "Ans 12: ";
+  for (size_t i = 0; i < ex + ex2; ++i)
+  {
+    std::cout << result[i];
+  }
+  std::cout << '\n';
 
   delete[] ans;
   delete[] ans2;
