@@ -28,6 +28,7 @@ int main()
   if (ans2 == nullptr)
   {
     std::cerr << "Memory allocation fail" << "\n";
+    delete[] ans;
     return 1;
   }
 
@@ -35,6 +36,8 @@ int main()
   if (result == nullptr)
   {
     std::cerr << "Memory allocation fail" << "\n";
+    delete[] ans;
+    delete[] ans2;
     return 1;
   }
 
@@ -45,6 +48,7 @@ int main()
   std::cout << "Ans 12: " << result << "\n";
 
   delete[] ans;
+  delete[] ans2;
   delete[] result;
 }
 
