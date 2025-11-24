@@ -67,7 +67,7 @@ int main(int argc, char** argv)
     output << "0\n";
     return 0;
   }
-  if (std::stoi(argv[1]) == 1)
+  if (bruh == 1)
   {
     int a[terentev::MAXOS] = {};
     for (size_t i = 0; i < n * m; ++i)
