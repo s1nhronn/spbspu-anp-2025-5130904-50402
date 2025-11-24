@@ -3,7 +3,7 @@
 
 void addSymb(char*& str, size_t& s, char ch)
 {
-  char* tmp = reinterpret_cast<char*>(malloc(s + 2));
+  char* tmp = reinterpret_cast< char* >(malloc(s + 2));
   if (tmp == nullptr) {
     if (str) {
       free(str);
@@ -84,7 +84,7 @@ char* doDgtSnd(const char* str1, size_t s1, const char* str2, size_t s2)
   size_t cnt = 0;
 
   for (size_t i = 0; i < s2; ++i) {
-    if (isdigit(static_cast<unsigned char>(str2[i]))) {
+    if (isdigit(static_cast< unsigned char >(str2[i]))) {
       try {
         addSymb(a, cnt, str2[i]);
       } catch (const std::bad_alloc& e) {
@@ -94,7 +94,7 @@ char* doDgtSnd(const char* str1, size_t s1, const char* str2, size_t s2)
     }
   }
 
-  char* res = reinterpret_cast<char*>(malloc(s1 + cnt + 1));
+  char* res = reinterpret_cast< char* >(malloc(s1 + cnt + 1));
   if (!res) {
     free(a);
     return nullptr;
@@ -115,7 +115,7 @@ char* doDgtSnd(const char* str1, size_t s1, const char* str2, size_t s2)
 int main()
 {
   size_t s1 = 0;
-  char *str1 = nullptr;
+  char* str1 = nullptr;
   try {
     str1 = getString(std::cin, s1);
   } catch (const std::bad_alloc& e) {
@@ -131,10 +131,13 @@ int main()
     }
     return 2;
   }
-  char strHas[] = {'a','b','c'};
+  if (s1 == 0) {
+    return 1;
+  }
+  char strHas[] = {'a', 'b', 'c'};
   int hasCommon = doHasSam(str1, s1, strHas, 3);
   std::cout << hasCommon << '\n';
-  char strDgt[] = {'g','1','h','2','k'};
+  char strDgt[] = {'g', '1', 'h', '2', 'k'};
   char* result2 = doDgtSnd(str1, s1, strDgt, 5);
   if (!result2) {
     std::cerr << "Memory allocation failed\n";
