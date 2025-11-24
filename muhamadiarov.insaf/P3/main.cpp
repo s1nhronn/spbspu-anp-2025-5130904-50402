@@ -21,11 +21,6 @@ namespace muhamadiarov
 
 int main(int argc, char* argv[])
 {
-  if (argc < 4)
-  {
-    std::cerr << "Not enough data\n";
-    return 1;
-  }
   namespace muh = muhamadiarov;
   bool checkparam = muh::toCheckParam(argc, argv);
   if (!checkparam)
@@ -38,14 +33,14 @@ int main(int argc, char* argv[])
     std::cerr << "Error is openning file\n";
     return 2;
   }
-  if (input.eof())
-  {
-    std::cerr << "Input file is empty\n";
-    return 2;
-  }
   int rows, colons = 0;
   input >> rows >> colons;
   bool isSizeWrong = muh::checkSizeMatric(rows, colons);
+  if (input.eof() || input.fail())
+  {
+    std::cerr << "Error is openning file\n";
+    return 2;
+  }
   if (isSizeWrong)
   {
     std::cerr << "Wrong size of matric\n";
@@ -70,11 +65,6 @@ int main(int argc, char* argv[])
     {
       muh::inputMatric(ptr, rows, colons, input);
     }
-    catch (const std::out_of_range &e)
-    {
-      std::cerr << e.what() << '\n';
-      return 2;
-    }
     catch (const std::logic_error &e)
     {
       std::cerr << e.what() << '\n';
@@ -92,12 +82,6 @@ int main(int argc, char* argv[])
     try
     {
       muh::inputMatric(ptr, rows, colons, input);
-    }
-    catch (const std::out_of_range &e)
-    {
-      free(ptr);
-      std::cerr << e.what() << '\n';
-      return 1;
     }
     catch (const std::logic_error &e)
     {
@@ -268,7 +252,7 @@ void muhamadiarov::inputMatric(int* ptr, int r, int c, std::istream &input)
     input >> ptr[i];
     if (ptr[i] > muh::maxInt() || ptr[i] < muh::minInt())
     {
-      throw std::out_of_range("The number is not int\n");
+      throw std::logic_error("The number is not int\n");
     }
     else if (input.eof())
     {
