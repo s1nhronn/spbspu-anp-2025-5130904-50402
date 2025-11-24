@@ -27,8 +27,8 @@ int main()
   }
 
   char *res1 = nullptr, *res2 = nullptr;
-  res1 = (char *) malloc((shirokov::LATIN_ALPHABET_LENGTH - s) * sizeof(char));
-  res2 = (char *) malloc((std::strlen(shirokov::LITERAL) + s) * sizeof(char));
+  res1 = static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH - s) * sizeof(char)));
+  res2 = static_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s) * sizeof(char)));
 
   shirokov::SHR_SYM(str, s, res1);
   if (res1 == nullptr)
@@ -62,14 +62,14 @@ char *shirokov::getline(std::istream &in, size_t &s)
   }
   size_t capacity = 1;
   s = 0;
-  char *str = (char *) malloc(capacity * sizeof(char));
+  char *str = static_cast< char * >(malloc(capacity * sizeof(char)));
   char *temp_str = nullptr;
   while (in)
   {
     if (s == capacity)
     {
       capacity *= 2;
-      temp_str = (char *) realloc(str, capacity);
+      temp_str = static_cast< char * >(realloc(str, capacity));
       if (temp_str == nullptr)
       {
         return nullptr;
@@ -84,4 +84,22 @@ char *shirokov::getline(std::istream &in, size_t &s)
     in >> std::skipws;
   }
   return str;
+}
+
+void shirokov::SHR_SYM(const char *str, size_t s, char *res)
+{
+  (void) str;
+  (void) s;
+  (void) res;
+  return;
+}
+
+void shirokov::UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
+{
+  (void) str1;
+  (void) s1;
+  (void) str2;
+  (void) s2;
+  (void) res;
+  return;
 }
