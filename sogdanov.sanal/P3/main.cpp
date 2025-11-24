@@ -78,7 +78,7 @@ namespace sogdanov
   {
     return reinterpret_cast< int * >(malloc(rows * cols * sizeof(int)));
   }
-  void rm(char num, int * mtx)
+  void rm(long num, int * mtx)
   {
     if (num == 2 && mtx != nullptr) {
       free(mtx);
