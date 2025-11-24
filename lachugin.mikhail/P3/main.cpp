@@ -10,11 +10,11 @@ namespace lachugin
       fin >> mtx[i];
       if (fin.eof())
       {
-        throw std::logic_error("Not enough data\n");
+        break;
       }
       if (fin.fail())
       {
-        throw std::logic_error("Can't read\n");
+        break;
       }
     }
   }
@@ -189,19 +189,11 @@ namespace lachugin
     output << '\n';
     output.close();
   }
-  void doAll(char *infile, char *outfile, size_t rows, size_t cols, int *res1, double *res2, int *mtx)
-  {
-    std::ifstream fin(infile);
-    make(fin, rows, cols, res1);
-    fin.close();
-    LFT_BOT_CLK(res1, rows, cols);
-    fin.open(infile);
-    fin.clear();
-    make(fin, rows, cols, mtx);
-    BLT_SMT_MTR(mtx, rows, cols, res2);
-    fin.close();
-    std::ofstream output(outfile);
-    lachugin::output(output, rows, cols, res1, res2);
+  void copy(int *ptr, const int *mtx, size_t r, size_t c) {
+    for (size_t i = 0; i < r*c; i++)
+    {
+      ptr[i] = mtx[i];
+    }
   }
 }
 int main(int argc, char **argv)
@@ -236,7 +228,7 @@ int main(int argc, char **argv)
     std::cerr <<  "Error reading file\n";
     return 1;
   }
-  fin.close();
+  std::ofstream output(argv[3]);
   if (prmt == 2)
   {
     int *res1 = nullptr;
@@ -247,7 +239,18 @@ int main(int argc, char **argv)
       res1 = new int[rows*cols];
       res2 = new double[rows*cols];
       mtx = new int[rows*cols];
-      lachugin::doAll(argv[2], argv[3], rows, cols, res1, res2, mtx);
+      lachugin::make(fin, rows, cols, res1);
+      if (fin.fail()) {
+        throw std::logic_error("Can't read\n");
+      }
+      if (fin.eof()) {
+        throw std::logic_error("Not enough data\n");
+      }
+      fin.close();
+      lachugin::copy(mtx, res1, rows, cols);
+      lachugin::LFT_BOT_CLK(res1, rows, cols);
+      lachugin::BLT_SMT_MTR(mtx, rows, cols, res2);
+      lachugin::output(output, rows, cols, res1, res2);
       delete[] res1;
       delete[] res2;
       delete[] mtx;
@@ -277,7 +280,18 @@ int main(int argc, char **argv)
     int mtx[count];
     try
     {
-      lachugin::doAll(argv[2], argv[3], rows, cols, res1, res2, mtx);
+      lachugin::make(fin, rows, cols, res1);
+      if (fin.fail()) {
+        throw std::logic_error("Can't read\n");
+      }
+      if (fin.eof()) {
+        throw std::logic_error("Not enough data\n");
+      }
+      fin.close();
+      lachugin::copy(mtx, res1, rows, cols);
+      lachugin::LFT_BOT_CLK(res1, rows, cols);
+      lachugin::BLT_SMT_MTR(mtx, rows, cols, res2);
+      lachugin::output(output, rows, cols, res1, res2);
     }
     catch (std::logic_error &e)
     {
