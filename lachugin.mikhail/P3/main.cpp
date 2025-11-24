@@ -162,28 +162,16 @@ namespace lachugin
   }
   void output(std::ofstream &output, size_t rows, size_t cols, int *res1, double *res2)
   {
-    output << rows << ' ' << cols << ' ';
+    output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i)
     {
-      if (i == rows*cols-1)
-      {
-        output << res1[i];
-      } else
-      {
-        output << res1[i] << ' ';
-      }
+      output << ' ' << res1[i];
     }
     output << '\n';
-    output << rows << ' ' << cols << ' ';
+    output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i)
     {
-      if (i == rows*cols-1)
-      {
-        output << res2[i];
-      } else
-      {
-        output << res2[i]<< ' ';
-      }
+      output << ' ' << res2[i];
     }
     output << '\n';
     output.close();
