@@ -133,7 +133,7 @@ char *shirokov::uniq(const char *str, size_t s, size_t &rsize)
   (void) str;
   (void) s;
   (void) rsize;
-  return {};
+  return nullptr;
 }
 
 void shirokov::expand(char **str, size_t size, size_t &capacity)
