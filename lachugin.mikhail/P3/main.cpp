@@ -18,7 +18,7 @@ namespace lachugin
   void LFT_BOT_CLK (int *mtx, size_t rows, size_t cols)
   {
     int d = 1;
-    size_t k = 0;
+    size_t k = 1;
     size_t n = 0;
     while (k < rows * cols+1) {
       for (size_t i = cols*(rows-1-n)+n; i >= n*(cols+1); i-=cols) {
