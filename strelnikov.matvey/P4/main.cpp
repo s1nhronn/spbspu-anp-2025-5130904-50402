@@ -132,6 +132,9 @@ int main()
     return 2;
   }
   if (s1 == 0) {
+    if(str1){
+      free(str1);
+    }
     return 1;
   }
   char strHas[] = {'a', 'b', 'c'};
