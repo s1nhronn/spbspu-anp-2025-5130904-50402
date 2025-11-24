@@ -97,13 +97,13 @@ int main(int argc, char* argv[])
     {
       free(ptr);
       std::cerr << e.what() << '\n';
-      return 2;
+      return 1;
     }
     catch (const std::logic_error &e)
     {
       free(ptr);
       std::cerr << e.what() << '\n';
-      return 2;
+      return 1;
     }
   }
   input.close();
