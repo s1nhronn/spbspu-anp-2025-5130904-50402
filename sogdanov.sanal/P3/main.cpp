@@ -142,7 +142,7 @@ int main(int argc, char ** argv)
   }
   int extra;
   if (input >> extra) {
-    std::cerr <<"Too many elements in input file\n";
+    std::cerr << "Too many elements in input file\n";
     sogdanov::rm(num, mtx);
     return 2;
   }
