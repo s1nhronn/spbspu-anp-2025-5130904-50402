@@ -10,6 +10,7 @@ namespace shirokov
   size_t LATIN_ALPHABET_LENGTH = 26;
   const char LITERAL[] = "def ";
   char *uniq(const char *str, size_t s, size_t &rsize);
+  void expand(char *str, size_t size, size_t &capacity);
   char *getline(std::istream &in, size_t &s);
   void SHR_SYM(const char *str, size_t s, char *res);
   void UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2, char *res);
@@ -80,20 +81,24 @@ char *shirokov::getline(std::istream &in, size_t &s)
   {
     return nullptr;
   }
-  char *temp_str = nullptr;
   while (in)
   {
-    if (s == capacity)
+    in >> str[s];
+    if (in.eof())
     {
-      capacity *= 2;
-      temp_str = static_cast< char * >(realloc(str, capacity));
-      if (temp_str == nullptr)
+      shirokov::expand(str, s, capacity);
+      if (str == nullptr)
       {
         return nullptr;
       }
-      str = temp_str;
+      break;
     }
-    in >> str[s++];
+    s += 1;
+    shirokov::expand(str, s, capacity);
+    if (str == nullptr)
+    {
+      return nullptr;
+    }
   }
   if (in.bad())
   {
@@ -131,4 +136,20 @@ char *shirokov::uniq(const char *str, size_t s, size_t &rsize)
   (void) s;
   (void) rsize;
   return {};
+}
+
+void shirokov::expand(char *str, size_t size, size_t &capacity)
+{
+  char *temp_str = nullptr;
+  if (size == capacity)
+  {
+    capacity *= 2;
+    temp_str = static_cast< char * >(realloc(str, capacity));
+    if (temp_str == nullptr)
+    {
+      str = nullptr;
+      return;
+    }
+    str = temp_str;
+  }
 }
