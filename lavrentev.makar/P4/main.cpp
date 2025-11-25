@@ -4,23 +4,21 @@
 
 namespace lavrentev
 {
-  size_t dif_lat(char* ans, char* s1);
+  size_t dif_lat(char* ans, char* s1, size_t& ex);
   void uni_two(char* s1, char* s2, size_t ex, size_t ex2, char* result);
-  char * getline(std::istream & in, size_t & n);
+  char * getline(std::istream & in, size_t& n);
 }
 
 int main()
 {
   char* s1 = nullptr;
-  size_t n = 0;
-  s1 = lavrentev::getline(std::cin, n);
+  size_t ex = 0;
+  s1 = lavrentev::getline(std::cin, ex);
   if (s1 == nullptr)
   {
     std::cerr << "Memory allocation fail" << '\n';
     return 1;
   }
-
-  size_t ex = sizeof(s1);
 
   if(ex == 0)
   {
@@ -37,21 +35,24 @@ int main()
   }
 
   char* s2 = nullptr;
-  size_t n2 = 0;
-  s2 = lavrentev::getline(std::cin, n2);
+  size_t ex2;
+  s2 = lavrentev::getline(std::cin, ex2);
   if (s2 == nullptr)
   {
     std::cerr << "Memory allocation fail" << '\n';
+    delete[] s1;
+    delete[] buf1;
     return 1;
   }
 
-  size_t ex2 = sizeof(s2);
-
-  if(ex2 == 0)
+  /*if(ex2 == 0)
   {
     std::cerr << "Invalid string";
+    delete[] s1;
+    delete[] buf1;
+    delete[] s2;
     return 1;
-  }
+  }*/
 
   char* buf2 = new char[ex2];
   if (buf2 == nullptr)
@@ -74,7 +75,7 @@ int main()
     return 1;
   }
 
-  int ans_7 = lavrentev::dif_lat(buf1, s1);
+  int ans_7 = lavrentev::dif_lat(buf1, s1, ex);
   std::cout << "Ans 7: " << ans_7 << '\n';
 
   lavrentev::uni_two(s1, s2, ex, ex2, result);
@@ -92,9 +93,8 @@ int main()
   delete[] result;
 }
 
-size_t lavrentev::dif_lat(char* buf1, char* s1)
+size_t lavrentev::dif_lat(char* buf1, char* s1, size_t& ex)
 {
-  size_t ex = sizeof(s1);
   size_t answer = 0;
 
   for (size_t i = 0; i < ex; ++i)
@@ -166,42 +166,56 @@ void lavrentev::uni_two(char* s1, char* s2, size_t ex, size_t ex2, char* result)
 
 char * lavrentev::getline(std::istream & in, size_t & n)
 {
+  size_t t = 10;
+  size_t size = 0;
   bool is_skipws = in.flags() & std::ios_base::skipws;
+
   if (is_skipws)
   {
     in >> std::noskipws;
   }
-  char * s = new char[1];
-  char st;
-  in >> st;
-  size_t i = 0;
-  while (st != '\n')
+
+  char * s = new char[t];
+  if (s == nullptr)
   {
-    s[i] = st;
-    ++i;
-    if (i == sizeof(s))
-    {
-      std::string buf = "";
-      size_t q = sizeof(s);
-      for(size_t i = 0; i < q; ++i)
-      {
-        buf += s[i];
-      }
-      delete[] s;
-      char * s = new char[q + q / 2];
-      for(size_t i = 0; i < q + 1; ++i)
-      {
-        s[i] = buf[i];
-      }
-    }
-    in >> st;
+    n = 0;
+    return nullptr;
   }
+
+  char st;
+  while (in >> st && st != '\n')
+  {
+    if (size == t - 1)
+    {
+      t += t / 2;
+      char * new_s = new char[t];
+      if (new_s == nullptr)
+      {
+        delete[] s;
+        n = 0;
+        return nullptr;
+      }
+
+      for(size_t j = 0; j < size; ++j)
+      {
+        new_s[j] = s[j];
+      }
+
+      delete[] s;
+      s = new_s;
+    }
+
+    s[size] = st;
+    ++size;
+  }
+
+  s[size] = '\0';
 
   if(is_skipws)
   {
     in >> std::skipws;
   }
 
-  n = sizeof(s);
+  n = size;
   return s;
 }
