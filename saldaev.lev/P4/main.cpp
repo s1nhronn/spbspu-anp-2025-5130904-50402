@@ -6,7 +6,7 @@ namespace saldaev
 {
   const size_t block_size = 10;
 
-  size_t getline(std::istream &in, char *&data, const size_t block_size)
+  size_t getLine(std::istream &in, char *&data, const size_t block_size)
   {
     in >> std::noskipws;
     data = static_cast< char * >(malloc(block_size + 1 * sizeof(char)));
@@ -46,7 +46,7 @@ namespace saldaev
     return 0;
   }
 
-  size_t countNewLength(char *arr, size_t length, char *&new_arr)
+  size_t createCompactString(char *arr, size_t length, char *&new_arr)
   {
     char previous = ' ';
     char curent = ' ';
@@ -76,16 +76,43 @@ namespace saldaev
     }
     return (leters + spaces + 1);
   }
+
+  size_t SpcRmv(char *arr, size_t length, char *&new_arr)
+  {
+    size_t new_length = createCompactString(arr, length, new_arr);
+    if (new_length == 0)
+    {
+      return 0;
+    }
+    char prev_char = ' ';
+    char crnt_char = ' ';
+    size_t i = 0;
+    size_t crnt_digit = 0;
+    while (crnt_digit < new_length - 1)
+    {
+      crnt_char = arr[i];
+      if (crnt_char != ' ' || prev_char != ' ')
+      {
+        new_arr[crnt_digit] = crnt_char;
+        crnt_digit++;
+      }
+      prev_char = crnt_char;
+      i++;
+    }
+    new_arr[crnt_digit] = '\0';
+    return new_length;
+  }
 }
 
 int main()
 {
   char *a = nullptr;
-  size_t k = saldaev::getline(std::cin, a, saldaev::block_size);
+  size_t k = saldaev::getLine(std::cin, a, saldaev::block_size);
+  char *b = nullptr;
+  k = saldaev::SpcRmv(a, k, b);
   for (size_t i = 0; i < k; ++i)
   {
-    std::cout << a[i];
+    std::cout << b[i];
   }
-  std::cout << '\n' << k << ' ' << saldaev::countNewLength(a, k, a) << '\n';
   free(a);
 }
