@@ -45,25 +45,6 @@ int main()
     return 1;
   }
 
-  /*if(ex2 == 0)
-  {
-    std::cerr << "Invalid string";
-    delete[] s1;
-    delete[] buf1;
-    delete[] s2;
-    return 1;
-  }*/
-
-  char* buf2 = new char[ex2];
-  if (buf2 == nullptr)
-  {
-    std::cerr << "Memory allocation fail" << '\n';
-    delete[] s1;
-    delete[] buf1;
-    delete[] s2;
-    return 1;
-  }
-
   char* result = new char[ex + ex2];
   if (result == nullptr)
   {
@@ -71,7 +52,6 @@ int main()
     delete[] s1;
     delete[] buf1;
     delete[] s2;
-    delete[] buf2;
     return 1;
   }
 
@@ -89,7 +69,6 @@ int main()
   delete[] s1;
   delete[] buf1;
   delete[] s2;
-  delete[] buf2;
   delete[] result;
 }
 
