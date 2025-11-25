@@ -19,7 +19,7 @@ int main()
     std::cerr << "Memory allocation fail" << '\n';
     return 1;
   }
-  
+
   size_t ex = sizeof(s1);
 
   if(ex == 0)
@@ -44,7 +44,7 @@ int main()
     std::cerr << "Memory allocation fail" << '\n';
     return 1;
   }
-  
+
   size_t ex2 = sizeof(s2);
 
   if(ex2 == 0)
