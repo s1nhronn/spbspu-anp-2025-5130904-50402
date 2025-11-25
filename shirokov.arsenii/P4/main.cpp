@@ -50,8 +50,9 @@ int main()
     return 1;
   }
 
-  std::cout << "1. " << res1 << '\n';
-  std::cout << "2. " << res2 << '\n';
+  // std::cout << "1. " << res1 << '\n';
+  // std::cout << "2. " << res2 << '\n';
+  std::cout << "Тут будет результат преобразований\n";
   free(str);
   free(res1);
   free(res2);
