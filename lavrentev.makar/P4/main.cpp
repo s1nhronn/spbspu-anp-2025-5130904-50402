@@ -166,8 +166,8 @@ char * lavrentev::getline(std::istream & in, size_t & n)
   {
     if (size == t - 1)
     {
-      t += t / 2;
-      char * new_s = new char[t];
+      size_t new_t = t + t / 2;
+      char * new_s = new char[new_t];
       if (new_s == nullptr)
       {
         delete[] s;
@@ -182,6 +182,7 @@ char * lavrentev::getline(std::istream & in, size_t & n)
 
       delete[] s;
       s = new_s;
+      t = new_t;
     }
 
     s[size] = st;
