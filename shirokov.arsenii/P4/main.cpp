@@ -124,6 +124,7 @@ void shirokov::SHR_SYM(const char *str, size_t s, char *res)
       res[pos++] = letter;
     }
   }
+  free(ustr);
 }
 
 void shirokov::UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
