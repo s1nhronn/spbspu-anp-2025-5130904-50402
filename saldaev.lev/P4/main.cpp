@@ -9,7 +9,7 @@ namespace saldaev
   size_t getLine(std::istream &in, char *&data, const size_t block_size)
   {
     in >> std::noskipws;
-    data = static_cast<char *>(malloc(block_size + 1 * sizeof(char)));
+    data = static_cast<char *>(malloc((block_size + 1) * sizeof(char)));
     if (data == nullptr)
     {
       return 0;
