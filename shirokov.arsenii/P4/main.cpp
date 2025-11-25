@@ -28,17 +28,7 @@ int main()
     return 1;
   }
 
-  size_t usize = 0;
-  char *uniq_str = shirokov::uniq(str, s, usize);
-  if (uniq_str == nullptr)
-  {
-    free(str);
-    std::cerr << "Error\n"; // TODO: Исправить на нормальное описание ошибки
-    return 1;
-  }
-
-  char *res1 =
-      static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH - usize) * sizeof(char)));
+  char *res1 = static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH) * sizeof(char)));
   char *res2 = static_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s) * sizeof(char)));
   if (res1 == nullptr || res2 == nullptr)
   {
@@ -83,13 +73,10 @@ char *shirokov::getline(std::istream &in, size_t &s)
   }
   while (in)
   {
-    if (s == capacity)
+    shirokov::expand(&str, s, capacity);
+    if (str == nullptr)
     {
-      shirokov::expand(&str, s, capacity);
-      if (str == nullptr)
-      {
-        return nullptr;
-      }
+      return nullptr;
     }
     in >> str[s];
     if (in.eof())
@@ -152,6 +139,7 @@ void shirokov::expand(char **str, size_t size, size_t &capacity)
     {
       temp_str[i] = (*str)[i];
     }
+    free(str);
     *str = temp_str;
   }
 }
