@@ -141,7 +141,7 @@ void shirokov::UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2,
   {
     res[i] = (s1 > s2 ? str1[i - minn] : str2[i - minn]);
   }
-  res[s1 + s2 + 1] = '\0';
+  res[s1 + s2] = '\0';
 }
 
 char *shirokov::uniq(const char *str, size_t s, size_t &rsize)
