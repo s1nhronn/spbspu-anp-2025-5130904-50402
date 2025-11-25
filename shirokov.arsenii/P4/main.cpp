@@ -142,11 +142,15 @@ void shirokov::expand(char **str, size_t size, size_t &capacity)
   if (size == capacity)
   {
     capacity *= 2;
-    temp_str = static_cast< char * >(realloc(*str, capacity));
+    temp_str = static_cast< char * >(malloc(capacity));
     if (temp_str == nullptr)
     {
       *str = nullptr;
       return;
+    }
+    for (size_t i = 0; i < size; ++i)
+    {
+      temp_str[i] = (*str)[i];
     }
     *str = temp_str;
   }
