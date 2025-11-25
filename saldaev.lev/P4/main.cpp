@@ -112,7 +112,7 @@ int main()
   k = saldaev::spcRmv(a, k, b);
   for (size_t i = 0; i < k - 1; ++i)
   {
-    std::cout << b[i] << '\n';
+    std::cout << b[i];
   }
   free(a);
   free(b);
