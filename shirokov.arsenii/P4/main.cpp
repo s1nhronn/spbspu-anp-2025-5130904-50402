@@ -87,6 +87,7 @@ char *shirokov::getline(std::istream &in, size_t &s)
   }
   if (in.bad() || s == 0)
   {
+    free(str);
     return nullptr;
   }
   str[s] = '\0';
