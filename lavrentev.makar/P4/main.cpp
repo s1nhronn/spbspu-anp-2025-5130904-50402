@@ -1,11 +1,11 @@
 #include <iostream>
 #include <cstring>
-#include <iomanip>
+#include <ios>
 
 namespace lavrentev
 {
   size_t dif_lat(char* ans, char* s1, size_t& ex);
-  void uni_two(char* s1, char* s2, size_t ex, size_t ex2, char* result);
+  void uni_two(char* s1, const char s2[], size_t ex, size_t ex2, char* result);
   char * getline(std::istream & in, size_t& n);
 }
 
@@ -20,6 +20,13 @@ int main()
     return 1;
   }
 
+  if(ex == 0)
+  {
+    std::cerr << "Invalid string" << '\n';
+    delete[] s1;
+    return 1;
+  }
+
   char* buf1 = new char[ex];
   if (buf1 == nullptr)
   {
@@ -28,16 +35,8 @@ int main()
     return 1;
   }
 
-  char* s2 = nullptr;
-  size_t ex2;
-  s2 = lavrentev::getline(std::cin, ex2);
-  if (s2 == nullptr)
-  {
-    std::cerr << "Memory allocation fail" << '\n';
-    delete[] s1;
-    delete[] buf1;
-    return 1;
-  }
+  const char s2[] = "def ";
+  size_t ex2 = 4;
 
   char* result = new char[ex + ex2];
   if (result == nullptr)
@@ -45,7 +44,6 @@ int main()
     std::cerr << "Memory allocation fail" << '\n';
     delete[] s1;
     delete[] buf1;
-    delete[] s2;
     return 1;
   }
 
@@ -62,7 +60,6 @@ int main()
 
   delete[] s1;
   delete[] buf1;
-  delete[] s2;
   delete[] result;
 }
 
@@ -104,7 +101,7 @@ size_t lavrentev::dif_lat(char* buf1, char* s1, size_t& ex)
   return answer;
 }
 
-void lavrentev::uni_two(char* s1, char* s2, size_t ex, size_t ex2, char* result)
+void lavrentev::uni_two(char* s1, const char s2[], size_t ex, size_t ex2, char* result)
 {
   size_t min;
   std::string max_s;
