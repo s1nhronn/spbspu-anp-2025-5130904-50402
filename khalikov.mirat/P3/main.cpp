@@ -1,28 +1,26 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 namespace khalikov
 {
-  bool proverka(const char* str);
-  void output_mtx(std::ostream & out, const int * a, size_t n, size_t m);
-  size_t input_mtx(std::istream & in, int * a, size_t n, size_t m);
-  size_t count_seddle(const int * a, size_t n, size_t m);
+  bool proverka(const char * str);
+  void outputMtx(std::ostream & out, const int * a, size_t n, size_t m);
+  std::istream & inputMtx(std::istream & in, int * a, size_t n, size_t m, size_t & count);
+  size_t countSeddle(const int * a, size_t n, size_t m);
   int * spiral(const int * a, int * res, size_t n, size_t m,
-  size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t &c);
+  size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c);
   int * spiral(const int * a, int * res, size_t n, size_t m);
+  const size_t MTXSIZE = 10000;
 }
 
-bool khalikov::proverka(const char* str)
+bool khalikov::proverka(const char * str)
 {
   if (str == nullptr)
   {
     return false;
   }
-  size_t length = 0;
-  while (str[length] != '\0')
-  {
-    length++;
-  }
+  size_t length = strlen(str);
 
   if (length > 1)
   {
@@ -37,33 +35,40 @@ bool khalikov::proverka(const char* str)
   return 1;
 }
 
-void khalikov::output_mtx(std::ostream & out, const int * a, size_t n, size_t m)
+void khalikov::outputMtx(std::ostream & out, const int * a, size_t n, size_t m)
 {
   for (size_t i = 0; i < n; ++i)
   {
     for (size_t j = 0; j < m; ++j)
     {
-       out << a[i*m + j] << " ";
+      out << a[i*m+j];
+      if (j < m-1)
+      {
+        out << ' ';
+      }
     }
-    out << "\n";
+    if (i < n-1)
+    {
+      out << ' ';
+    }
   }
 }
 
-size_t khalikov::input_mtx(std::istream & in, int * a, size_t n, size_t m)
+std::istream & khalikov::inputMtx(std::istream & in, int * a,
+size_t n, size_t m, size_t & count)
 {
-  size_t count = 0;
   for (size_t i = 0; i < n*m; ++i)
   {
-    if(!(in >> a[i]))
+    if (!(in >> a[i]))
     {
-      break;
+      return in;
     }
     count++;
   }
-  return count;
+  return in;
 }
 
-size_t khalikov::count_seddle(const int * a, size_t n, size_t m)
+size_t khalikov::countSeddle(const int * a, size_t n, size_t m)
 {
   int min = 0;
   int max = 0;
@@ -90,7 +95,7 @@ size_t khalikov::count_seddle(const int * a, size_t n, size_t m)
       }
       if (min == max)
       {
-        count+=1;
+        count++;
       }
     }
   }
@@ -98,7 +103,7 @@ size_t khalikov::count_seddle(const int * a, size_t n, size_t m)
 }
 
 int * khalikov::spiral(const int * a, int * res, size_t n, size_t m,
-size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t &c)
+size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c)
 {
   if (st_row > end_row || st_col > end_col)
   {
@@ -156,57 +161,58 @@ int * khalikov::spiral(const int * a, int * res, size_t n, size_t m)
     return res;
   }
   size_t c = 1;
-  return khalikov::spiral(a, res, n, m, 0, 0, n-1, m-1, c);
+  return spiral(a, res, n, m, 0, 0, n-1, m-1, c);
 }
+
 int main(int argc, char ** argv)
 {
+
+  namespace kh = khalikov;
+
   if (argc < 4)
   {
-    std::cerr << "Not enough arguments" << "\n";
+    std::cerr << "Not enough arguments" << '\n';
     return 1;
   }
   if (argc > 4)
   {
-    std::cerr << "Too many arguments" << "\n";
+    std::cerr << "Too many arguments" << '\n';
     return 1;
   }
   if (!khalikov::proverka(argv[1]))
   {
-    std::cerr << "First parameter is not a number" << "\n";
+    std::cerr << "First parameter is not a number" << '\n';
     return 1;
   }
   if ((*argv[1] != '1') && (*argv[1] != '2'))
   {
-    std::cerr << "First parametr is out of range" << "\n";
+    std::cerr << "First parametr is out of range" << '\n';
     return 1;
   }
   std::ifstream input(argv[2]);
   size_t n = 0;
   size_t m = 0;
-  size_t elements = 0;
-  std::string extra;
-  namespace kh = khalikov;
+  size_t count = 0;
   input >> n >> m;
   if (input.fail())
   {
-    std::cerr << "Input error" << "\n";
+    std::cerr << "Input error" << '\n';
     return 2;
   }
   if (*argv[1] == '1')
   {
-    int a[10000] = {};
-    elements = kh::input_mtx(input, a, n, m);
-    if (elements != n*m || input >> extra)
+    int a[kh::MTXSIZE] = {};
+    kh::inputMtx(input, a, n, m, count);
+    if (count != n*m)
     {
-      std::cerr << "Input error" << "\n";
-      input.close();
+      std::cerr << "Input error" << '\n';
       return 2;
     }
     input.close();
     std::ofstream output(argv[3]);
-    kh::output_mtx(output, a, n, m);
-    output << "\n";
-    output << kh::count_seddle(a, n, m) << "\n";
+    kh::outputMtx(output, a, n, m);
+    output << '\n';
+    output << kh::countSeddle(a, n, m) << '\n';
   }
   if (*argv[1] == '2')
   {
@@ -216,37 +222,36 @@ int main(int argc, char ** argv)
     {
       b = new int[n*m];
     }
-    catch(std::bad_alloc &)
+    catch (const std::bad_alloc &)
     {
-      std::cerr << "bad_alloc";
-      delete[] b;
+      std::cerr << "bad_alloc" << '\n';
       return 2;
     }
     try
     {
       res = new int[n*m];
     }
-    catch(std::bad_alloc &)
+    catch (const std::bad_alloc &)
     {
-      std::cerr << "bad_alloc";
-      delete[] res;
+      std::cerr << "bad_alloc" << '\n';
+      delete[] b;
       return 2;
     }
-    elements = kh::input_mtx(input, b, n, m);
-    if (elements != n*m || input >> extra)
+    kh::inputMtx(input, b, n, m, count);
+    if (count != n*m)
     {
-      std::cerr << "Input error" << "\n";
+      std::cerr << "Input error" << '\n';
       delete[] res;
       delete[] b;
-      input.close();
       return 2;
     }
     input.close();
     std::ofstream output(argv[3]);
-    kh::output_mtx(output, b, n, m);
-    output << "\n";
+    kh::outputMtx(output, b, n, m);
+    output << '\n';
     res = kh::spiral(b, res, n, m);
-    kh::output_mtx(output, res, n, m);
+    kh::outputMtx(output, res, n, m);
+    output << '\n';
     delete[] res;
     delete[] b;
   }
