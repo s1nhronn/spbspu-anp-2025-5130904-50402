@@ -77,7 +77,7 @@ namespace saldaev
     return (leters + spaces + 1);
   }
 
-  size_t SpcRmv(char *arr, size_t length, char *&new_arr)
+  size_t spcRmv(char *arr, size_t length, char *&new_arr)
   {
     size_t new_length = createCompactString(arr, length, new_arr);
     if (new_length == 0)
@@ -109,10 +109,11 @@ int main()
   char *a = nullptr;
   size_t k = saldaev::getLine(std::cin, a, saldaev::block_size);
   char *b = nullptr;
-  k = saldaev::SpcRmv(a, k, b);
-  for (size_t i = 0; i < k; ++i)
+  k = saldaev::spcRmv(a, k, b);
+  for (size_t i = 0; i < k - 1; ++i)
   {
-    std::cout << b[i];
+    std::cout << b[i] << '\n';
   }
   free(a);
+  free(b);
 }
