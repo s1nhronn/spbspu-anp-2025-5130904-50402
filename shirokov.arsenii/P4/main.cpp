@@ -29,7 +29,8 @@ int main()
   }
 
   char *res1 = static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH + 1) * sizeof(char)));
-  char *res2 = static_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s) * sizeof(char)));
+  char *res2 =
+      static_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s + 1) * sizeof(char)));
   if (res1 == nullptr || res2 == nullptr)
   {
     free(str);
@@ -51,7 +52,7 @@ int main()
   }
 
   std::cout << "1. " << res1 << '\n';
-  std::cout << "2. " << "res2" << '\n';
+  std::cout << "2. " << res2 << '\n';
   free(str);
   free(res1);
   free(res2);
@@ -130,12 +131,17 @@ void shirokov::SHR_SYM(const char *str, size_t s, char *res)
 
 void shirokov::UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
 {
-  (void) str1;
-  (void) s1;
-  (void) str2;
-  (void) s2;
-  (void) res;
-  return;
+  size_t minn = s1 < s2 ? s1 : s2;
+  for (size_t i = 0; i < minn; ++i)
+  {
+    res[2 * i] = str1[i];
+    res[2 * i + 1] = str2[i];
+  }
+  for (size_t i = minn * 2; i < s1 + s2; ++i)
+  {
+    res[i] = (s1 > s2 ? str1[i - minn] : str2[i - minn]);
+  }
+  res[s1 + s2 + 1] = '\0';
 }
 
 char *shirokov::uniq(const char *str, size_t s, size_t &rsize)
