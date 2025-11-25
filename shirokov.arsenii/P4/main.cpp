@@ -50,9 +50,8 @@ int main()
     return 1;
   }
 
-  // std::cout << "1. " << res1 << '\n';
-  // std::cout << "2. " << res2 << '\n';
-  std::cout << "Тут будет результат преобразований\n";
+  std::cout << "1. " << "res1" << '\n';
+  std::cout << "2. " << "res2" << '\n';
   free(str);
   free(res1);
   free(res2);
@@ -86,7 +85,7 @@ char *shirokov::getline(std::istream &in, size_t &s)
     }
     s += 1;
   }
-  if (in.bad())
+  if (in.bad() || s == 0)
   {
     return nullptr;
   }
