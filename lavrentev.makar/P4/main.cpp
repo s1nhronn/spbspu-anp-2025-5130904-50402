@@ -20,12 +20,6 @@ int main()
     return 1;
   }
 
-  if(ex == 0)
-  {
-    std::cerr << "Invalid string";
-    return 1;
-  }
-
   char* buf1 = new char[ex];
   if (buf1 == nullptr)
   {
@@ -147,16 +141,18 @@ char * lavrentev::getline(std::istream & in, size_t & n)
 {
   size_t t = 10;
   size_t size = 0;
-  bool is_skipws = in.flags() & std::ios_base::skipws;
 
+  bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws)
   {
     in >> std::noskipws;
   }
 
-  char * s = new char[t];
-  if (s == nullptr)
-  {
+  char* s = nullptr;
+
+  try {
+    s = new char[t];
+  } catch (const std::bad_alloc&) {
     n = 0;
     return nullptr;
   }
@@ -167,15 +163,17 @@ char * lavrentev::getline(std::istream & in, size_t & n)
     if (size == t - 1)
     {
       size_t new_t = t + t / 2;
-      char * new_s = new char[new_t];
-      if (new_s == nullptr)
-      {
+      char* new_s = nullptr;
+
+      try {
+        new_s = new char[new_t];
+      } catch (const std::bad_alloc&) {
         delete[] s;
         n = 0;
         return nullptr;
       }
 
-      for(size_t j = 0; j < size; ++j)
+      for (size_t j = 0; j < size; ++j)
       {
         new_s[j] = s[j];
       }
@@ -190,12 +188,12 @@ char * lavrentev::getline(std::istream & in, size_t & n)
   }
 
   s[size] = '\0';
+  n = size;
 
-  if(is_skipws)
+  if (is_skipws)
   {
     in >> std::skipws;
   }
 
-  n = size;
   return s;
 }
