@@ -50,7 +50,7 @@ int main()
     return 1;
   }
 
-  std::cout << "1. " << "res1" << '\n';
+  std::cout << "1. " << res1 << '\n';
   std::cout << "2. " << "res2" << '\n';
   free(str);
   free(res1);
@@ -100,10 +100,30 @@ char *shirokov::getline(std::istream &in, size_t &s)
 
 void shirokov::SHR_SYM(const char *str, size_t s, char *res)
 {
-  (void) str;
-  (void) s;
-  (void) res;
-  return;
+  size_t rsize = 0;
+  char *ustr = uniq(str, s, rsize);
+  if (ustr == nullptr)
+  {
+    res = nullptr;
+    return;
+  }
+  size_t pos = 0;
+  for (char letter = 'a'; letter <= 'z'; ++letter)
+  {
+    bool in_str = false;
+    for (size_t i = 0; i < rsize; ++i)
+    {
+      if (ustr[i] == letter)
+      {
+        in_str = true;
+        break;
+      }
+    }
+    if (!in_str)
+    {
+      res[pos++] = letter;
+    }
+  }
 }
 
 void shirokov::UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
@@ -118,10 +138,38 @@ void shirokov::UNI_TWO(const char *str1, size_t s1, const char *str2, size_t s2,
 
 char *shirokov::uniq(const char *str, size_t s, size_t &rsize)
 {
-  (void) str;
-  (void) s;
-  (void) rsize;
-  return nullptr;
+  rsize = 0;
+  char *res = static_cast< char * >(malloc(sizeof(char) * s));
+  if (res == nullptr)
+  {
+    return nullptr;
+  }
+  for (size_t i = 0; i < s; ++i)
+  {
+    bool in_res = false;
+    for (size_t j = 0; j < rsize; ++j)
+    {
+      char temp = str[i];
+      if ('A' <= temp && temp <= 'Z')
+      {
+        temp += 32;
+      }
+      if (temp == res[j])
+      {
+        in_res = true;
+      }
+    }
+    if (!in_res)
+    {
+      char temp = str[i];
+      if ('A' <= temp && temp <= 'Z')
+      {
+        temp += 32;
+      }
+      res[rsize++] = temp;
+    }
+  }
+  return res;
 }
 
 void shirokov::expand(char **str, size_t size, size_t &capacity)
