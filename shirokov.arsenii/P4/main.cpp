@@ -139,7 +139,7 @@ void shirokov::expand(char **str, size_t size, size_t &capacity)
     {
       temp_str[i] = (*str)[i];
     }
-    free(str);
+    free(*str);
     *str = temp_str;
   }
 }
