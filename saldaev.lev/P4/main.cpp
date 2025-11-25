@@ -51,6 +51,7 @@ namespace saldaev
     size_t spaces = 0;
     for (size_t i = 0; i < length; ++i)
     {
+      char crnt = data[i];
       if (crnt != ' ')
       {
         leters++;
@@ -72,6 +73,31 @@ namespace saldaev
     }
     return (leters + spaces);
   }
+
+  size_t spcRmv(char *arr, size_t length, char *&new_arr)
+  {
+    size_t new_length = createCompactArray(arr, length, new_arr);
+    if (new_length == 0)
+    {
+      return 0;
+    }
+    size_t crnt_digit = 0;
+    char crnt_char = ' ';
+    char prev_char = ' ';
+    size_t i = 0;
+    while (crnt_digit < new_length)
+    {
+      crnt_char = arr[i];
+      if (crnt_char != ' ' || prev_char != ' ')
+      {
+        new_arr[crnt_digit] = crnt_char;
+        crnt_digit++;
+      }
+      i++;
+      prev_char = crnt_char;
+    }
+    return new_length;
+  }
 }
 
 int main()
@@ -80,12 +106,21 @@ int main()
   size_t k = saldaev::getLine(std::cin, a, 10);
   if (k == 0)
   {
-    std::cerr << "Could not read the string";
+    std::cerr << "Could not read the string\n";
+    return 1;
+  }
+  char *b = nullptr;
+  k = saldaev::spcRmv(a, k, b);
+  if (k == 0)
+  {
+    std::cerr << "Could not convert the string\n";
     return 1;
   }
   for (size_t i = 0; i < k; ++i)
   {
-    std::cout << a[i];
+    std::cout << b[i];
   }
-  std::cout << '\n';
+  std::cout << "\n";
+  free(a);
+  free(b);
 }
