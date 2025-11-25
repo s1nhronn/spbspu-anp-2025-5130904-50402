@@ -28,7 +28,7 @@ int main()
     return 1;
   }
 
-  char *res1 = static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH) * sizeof(char)));
+  char *res1 = static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH + 1) * sizeof(char)));
   char *res2 = static_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s) * sizeof(char)));
   if (res1 == nullptr || res2 == nullptr)
   {
@@ -124,6 +124,7 @@ void shirokov::SHR_SYM(const char *str, size_t s, char *res)
       res[pos++] = letter;
     }
   }
+  res[pos] = '\0';
   free(ustr);
 }
 
