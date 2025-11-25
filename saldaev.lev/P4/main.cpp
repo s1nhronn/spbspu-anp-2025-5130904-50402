@@ -9,7 +9,7 @@ namespace saldaev
   size_t getLine(std::istream &in, char *&data, const size_t block_size)
   {
     in >> std::noskipws;
-    data = static_cast< char * >(malloc(block_size + 1 * sizeof(char)));
+    data = static_cast<char *>(malloc(block_size + 1 * sizeof(char)));
     if (data == nullptr)
     {
       return 0;
@@ -23,7 +23,7 @@ namespace saldaev
       crnt_size++;
       if (crnt_size > crnt_msize)
       {
-        char *tmp = static_cast< char * >(malloc(crnt_size + block_size + 1 * sizeof(char)));
+        char *tmp = static_cast<char *>(malloc(crnt_size + block_size + 1 * sizeof(char)));
         if (tmp == nullptr)
         {
           return 0;
@@ -59,7 +59,7 @@ namespace saldaev
       {
         leters++;
       }
-      else if(previous != ' ')
+      else if (previous != ' ')
       {
         spaces++;
       }
@@ -69,7 +69,7 @@ namespace saldaev
     {
       spaces--;
     }
-    new_arr = static_cast< char * >(malloc((leters + spaces + 1) * sizeof(char)));
+    new_arr = static_cast<char *>(malloc((leters + spaces + 1) * sizeof(char)));
     if (new_arr == nullptr)
     {
       return 0;
@@ -108,8 +108,18 @@ int main()
 {
   char *a = nullptr;
   size_t k = saldaev::getLine(std::cin, a, saldaev::block_size);
+  if (!k)
+  {
+    std::cerr << "failed reading the line";
+    return 1;
+  }
   char *b = nullptr;
   k = saldaev::spcRmv(a, k, b);
+  if (!k)
+  {
+    std::cerr << "failed morfing the line";
+    return 1;
+  }
   for (size_t i = 0; i < k - 1; ++i)
   {
     std::cout << b[i];
