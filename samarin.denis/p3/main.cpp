@@ -6,7 +6,6 @@ namespace samarin {
   bool checkMax(int * a, int i, int j, int n);
   bool isLowerTriangular(const int * a, int size, int n);
   size_t localMax(int * a, size_t n, size_t m);
-  void printMatrix(int * a, int m, int n, char * file);
 }
 
 int main(int argc, char ** argv)
@@ -142,13 +141,3 @@ size_t samarin::localMax(int * a, size_t n, size_t m)
   return counter;
 }
 
-void samarin::printMatrix(int * a, int m, int n, char * file) {
-  std::ofstream output(file);
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < n; ++j) {
-      output << a[j + i * n] << " ";
-    }
-    output << "\n";
-  }
-  output.close();
-}
