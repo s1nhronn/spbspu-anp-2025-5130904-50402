@@ -1,14 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <cstring>
-#include <algorithm>
 
 namespace pozdnyakov {
 
   const size_t MAX_ELEMENTS = 10000;
   const size_t MAX_ROWS = 100;
   const size_t MAX_COLS = 100;
+
+  size_t myMin(size_t a, size_t b)
+  {
+    return (a < b ? a : b);
+  }
 
   int* createMatrix(size_t rows, size_t cols)
   {
@@ -27,84 +30,59 @@ namespace pozdnyakov {
     }
   }
 
-  bool readMatrix(std::istream& input, int* matrix, size_t rows, size_t cols)
+  bool readMatrix(std::istream& in, int* m, size_t rows, size_t cols)
   {
-    for (size_t i = 0; i < rows; i++)
+    size_t total = rows;
+    total *= cols;
+    for (size_t i = 0; i < total; i++)
     {
-      for (size_t j = 0; j < cols; j++)
+      if (!(in >> m[i]))
       {
-        if (!(input >> matrix[i * cols + j]))
-        {
-          return false;
-        }
+        return false;
       }
     }
     return true;
   }
 
-  void writeResults(std::ostream& output, int result18, int result8)
+  void writeResults(std::ostream& out, int r18, int r8)
   {
-    output << result18 << " " << result8;
+    out << r18 << " " << r8;
   }
 
-  int processTask18(const int* matrix, size_t rows, size_t cols)
+  int countDiag(const int* m, size_t rows, size_t cols,
+    size_t r, size_t c)
+  {
+    bool hasZero = false;
+    bool exists = false;
+    while (r < rows && c < cols)
+    {
+      exists = true;
+      if (m[r * cols + c] == 0)
+      {
+        hasZero = true;
+        break;
+      }
+      r++;
+      c++;
+    }
+    return (exists && !hasZero) ? 1 : 0;
+  }
+
+  int processTask18(const int* m, size_t rows, size_t cols)
   {
     int count = 0;
-
-    for (size_t startCol = 0; startCol < cols; startCol++)
+    for (size_t c = 0; c < cols; c++)
     {
-      bool hasZero = false;
-      bool diagonalExists = false;
-      size_t i = 0;
-      size_t j = startCol;
-
-      while (i < rows && j < cols)
-      {
-        diagonalExists = true;
-        if (matrix[i * cols + j] == 0)
-        {
-          hasZero = true;
-          break;
-        }
-        i++;
-        j++;
-      }
-
-      if (diagonalExists && !hasZero)
-      {
-        count++;
-      }
+      count += countDiag(m, rows, cols, 0, c);
     }
-
-    for (size_t startRow = 1; startRow < rows; startRow++)
+    for (size_t r = 1; r < rows; r++)
     {
-      bool hasZero = false;
-      bool diagonalExists = false;
-      size_t i = startRow;
-      size_t j = 0;
-
-      while (i < rows && j < cols)
-      {
-        diagonalExists = true;
-        if (matrix[i * cols + j] == 0)
-        {
-          hasZero = true;
-          break;
-        }
-        i++;
-        j++;
-      }
-
-      if (diagonalExists && !hasZero)
-      {
-        count++;
-      }
+      count += countDiag(m, rows, cols, r, 0);
     }
-
     return count;
   }
 
-  bool processTask8(int* matrix, size_t rows, size_t cols, int& result)
+  bool processTask8(int* m, size_t rows, size_t cols, int& result)
   {
     if (rows == 0 || cols == 0)
     {
@@ -112,46 +90,51 @@ namespace pozdnyakov {
       return true;
     }
 
-    int* tempMatrix = static_cast<int*>(
-      std::malloc(rows * cols * sizeof(int)));
-    if (tempMatrix == nullptr)
+    size_t total = rows;
+    total *= cols;
+
+    int* tmp = static_cast<int*>(std::malloc(total * sizeof(int)));
+    if (tmp == nullptr)
     {
       return false;
     }
 
-    for (size_t i = 0; i < rows * cols; i++)
+    for (size_t i = 0; i < total; i++)
     {
-      tempMatrix[i] = matrix[i];
+      tmp[i] = m[i];
     }
 
-    size_t layers = (std::min(rows, cols) + 1) / 2;
-
+    size_t layers = (myMin(rows, cols) + 1) / 2;
     for (size_t layer = 0; layer < layers; layer++)
     {
-      int increment = layer + 1;
+      int inc = layer + 1;
+      size_t top = layer;
+      size_t bottom = rows - layer - 1;
+      size_t left = layer;
+      size_t right = cols - layer - 1;
 
-      for (size_t i = layer; i < rows - layer; i++)
+      for (size_t r = layer; r < rows - layer; r++)
       {
-        for (size_t j = layer; j < cols - layer; j++)
+        for (size_t c = layer; c < cols - layer; c++)
         {
-          bool isBorder = i == layer || i == rows - layer - 1 ||
-            j == layer || j == cols - layer - 1;
-          if (isBorder)
+          bool border = (r == top || r == bottom ||
+            c == left || c == right);
+          if (border)
           {
-            tempMatrix[i * cols + j] += increment;
+            tmp[r * cols + c] += inc;
           }
         }
       }
     }
 
     int sum = 0;
-    for (size_t i = 0; i < rows * cols; i++)
+    for (size_t i = 0; i < total; i++)
     {
-      sum += tempMatrix[i];
+      sum += tmp[i];
     }
 
     result = sum;
-    std::free(tempMatrix);
+    std::free(tmp);
     return true;
   }
 }
@@ -161,9 +144,10 @@ int main()
   using namespace pozdnyakov;
 
   int taskNum;
-  std::string inputFile, outputFile;
+  std::string inFile;
+  std::string outFile;
 
-  std::cin >> taskNum >> inputFile >> outputFile;
+  std::cin >> taskNum >> inFile >> outFile;
 
   if (taskNum != 1 && taskNum != 2)
   {
@@ -171,8 +155,8 @@ int main()
     return 1;
   }
 
-  std::ifstream inputStream(inputFile);
-  if (!inputStream.is_open())
+  std::ifstream in(inFile);
+  if (!in.is_open())
   {
     std::cerr << "Cannot open input file\n";
     return 2;
@@ -181,76 +165,76 @@ int main()
   size_t rows = 0;
   size_t cols = 0;
 
-  if (!(inputStream >> rows >> cols))
+  if (!(in >> rows >> cols))
   {
     std::cerr << "File is empty\n";
     return 2;
   }
 
-  int result18 = 0;
-  int result8 = 0;
+  int r18 = 0;
+  int r8 = 0;
 
   if (rows == 0 || cols == 0)
   {
-    std::ofstream outputStream(outputFile);
-    if (outputStream.is_open())
+    std::ofstream out(outFile);
+    if (out.is_open())
     {
-      writeResults(outputStream, result18, result8);
+      writeResults(out, r18, r8);
     }
-    std::cout << result18 << " " << result8 << '\n';
+    std::cout << r18 << " " << r8 << '\n';
     return 0;
   }
 
-  bool exceedsLimits = false;
+  bool exceeds = false;
 
-  if (rows > 0 && cols > MAX_ELEMENTS / rows) 
+  if (rows > 0 && cols > MAX_ELEMENTS / rows)
   {
-    exceedsLimits = true;
+    exceeds = true;
+  }
+  if (!exceeds && (rows > MAX_ROWS || cols > MAX_COLS))
+  {
+    exceeds = true;
   }
 
-  if (!exceedsLimits && (rows > MAX_ROWS || cols > MAX_COLS)) {
-    exceedsLimits = true;
-  }
-
-  if (taskNum == 1 && exceedsLimits) 
+  if (taskNum == 1 && exceeds)
   {
     std::cerr << "Matrix size exceeds limits\n";
     return 2;
   }
 
-  int* matrix = createMatrix(rows, cols);
-  if (matrix == nullptr)
+  int* m = createMatrix(rows, cols);
+  if (m == nullptr)
   {
     std::cerr << "Memory allocation failed\n";
     return 2;
   }
 
-  if (!readMatrix(inputStream, matrix, rows, cols))
+  if (!readMatrix(in, m, rows, cols))
   {
     std::cerr << "Invalid matrix data\n";
-    freeMatrix(matrix);
+    freeMatrix(m);
     return 2;
   }
 
-  result18 = processTask18(matrix, rows, cols);
+  r18 = processTask18(m, rows, cols);
 
-  bool task8Success = processTask8(matrix, rows, cols, result8);
-  if (!task8Success)
+  bool ok = processTask8(m, rows, cols, r8);
+  if (!ok)
   {
-    std::cerr << "Memory allocation failed during task processing\n";
-    freeMatrix(matrix);
+    std::cerr << "Memory allocation failed while processing the task\n";
+    freeMatrix(m);
     return 3;
   }
 
-  std::ofstream outputStream(outputFile);
-  if (outputStream.is_open())
+  std::ofstream out(outFile);
+  if (out.is_open())
   {
-    writeResults(outputStream, result18, result8);
+    writeResults(out, r18, r8);
   }
 
-  std::cout << result18 << " " << result8 << '\n';
+  std::cout << r18 << " " << r8 << '\n';
 
-  freeMatrix(matrix);
+  freeMatrix(m);
 
   return 0;
 }
