@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <cstring>
+#include <algorithm>
 
 namespace pozdnyakov {
 
@@ -103,48 +104,58 @@ namespace pozdnyakov {
     return count;
   }
 
-  bool processTask8(const int* matrix, size_t rows, size_t cols, int& result)
+  bool processTask8(int* matrix, size_t rows, size_t cols, int& result)
   {
-    size_t total = rows * cols;
-    if (total == 0)
+    if (rows == 0 || cols == 0)
     {
       result = 0;
       return true;
     }
 
-    int* elements = static_cast<int*>(std::malloc(total * sizeof(int)));
-
-    if (elements == nullptr)
+    // ������� ����� ������� ��� ��������������
+    int* tempMatrix = static_cast<int*>(std::malloc(rows * cols * sizeof(int)));
+    if (tempMatrix == nullptr)
     {
       return false;
     }
 
-    for (size_t i = 0; i < total; i++)
+    // �������� �������� �������
+    for (size_t i = 0; i < rows * cols; i++)
     {
-      elements[i] = matrix[i];
+      tempMatrix[i] = matrix[i];
     }
 
-    for (size_t i = 0; i < total - 1; i++)
+    // ������� � �������� �������� ��������� ��������������
+    size_t layers = (std::min(rows, cols) + 1) / 2;
+
+    for (size_t layer = 0; layer < layers; layer++)
     {
-      for (size_t j = 0; j < total - i - 1; j++)
+      int increment = layer + 1; // +1 ��� ��������, +2 ��� ���������� � �.�.
+
+      // ������������ ��� �������� �������� ����
+      for (size_t i = layer; i < rows - layer; i++)
       {
-        if (elements[j] > elements[j + 1])
+        for (size_t j = layer; j < cols - layer; j++)
         {
-          int temp = elements[j];
-          elements[j] = elements[j + 1];
-          elements[j + 1] = temp;
+          // ���� ������� ��������� �� ������� �������� ����
+          if (i == layer || i == rows - layer - 1 ||
+            j == layer || j == cols - layer - 1)
+          {
+            tempMatrix[i * cols + j] += increment;
+          }
         }
       }
     }
 
+    // ��������� ����� ���� ��������� ��������������� �������
     int sum = 0;
-    for (size_t i = 0; i < total; i++)
+    for (size_t i = 0; i < rows * cols; i++)
     {
-      sum += elements[i];
+      sum += tempMatrix[i];
     }
 
     result = sum;
-    std::free(elements);
+    std::free(tempMatrix);
     return true;
   }
 
@@ -161,14 +172,14 @@ int main()
 
   if (taskNum != 1 && taskNum != 2)
   {
-    std::cerr << "First parameter is out of range" << std::endl;
+    std::cerr << "First parameter is out of range\n";
     return 1;
   }
 
   std::ifstream inputStream(inputFile);
   if (!inputStream.is_open())
   {
-    std::cerr << "Cannot open input file" << std::endl;
+    std::cerr << "Cannot open input file\n";
     return 2;
   }
 
@@ -177,7 +188,7 @@ int main()
 
   if (!(inputStream >> rows >> cols))
   {
-    std::cerr << "File is empty" << std::endl;
+    std::cerr << "File is empty\n";
     return 2;
   }
 
@@ -191,27 +202,27 @@ int main()
     {
       writeResults(outputStream, result18, result8);
     }
-    std::cout << result18 << " " << result8 << std::endl;
+    std::cout << result18 << " " << result8 << '\n';
     return 0;
   }
 
   if (taskNum == 1 && (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS
     || cols > MAX_COLS))
   {
-    std::cerr << "Matrix size exceeds limits" << std::endl;
+    std::cerr << "Matrix size exceeds limits\n";
     return 2;
   }
 
   int* matrix = createMatrix(rows, cols);
   if (matrix == nullptr)
   {
-    std::cerr << "Memory allocation failed" << std::endl;
+    std::cerr << "Memory allocation failed\n";
     return 2;
   }
 
   if (!readMatrix(inputStream, matrix, rows, cols))
   {
-    std::cerr << "Invalid matrix data" << std::endl;
+    std::cerr << "Invalid matrix data\n";
     freeMatrix(matrix);
     return 2;
   }
@@ -221,7 +232,7 @@ int main()
   bool task8Success = processTask8(matrix, rows, cols, result8);
   if (!task8Success)
   {
-    std::cerr << "Memory allocation failed during task processing" << std::endl;
+    std::cerr << "Memory allocation failed during task processing\n";
     freeMatrix(matrix);
     return 3;
   }
@@ -232,7 +243,7 @@ int main()
     writeResults(outputStream, result18, result8);
   }
 
-  std::cout << result18 << " " << result8 << std::endl;
+  std::cout << result18 << " " << result8 << '\n';
 
   freeMatrix(matrix);
 
