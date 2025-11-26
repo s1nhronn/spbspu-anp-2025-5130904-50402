@@ -112,7 +112,8 @@ namespace pozdnyakov {
       return true;
     }
 
-    int* tempMatrix = static_cast<int*>(std::malloc(rows * cols * sizeof(int)));
+    int* tempMatrix = static_cast<int*>(
+      std::malloc(rows * cols * sizeof(int)));
     if (tempMatrix == nullptr)
     {
       return false;
@@ -133,8 +134,9 @@ namespace pozdnyakov {
       {
         for (size_t j = layer; j < cols - layer; j++)
         {
-          if (i == layer || i == rows - layer - 1 ||
-            j == layer || j == cols - layer - 1)
+          bool isBorder = i == layer || i == rows - layer - 1 ||
+            j == layer || j == cols - layer - 1;
+          if (isBorder)
           {
             tempMatrix[i * cols + j] += increment;
           }
@@ -199,8 +201,18 @@ int main()
     return 0;
   }
 
-  if (taskNum == 1 && (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS
-    || cols > MAX_COLS))
+  bool exceedsLimits = false;
+
+  if (rows > 0 && cols > MAX_ELEMENTS / rows) 
+  {
+    exceedsLimits = true;
+  }
+
+  if (!exceedsLimits && (rows > MAX_ROWS || cols > MAX_COLS)) {
+    exceedsLimits = true;
+  }
+
+  if (taskNum == 1 && exceedsLimits) 
   {
     std::cerr << "Matrix size exceeds limits\n";
     return 2;
