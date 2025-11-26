@@ -5,140 +5,125 @@
 
 namespace pozdnyakov {
 
-  const int MAX_ELEMENTS = 10000;
-  const int MAX_ROWS = 100;
-  const int MAX_COLS = 100;
+  const size_t MAX_ELEMENTS = 10000;
+  const size_t MAX_ROWS = 100;
+  const size_t MAX_COLS = 100;
 
-  struct Matrix {
-    int** data;
-    int rows;
-    int cols;
-  };
+  int* createMatrix(size_t rows, size_t cols)
+  {
+    return static_cast<int*>(std::malloc(rows * cols * sizeof(int)));
+  }
 
-  // create matrix using malloc
-  Matrix* create_matrix(int rows, int cols) {
-    Matrix* matrix = static_cast<Matrix*>(std::malloc(sizeof(Matrix)));
-    if (matrix == nullptr) return nullptr;
-
-    matrix->rows = rows;
-    matrix->cols = cols;
-    matrix->data = static_cast<int**>(std::malloc(rows * sizeof(int*)));
-
-    if (matrix->data == nullptr) {
+  void freeMatrix(int* matrix)
+  {
+    if (matrix != nullptr)
+    {
       std::free(matrix);
-      return nullptr;
     }
-
-    for (int i = 0; i < rows; i++) {
-      matrix->data[i] = static_cast<int*>(std::malloc(cols * sizeof(int)));
-      if (matrix->data[i] == nullptr) {
-        for (int j = 0; j < i; j++) {
-          std::free(matrix->data[j]);
-        }
-        std::free(matrix->data);
-        std::free(matrix);
-        return nullptr;
-      }
-    }
-    return matrix;
   }
 
-  // free matrix memory
-  void free_matrix(Matrix* matrix) {
-    if (matrix == nullptr) return;
-    if (matrix->data != nullptr) {
-      for (int i = 0; i < matrix->rows; i++) {
-        std::free(matrix->data[i]);
-      }
-      std::free(matrix->data);
-    }
-    std::free(matrix);
-  }
-
-  // read matrix from file
-  Matrix* read_matrix_from_file(const char* filename, bool use_fixed_size) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-      std::cerr << "Cannot open input file" << std::endl;
-      return nullptr;
+  std::istream& readMatrix(std::istream& input, int* matrix, size_t& rows, size_t& cols)
+  {
+    if (!(input >> rows >> cols))
+    {
+      return input;
     }
 
-    int rows, cols;
-    if (!(file >> rows >> cols)) {
-      std::cerr << "Invalid matrix dimensions" << std::endl;
-      return nullptr;
-    }
-
-    if (use_fixed_size && (rows * cols > MAX_ELEMENTS)) {
-      std::cerr << "Matrix size exceeds limits" << std::endl;
-      return nullptr;
-    }
-
-    Matrix* matrix = create_matrix(rows, cols);
-    if (matrix == nullptr) {
-      std::cerr << "Memory allocation failed" << std::endl;
-      return nullptr;
-    }
-
-    for (int i = 0; i < rows; i++) {
-      for (int j = 0; j < cols; j++) {
-        if (!(file >> matrix->data[i][j])) {
-          std::cerr << "Invalid matrix data" << std::endl;
-          free_matrix(matrix);
-          return nullptr;
-        }
+    for (size_t i = 0; i < rows * cols; i++)
+    {
+      if (!(input >> matrix[i]))
+      {
+        return input;
       }
     }
-    return matrix;
+
+    return input;
   }
 
-  // task 18
-  int process_task_18(const Matrix* input) {
+  std::ostream& writeResults(std::ostream& output, int result18, int result8)
+  {
+    output << result18 << " " << result8;
+    return output;
+  }
+
+  int processTask18(const int* matrix, size_t rows, size_t cols)
+  {
     int count = 0;
-    int rows = input->rows;
-    int cols = input->cols;
 
-    for (int k = 1 - rows; k < cols; k++) {
-      bool has_zero = false;
-      bool diagonal_exists = false;
+    for (size_t startCol = 0; startCol < cols; startCol++)
+    {
+      bool hasZero = false;
+      bool diagonalExists = false;
+      size_t i = 0;
+      size_t j = startCol;
 
-      for (int i = 0; i < rows; i++) {
-        int j = i + k;
-        if (j >= 0 && j < cols) {
-          diagonal_exists = true;
-          if (input->data[i][j] == 0) {
-            has_zero = true;
-            break;
-          }
+      while (i < rows && j < cols)
+      {
+        diagonalExists = true;
+        if (matrix[i * cols + j] == 0)
+        {
+          hasZero = true;
+          break;
         }
+        i++;
+        j++;
       }
 
-      if (diagonal_exists && !has_zero) {
+      if (diagonalExists && !hasZero)
+      {
         count++;
       }
     }
-    return count;
-  }
 
-  // task 8
-  int process_task_8(const Matrix* input) {
-    int total = input->rows * input->cols;
-    int* elements = static_cast<int*>(std::malloc(total * sizeof(int)));
+    for (size_t startRow = 1; startRow < rows; startRow++)
+    {
+      bool hasZero = false;
+      bool diagonalExists = false;
+      size_t i = startRow;
+      size_t j = 0;
 
-    if (elements == nullptr) {
-      return -1;
-    }
+      while (i < rows && j < cols)
+      {
+        diagonalExists = true;
+        if (matrix[i * cols + j] == 0)
+        {
+          hasZero = true;
+          break;
+        }
+        i++;
+        j++;
+      }
 
-    int index = 0;
-    for (int i = 0; i < input->rows; i++) {
-      for (int j = 0; j < input->cols; j++) {
-        elements[index++] = input->data[i][j];
+      if (diagonalExists && !hasZero)
+      {
+        count++;
       }
     }
 
-    for (int i = 0; i < total - 1; i++) {
-      for (int j = 0; j < total - i - 1; j++) {
-        if (elements[j] > elements[j + 1]) {
+    return count;
+  }
+
+  int processTask8(const int* matrix, size_t rows, size_t cols)
+  {
+    size_t total = rows * cols;
+    int* elements = static_cast<int*>(std::malloc(total * sizeof(int)));
+
+    if (elements == nullptr)
+    {
+      return -1;
+    }
+
+    for (size_t i = 0; i < total; i++)
+    {
+      elements[i] = matrix[i];
+    }
+
+    for (size_t i = 0; i < total - 1; i++)
+    {
+      for (size_t j = 0; j < total - i - 1; j++)
+      {
+        if (elements[j] > elements[j + 1])
+        {
           int temp = elements[j];
           elements[j] = elements[j + 1];
           elements[j + 1] = temp;
@@ -147,7 +132,8 @@ namespace pozdnyakov {
     }
 
     int sum = 0;
-    for (int i = 0; i < total; i++) {
+    for (size_t i = 0; i < total; i++)
+    {
       sum += elements[i];
     }
 
@@ -155,17 +141,10 @@ namespace pozdnyakov {
     return sum;
   }
 
-  // both results to file
-  void write_results_to_file(const char* filename, int result18, int result8) {
-    std::ofstream file(filename);
-    if (file.is_open()) {
-      file << result18 << " " << result8;
-    }
-  }
-
-  // error handling
-  bool validate_arguments(int argc, char* argv[]) {
-    if (argc != 4) {
+  bool validateArguments(int argc, char* argv[])
+  {
+    if (argc != 4)
+    {
       std::cerr << (argc < 4 ? "Not enough arguments" : "Too many arguments") << std::endl;
       return false;
     }
@@ -173,12 +152,14 @@ namespace pozdnyakov {
     char* endptr;
     long num = std::strtol(argv[1], &endptr, 10);
 
-    if (*endptr != '\0' || endptr == argv[1]) {
+    if (*endptr != '\0' || endptr == argv[1])
+    {
       std::cerr << "First parameter is not a number" << std::endl;
       return false;
     }
 
-    if (num != 1 && num != 2) {
+    if (num != 1 && num != 2)
+    {
       std::cerr << "First parameter is out of range" << std::endl;
       return false;
     }
@@ -188,32 +169,68 @@ namespace pozdnyakov {
 
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
   using namespace pozdnyakov;
 
-  if (!validate_arguments(argc, argv)) {
-    return 1;  // code 1 for argument errors
+  if (!validateArguments(argc, argv))
+  {
+    return 1;
   }
 
-  int task_num = std::atoi(argv[1]);
-  const char* input_file = argv[2];
-  const char* output_file = argv[3];
+  int taskNum = std::atoi(argv[1]);
+  const char* inputFile = argv[2];
+  const char* outputFile = argv[3];
 
-  Matrix* input_matrix = read_matrix_from_file(input_file, task_num == 1);
-  if (input_matrix == nullptr) {
-    return 2;  // code 2 for file/matrix errors
+  std::ifstream inputStream(inputFile);
+  std::ofstream outputStream(outputFile);
+
+  if (!inputStream.is_open())
+  {
+    std::cerr << "Cannot open input file" << std::endl;
+    return 2;
   }
 
-  int result18 = process_task_18(input_matrix);
-  int result8 = process_task_8(input_matrix);
+  if (!outputStream.is_open())
+  {
+    std::cerr << "Cannot open output file" << std::endl;
+    return 2;
+  }
 
-  write_results_to_file(output_file, result18, result8);
+  size_t rows, cols;
+  if (!(inputStream >> rows >> cols))
+  {
+    std::cerr << "Invalid matrix dimensions" << std::endl;
+    return 2;
+  }
 
-  // output results
-  std::cout << result18 << " " << result8 << std::endl;
+  if (taskNum == 1 && (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS || cols > MAX_COLS))
+  {
+    std::cerr << "Matrix size exceeds limits" << std::endl;
+    return 2;
+  }
 
-  // cleanup
-  free_matrix(input_matrix);
+  int* matrix = createMatrix(rows, cols);
+  if (matrix == nullptr)
+  {
+    std::cerr << "Memory allocation failed" << std::endl;
+    return 2;
+  }
+
+  if (!readMatrix(inputStream, matrix, rows, cols))
+  {
+    std::cerr << "Invalid matrix data" << std::endl;
+    freeMatrix(matrix);
+    return 2;
+  }
+
+  int result18 = processTask18(matrix, rows, cols);
+  int result8 = processTask8(matrix, rows, cols);
+
+  writeResults(outputStream, result18, result8);
+  writeResults(std::cout, result18, result8) << std::endl;
+
+  freeMatrix(matrix);
 
   return 0;
 }
