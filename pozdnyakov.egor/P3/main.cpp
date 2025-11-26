@@ -11,6 +11,10 @@ namespace pozdnyakov {
 
   int* createMatrix(size_t rows, size_t cols)
   {
+    if (rows == 0 || cols == 0)
+    {
+      return nullptr;
+    }
     return static_cast<int*>(std::malloc(rows * cols * sizeof(int)));
   }
 
@@ -22,28 +26,24 @@ namespace pozdnyakov {
     }
   }
 
-  std::istream& readMatrix(std::istream& input, int* matrix, size_t& rows, size_t& cols)
+  bool readMatrix(std::istream& input, int* matrix, size_t rows, size_t cols)
   {
-    if (!(input >> rows >> cols))
+    for (size_t i = 0; i < rows; i++)
     {
-      return input;
-    }
-
-    for (size_t i = 0; i < rows * cols; i++)
-    {
-      if (!(input >> matrix[i]))
+      for (size_t j = 0; j < cols; j++)
       {
-        return input;
+        if (!(input >> matrix[i * cols + j]))
+        {
+          return false;
+        }
       }
     }
-
-    return input;
+    return true;
   }
 
-  std::ostream& writeResults(std::ostream& output, int result18, int result8)
+  void writeResults(std::ostream& output, int result18, int result8)
   {
     output << result18 << " " << result8;
-    return output;
   }
 
   int processTask18(const int* matrix, size_t rows, size_t cols)
@@ -106,6 +106,11 @@ namespace pozdnyakov {
   int processTask8(const int* matrix, size_t rows, size_t cols)
   {
     size_t total = rows * cols;
+    if (total == 0)
+    {
+      return 0;
+    }
+
     int* elements = static_cast<int*>(std::malloc(total * sizeof(int)));
 
     if (elements == nullptr)
@@ -183,25 +188,23 @@ int main(int argc, char* argv[])
   const char* outputFile = argv[3];
 
   std::ifstream inputStream(inputFile);
-  std::ofstream outputStream(outputFile);
-
   if (!inputStream.is_open())
   {
     std::cerr << "Cannot open input file" << std::endl;
     return 2;
   }
 
-  if (!outputStream.is_open())
-  {
-    std::cerr << "Cannot open output file" << std::endl;
-    return 2;
-  }
+  size_t rows = 0;
+  size_t cols = 0;
 
-  size_t rows, cols;
   if (!(inputStream >> rows >> cols))
   {
-    std::cerr << "Invalid matrix dimensions" << std::endl;
-    return 2;
+    return 0;
+  }
+
+  if (rows == 0 || cols == 0)
+  {
+    return 0;
   }
 
   if (taskNum == 1 && (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS || cols > MAX_COLS))
@@ -224,11 +227,23 @@ int main(int argc, char* argv[])
     return 2;
   }
 
+  if (inputStream.fail() && !inputStream.eof())
+  {
+    std::cerr << "Invalid matrix data" << std::endl;
+    freeMatrix(matrix);
+    return 2;
+  }
+
   int result18 = processTask18(matrix, rows, cols);
   int result8 = processTask8(matrix, rows, cols);
 
-  writeResults(outputStream, result18, result8);
-  writeResults(std::cout, result18, result8) << std::endl;
+  std::ofstream outputStream(outputFile);
+  if (outputStream.is_open())
+  {
+    writeResults(outputStream, result18, result8);
+  }
+
+  std::cout << result18 << " " << result8 << std::endl;
 
   freeMatrix(matrix);
 
