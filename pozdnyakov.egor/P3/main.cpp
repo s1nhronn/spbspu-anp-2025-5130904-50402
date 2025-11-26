@@ -146,46 +146,22 @@ namespace pozdnyakov {
     return sum;
   }
 
-  bool validateArguments(int argc, char* argv[])
-  {
-    if (argc != 4)
-    {
-      std::cerr << (argc < 4 ? "Not enough arguments" : "Too many arguments") << std::endl;
-      return false;
-    }
-
-    char* endptr;
-    long num = std::strtol(argv[1], &endptr, 10);
-
-    if (*endptr != '\0' || endptr == argv[1])
-    {
-      std::cerr << "First parameter is not a number" << std::endl;
-      return false;
-    }
-
-    if (num != 1 && num != 2)
-    {
-      std::cerr << "First parameter is out of range" << std::endl;
-      return false;
-    }
-
-    return true;
-  }
-
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   using namespace pozdnyakov;
 
-  if (!validateArguments(argc, argv))
+  int taskNum;
+  std::string inputFile, outputFile;
+
+  std::cin >> taskNum >> inputFile >> outputFile;
+
+  if (taskNum != 1 && taskNum != 2)
   {
+    std::cerr << "First parameter is out of range" << std::endl;
     return 1;
   }
-
-  int taskNum = std::atoi(argv[1]);
-  const char* inputFile = argv[2];
-  const char* outputFile = argv[3];
 
   std::ifstream inputStream(inputFile);
   if (!inputStream.is_open())
@@ -199,11 +175,18 @@ int main(int argc, char* argv[])
 
   if (!(inputStream >> rows >> cols))
   {
-    return 0;
+    std::cerr << "File is empty" << std::endl;
+    return 2;
   }
 
   if (rows == 0 || cols == 0)
   {
+    std::ofstream outputStream(outputFile);
+    if (outputStream.is_open())
+    {
+      writeResults(outputStream, 0, 0);
+    }
+    std::cout << "0 0" << std::endl;
     return 0;
   }
 
@@ -221,13 +204,6 @@ int main(int argc, char* argv[])
   }
 
   if (!readMatrix(inputStream, matrix, rows, cols))
-  {
-    std::cerr << "Invalid matrix data" << std::endl;
-    freeMatrix(matrix);
-    return 2;
-  }
-
-  if (inputStream.fail() && !inputStream.eof())
   {
     std::cerr << "Invalid matrix data" << std::endl;
     freeMatrix(matrix);
