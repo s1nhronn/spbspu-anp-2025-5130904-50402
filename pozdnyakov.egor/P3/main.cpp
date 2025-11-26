@@ -165,7 +165,12 @@ int main()
   size_t rows = 0;
   size_t cols = 0;
 
-  if (!(in >> rows >> cols))
+  if (!(in >> rows))
+  {
+    std::cerr << "File is empty\n";
+    return 2;
+  }
+  if (!(in >> cols))
   {
     std::cerr << "File is empty\n";
     return 2;
