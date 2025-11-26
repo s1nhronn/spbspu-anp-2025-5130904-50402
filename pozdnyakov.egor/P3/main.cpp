@@ -112,32 +112,27 @@ namespace pozdnyakov {
       return true;
     }
 
-    // ������� ����� ������� ��� ��������������
     int* tempMatrix = static_cast<int*>(std::malloc(rows * cols * sizeof(int)));
     if (tempMatrix == nullptr)
     {
       return false;
     }
 
-    // �������� �������� �������
     for (size_t i = 0; i < rows * cols; i++)
     {
       tempMatrix[i] = matrix[i];
     }
 
-    // ������� � �������� �������� ��������� ��������������
     size_t layers = (std::min(rows, cols) + 1) / 2;
 
     for (size_t layer = 0; layer < layers; layer++)
     {
-      int increment = layer + 1; // +1 ��� ��������, +2 ��� ���������� � �.�.
+      int increment = layer + 1;
 
-      // ������������ ��� �������� �������� ����
       for (size_t i = layer; i < rows - layer; i++)
       {
         for (size_t j = layer; j < cols - layer; j++)
         {
-          // ���� ������� ��������� �� ������� �������� ����
           if (i == layer || i == rows - layer - 1 ||
             j == layer || j == cols - layer - 1)
           {
@@ -147,7 +142,6 @@ namespace pozdnyakov {
       }
     }
 
-    // ��������� ����� ���� ��������� ��������������� �������
     int sum = 0;
     for (size_t i = 0; i < rows * cols; i++)
     {
@@ -158,7 +152,6 @@ namespace pozdnyakov {
     std::free(tempMatrix);
     return true;
   }
-
 }
 
 int main()
