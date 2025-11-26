@@ -116,7 +116,7 @@ namespace pozdnyakov {
 
     if (elements == nullptr)
     {
-      return false; // ������ ��������� ������
+      return false;
     }
 
     for (size_t i = 0; i < total; i++)
@@ -145,7 +145,7 @@ namespace pozdnyakov {
 
     result = sum;
     std::free(elements);
-    return true; // �������� ����������
+    return true;
   }
 
 }
@@ -181,7 +181,6 @@ int main()
     return 2;
   }
 
-  // �������������� ���������� �� ���� �������� ������
   int result18 = 0;
   int result8 = 0;
 
@@ -196,7 +195,8 @@ int main()
     return 0;
   }
 
-  if (taskNum == 1 && (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS || cols > MAX_COLS))
+  if (taskNum == 1 && (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS
+    || cols > MAX_COLS))
   {
     std::cerr << "Matrix size exceeds limits" << std::endl;
     return 2;
@@ -216,10 +216,8 @@ int main()
     return 2;
   }
 
-  // ������ ���������� �������������� ����������������
   result18 = processTask18(matrix, rows, cols);
 
-  // ������������ ��������� processTask8 � ��������� ������
   bool task8Success = processTask8(matrix, rows, cols, result8);
   if (!task8Success)
   {
