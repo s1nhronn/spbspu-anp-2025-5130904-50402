@@ -103,19 +103,20 @@ namespace pozdnyakov {
     return count;
   }
 
-  int processTask8(const int* matrix, size_t rows, size_t cols)
+  bool processTask8(const int* matrix, size_t rows, size_t cols, int& result)
   {
     size_t total = rows * cols;
     if (total == 0)
     {
-      return 0;
+      result = 0;
+      return true;
     }
 
     int* elements = static_cast<int*>(std::malloc(total * sizeof(int)));
 
     if (elements == nullptr)
     {
-      return -1;
+      return false; // ������ ��������� ������
     }
 
     for (size_t i = 0; i < total; i++)
@@ -142,8 +143,9 @@ namespace pozdnyakov {
       sum += elements[i];
     }
 
+    result = sum;
     std::free(elements);
-    return sum;
+    return true; // �������� ����������
   }
 
 }
@@ -179,14 +181,18 @@ int main()
     return 2;
   }
 
+  // �������������� ���������� �� ���� �������� ������
+  int result18 = 0;
+  int result8 = 0;
+
   if (rows == 0 || cols == 0)
   {
     std::ofstream outputStream(outputFile);
     if (outputStream.is_open())
     {
-      writeResults(outputStream, 0, 0);
+      writeResults(outputStream, result18, result8);
     }
-    std::cout << "0 0" << std::endl;
+    std::cout << result18 << " " << result8 << std::endl;
     return 0;
   }
 
@@ -210,8 +216,17 @@ int main()
     return 2;
   }
 
-  int result18 = processTask18(matrix, rows, cols);
-  int result8 = processTask8(matrix, rows, cols);
+  // ������ ���������� �������������� ����������������
+  result18 = processTask18(matrix, rows, cols);
+
+  // ������������ ��������� processTask8 � ��������� ������
+  bool task8Success = processTask8(matrix, rows, cols, result8);
+  if (!task8Success)
+  {
+    std::cerr << "Memory allocation failed during task processing" << std::endl;
+    freeMatrix(matrix);
+    return 3;
+  }
 
   std::ofstream outputStream(outputFile);
   if (outputStream.is_open())
