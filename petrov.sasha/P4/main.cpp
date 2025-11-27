@@ -5,7 +5,7 @@ namespace petrov
 {
   char* getLine(std::istream& input) {
     size_t lenght = 0;
-    bool skipWs = in.flags() & std::ios:skipws;
+    bool skipWs = input.flags() & std::ios::skipws;
     if(skipWs) {
       input >> std::noskipws;
     }
@@ -15,7 +15,7 @@ namespace petrov
       char* tmpStr = static_cast< char* >(realloc(resStr, lenght+1));
       if (tmpStr == nullptr) {
         free(resStr);
-        throw std::bad_alloc("Bad allocate error\n");
+        throw std::bad_alloc();
       }
       resStr = tmpStr;
       resStr[lenght++] = tmp;
