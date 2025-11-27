@@ -60,8 +60,15 @@ namespace petrov
     result[place] = '\0';
   }
 
-  size_t doSeqSym() {
-  
+  size_t doSeqSym(const char* str, size_t lenght) {
+    size_t count = 0;
+    if (lenght == 1) {
+      return 0;
+    }
+    for (size_t i = 0; str[i] != '\0'; ++i) {
+      count += (str[i] == str[i+1]) ? 1 : 0;
+    }
+    return count;
   }
 }
 
@@ -86,7 +93,7 @@ int main()
     return 1;
   }
   petrov::doUncSym(str, sec_str, ansUncSym);
-  size_t ansSeqSym = petrov::doSeqSym();
+  size_t ansSeqSym = petrov::doSeqSym(str, len);
   std::cout << ansUncSym << "\n";
   std::cout << ansSeqSym << "\n";
   free(str);
