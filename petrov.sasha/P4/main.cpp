@@ -43,14 +43,16 @@ namespace petrov
         for (size_t k = 0; k < place; ++k) {
           if (result[k] == str1[i]) {
             flag2 = true;
-            break
+            break;
           }
+        }
         if (!flag2) {
           result[place++] = str1[i];
         }
       }
     }
   }
+
   void doUncSym(const char* str1, const char* str2, char* result) {
     size_t place = 0;
     duplicateForUncSym(str1, str2, result, place);
@@ -83,8 +85,8 @@ int main()
     free(str);
     return 1;
   }
-  doUncSym(str, sec_str, ansUncSym);
-  size_t ansSeqSym = doSeqSym();
+  petrov::doUncSym(str, sec_str, ansUncSym);
+  size_t ansSeqSym = petrov::doSeqSym();
   std::cout << ansUncSym << "\n";
   std::cout << ansSeqSym << "\n";
   free(str);
