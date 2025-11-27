@@ -10,6 +10,7 @@ namespace petrov
     }
     char* resStr = nullptr;
     char tmp = ' ';
+    lenght = 0;
     while ( input >> tmp && tmp != '\n') {
       char* tmpStr = static_cast< char* >(realloc(resStr, lenght+2));
       if (tmpStr == nullptr) {
@@ -17,7 +18,8 @@ namespace petrov
         throw std::bad_alloc();
       }
       resStr = tmpStr;
-      resStr[lenght++] = tmp;
+      resStr[lenght] = tmp;
+      lenght++;
     }
     if (input.fail() && !input.eof()) {
       free(resStr);
@@ -28,6 +30,11 @@ namespace petrov
     }
     if (resStr != nullptr) {
       resStr[lenght] = '\0';
+    } else {
+      resStr = static_cast< char* >(malloc(1));
+      if (resStr != nullptr) {
+        resStr[0] = '\0';
+      }
     }
     return resStr;
   }
@@ -94,6 +101,9 @@ int main()
     std::cerr << "Alloc failed\n";
     free(str);
     return 1;
+  }
+  for (size_t i = 0; i < len; ++i) {
+    ansUncSym[i] = '\0';
   }
   petrov::doUncSym(str, sec_str, ansUncSym);
   size_t ansSeqSym = petrov::doSeqSym(str);
