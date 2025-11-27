@@ -29,7 +29,7 @@ namespace petrov
     resStr[lenght] = '\0';
     return resStr;
   }
-  void duplicateForUncSym(const char* str1, const char* str2, char* result, size_t place) {
+  void duplicateForUncSym(const char* str1, const char* str2, char* result, size_t& place) {
     for(size_t i = 0; str1[i] != '\0'; ++i) {
       bool flag1 = false;
       for (size_t j = 0; str2[j] != '\0'; ++j) {
@@ -60,15 +60,13 @@ namespace petrov
     result[place] = '\0';
   }
 
-  size_t doSeqSym(const char* str, size_t lenght) {
-    size_t count = 0;
-    if (lenght == 1) {
-      return 0;
+  size_t doSeqSym(const char* str) {
+    for (size_t i = 1; str[i] != '\0'; ++i) {
+      if (str[i] == str[i-1]) {
+        return 1;
+      }
     }
-    for (size_t i = 0; str[i] != '\0'; ++i) {
-      count += (str[i] == str[i+1]) ? 1 : 0;
-    }
-    return count;
+    return 0;
   }
 }
 
@@ -85,7 +83,7 @@ int main()
     std::cerr << "Bad alloc error\n";
     return 1;
   }
-  const char* sec_str = "abc_ef";
+  const char* sec_str = "abc ef";
   char* ansUncSym = static_cast< char* >(malloc(len+7));
   if (ansUncSym == nullptr) {
     std::cerr << "Alloc failed\n";
@@ -93,7 +91,7 @@ int main()
     return 1;
   }
   petrov::doUncSym(str, sec_str, ansUncSym);
-  size_t ansSeqSym = petrov::doSeqSym(str, len);
+  size_t ansSeqSym = petrov::doSeqSym(str);
   std::cout << ansUncSym << "\n";
   std::cout << ansSeqSym << "\n";
   free(str);
