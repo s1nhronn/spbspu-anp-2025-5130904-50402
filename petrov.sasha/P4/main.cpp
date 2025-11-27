@@ -21,7 +21,11 @@ namespace petrov
       resStr[lenght] = tmp;
       lenght++;
     }
-    if (input.fail() && !input.eof()) {
+    if (lenght == 0) {
+      free(resStr);
+      throw std::logic_error("Empty input\n");
+    }
+    if (input.fail()) {
       free(resStr);
       throw std::logic_error("Invalid reading\n");
     }
@@ -70,9 +74,6 @@ namespace petrov
   }
 
   size_t doSeqSym(const char* str) {
-    if (str == nullptr || str[0] == '\0') {
-      return 0;
-    }
     for (size_t i = 1; str[i] != '\0'; ++i) {
       if (str[i] == str[i-1]) {
         return 1;
@@ -95,6 +96,11 @@ int main()
     std::cerr << "Bad alloc error\n";
     return 1;
   }
+  if (str == nullptr || str[0] == '\0') {
+    std::cerr << "Empty input\n";
+    free(str);
+    return 1;
+  }
   const char* sec_str = "abc ef";
   char* ansUncSym = static_cast< char* >(malloc(len+7));
   if (ansUncSym == nullptr) {
@@ -102,7 +108,7 @@ int main()
     free(str);
     return 1;
   }
-  for (size_t i = 0; i < len; ++i) {
+  for (size_t i = 0; i < len+7; ++i) {
     ansUncSym[i] = '\0';
   }
   petrov::doUncSym(str, sec_str, ansUncSym);
