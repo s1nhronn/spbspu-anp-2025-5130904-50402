@@ -11,7 +11,7 @@ namespace petrov
     char* resStr = nullptr;
     char tmp = ' ';
     while ( input >> tmp && tmp != '\n') {
-      char* tmpStr = static_cast< char* >(realloc(resStr, lenght+1));
+      char* tmpStr = static_cast< char* >(realloc(resStr, lenght+2));
       if (tmpStr == nullptr) {
         free(resStr);
         throw std::bad_alloc();
@@ -26,7 +26,9 @@ namespace petrov
     if (skipWs) {
       input >> std::skipws;
     }
-    resStr[lenght] = '\0';
+    if (resStr != nullptr) {
+      resStr[lenght] = '\0';
+    }
     return resStr;
   }
   void duplicateForUncSym(const char* str1, const char* str2, char* result, size_t& place) {
@@ -61,6 +63,9 @@ namespace petrov
   }
 
   size_t doSeqSym(const char* str) {
+    if (str == nullptr || str[0] == '\0') {
+      return 0;
+    }
     for (size_t i = 1; str[i] != '\0'; ++i) {
       if (str[i] == str[i-1]) {
         return 1;
