@@ -148,8 +148,8 @@ namespace lachugin
         }
       }
     }
-    double arf_Mean = sum / k;
-    int temp = arf_Mean * 10;
+    double arf_mean = sum / k;
+    int temp = arf_mean * 10;
     double res = temp / 10.0;
     return res;
   }
@@ -160,21 +160,21 @@ namespace lachugin
       res2[i] = circle(mtx, i, rows, cols);
     }
   }
-  void output(std::ofstream &output, size_t rows, size_t cols, int *res1, double *res2)
+  void outputForInt(std::ofstream &output, size_t rows, size_t cols, int *mtx)
   {
     output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i)
     {
-      output << ' ' << res1[i];
+      output << ' ' << mtx[i];
     }
-    output << '\n';
+  }
+  void outputForDouble(std::ofstream &output, size_t rows, size_t cols, double *mtx)
+  {
     output << rows << ' ' << cols;
     for (size_t i = 0; i < rows * cols; ++i)
     {
-      output << ' ' << res2[i];
+      output << ' ' << mtx[i];
     }
-    output << '\n';
-    output.close();
   }
   void copy(int *ptr, const int *mtx, size_t r, size_t c)
   {
@@ -247,9 +247,11 @@ int main(int argc, char **argv)
     res2 = arr2;
     mtx = arr3;
   }
-  lachugin::make(fin, rows, cols, res1);
-  if (fin.fail()) {
-    if (prmt == 2) {
+  lachugin::make(fin, rows, cols, mtx);
+  if (fin.fail())
+  {
+    if (prmt == 2)
+    {
       delete[] res1;
       delete[] res2;
       delete[] mtx;
@@ -258,12 +260,15 @@ int main(int argc, char **argv)
     return 2;
   }
   fin.close();
-  lachugin::copy(mtx, res1, rows, cols);
+  lachugin::copy(res1, mtx, rows, cols);
   lachugin::doLftBotClk(res1, rows, cols);
-  lachugin::fopy(res2, mtx, rows, cols);
   lachugin::doBltSmtMtr(mtx, rows, cols, res2);
-  lachugin::output(output, rows, cols, res1, res2);
-  if (prmt == 2) {
+  lachugin::outputForInt(output, rows, cols, res1);
+  output << '\n';
+  lachugin::outputForDouble(output, rows, cols, res2);
+  output.close();
+  if (prmt == 2)
+    {
     delete[] res1;
     delete[] res2;
     delete[] mtx;
