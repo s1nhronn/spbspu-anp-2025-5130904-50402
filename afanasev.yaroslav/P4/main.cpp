@@ -32,6 +32,11 @@ namespace afanasev
       str[size] = n;
       size++;
     }
+    if (input.eof())
+    {
+      delete[] str;
+      throw std::invalid_argument("empty string");
+    }
 
     tmp = new char[size + 1];
     if (tmp == nullptr)
