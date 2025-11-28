@@ -4,7 +4,7 @@
 
 namespace afanasev
 {
-  char * getline(std::istream& input, size_t& size)
+  char * getline(std::istream & input, size_t & size)
   {
     bool isSkipWp = input.flags() & std::ios::skipws;
     if (isSkipWp)
@@ -12,27 +12,18 @@ namespace afanasev
       input >> std::noskipws;
     }
 
-    char * str = new char[1];
-    if (!str)
+    char * str = nullptr;
+    char * tmp = nullptr;
+    char n = 0;
+    while (input >> n && n != '\n')
     {
-      throw;
-    }
-
-    str[0] = '\0';
-    size = 0;
-
-    char n;
-    while (input.get(n) && n != '\n')
-    {
-      if (input.fail())
+      tmp = new char[size + 1];
+      if (tmp == nullptr || input.fail())
       {
-        delete[] str;
-        throw;
-      }
-
-      char* tmp = new char[size + 2];
-      if (!tmp)
-      {
+        if (input.fail())
+        {
+          delete[] tmp;
+        }
         delete[] str;
         throw;
       }
@@ -41,20 +32,33 @@ namespace afanasev
       {
         tmp[i] = str[i];
       }
-
-      tmp[size] = n;
-      tmp[size + 1] = '\0';
-
       delete[] str;
       str = tmp;
+      str[size] = n;
       size++;
     }
 
-    if (input.eof() && size == 0)
+    tmp = nullptr;
+    if (input.eof())
     {
       delete[] str;
       throw std::invalid_argument("empty string");
     }
+
+    tmp = new char[size + 1];
+    if (tmp == nullptr)
+    {
+      delete[] str;
+      throw;
+    }
+    for (size_t i = 0; i < size; ++i)
+    {
+      tmp[i] = str[i];
+    }
+    delete[] str;
+    str = tmp;
+    str[size] = '\0';
+    size++;
 
     if (isSkipWp)
     {
