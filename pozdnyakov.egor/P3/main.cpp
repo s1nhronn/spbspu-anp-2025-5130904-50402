@@ -208,7 +208,7 @@ namespace pozdnyakov
     return true;
   }
 
-} // namespace pozdnyakov
+}
 
 int main(int argc, char* argv[])
 {
@@ -246,7 +246,6 @@ int main(int argc, char* argv[])
     {
       writeResults(out, 0, 0);
     }
-    std::cout << 0 << ' ' << 0 << '\n';
     return 0;
   }
 
@@ -287,8 +286,6 @@ int main(int argc, char* argv[])
   {
     writeResults(out, result18, result8);
   }
-
-  std::cout << result18 << ' ' << result8 << '\n';
 
   freeMatrix(matrix, rows);
   return 0;
