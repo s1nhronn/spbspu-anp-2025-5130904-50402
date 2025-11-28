@@ -20,9 +20,14 @@ namespace afanasev
       tmp = new char[size + 1];
       if (tmp == nullptr || input.fail())
       {
+        if (input.fail())
+        {
+          delete[] tmp;
+        }
         delete[] str;
         throw;
       }
+      
       for (size_t i = 0; i < size; ++i)
       {
         tmp[i] = str[i];
