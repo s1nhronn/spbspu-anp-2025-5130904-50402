@@ -2,10 +2,11 @@
 #include <fstream>
 namespace lachugin
 {
-  void make(std::ifstream &fin, size_t rows, size_t cols, int *mtx)
+  std::ifstream &make(std::ifstream &fin, size_t rows, size_t cols, int *mtx)
   {
-    for (size_t i = 0; i < rows*cols; i++)
+    for (size_t i = 0; i < rows * cols; i++)
     {
+      fin >> mtx[i];
       if (fin.eof())
       {
         break;
@@ -14,17 +15,27 @@ namespace lachugin
       {
         break;
       }
-      fin >> mtx[i];
     }
+    return fin;
   }
-  void LFT_BOT_CLK(int *mtx, size_t rows, size_t cols)
+  void doLftBotClk(int *mtx, size_t rows, size_t cols)
   {
     int d = 1;
     size_t k = 1;
     size_t n = 0;
-    while (k < rows * cols+1)
+    while (k < rows * cols + 1)
     {
-      for (size_t i = cols*(rows-1-n)+n; i > n*(cols+1); i-=cols)
+      for (size_t i = cols * (rows - 1 - n) + n; i > n * (cols + 1); i -= cols)
+      {
+        mtx[i] -= d;
+        d++;
+        k++;
+      }
+      if (k == rows * cols + 1)
+      {
+        break;
+      }
+      for (size_t i = n * (cols + 1); i <= cols * (1 + n) - n - 1; i++)
       {
         mtx[i] -= d;
         d++;
@@ -34,7 +45,7 @@ namespace lachugin
       {
         break;
       }
-      for (size_t i = n*(cols+1); i <= cols*(1+n)-n-1; i++)
+      for (size_t i = cols * (2 + n) - n - 1; i <= cols * (rows - n) - n-1; i += cols)
       {
         mtx[i] -= d;
         d++;
@@ -44,17 +55,7 @@ namespace lachugin
       {
         break;
       }
-      for (size_t i=cols*(2+n)-n-1; i <= cols*(rows-n)-n-1; i+=cols)
-      {
-        mtx[i] -= d;
-        d++;
-        k++;
-      }
-      if (k == rows * cols+1)
-      {
-        break;
-      }
-      for (size_t i = cols*(rows-n)-n-2; i > cols*(rows-1-n)+n; i--)
+      for (size_t i = cols * (rows - n) - n - 2; i > cols * (rows - 1 - n) + n; i--)
       {
         mtx[i] -= d;
         d++;
@@ -65,7 +66,7 @@ namespace lachugin
   }
   void fopy(double *ptr, const int *mtx, size_t r, size_t c)
   {
-    for (size_t i = 0; i < r*c; i++)
+    for (size_t i = 0; i < r * c; i++)
     {
       ptr[i] = mtx[i];
     }
@@ -152,10 +153,9 @@ namespace lachugin
     double res = temp / 10.0;
     return res;
   }
-  void BLT_SMT_MTR(const int *mtx, size_t rows, size_t cols, double *res2)
+  void doBltSmtMtr(const int *mtx, size_t rows, size_t cols, double *res2)
   {
-    fopy(res2, mtx, rows, cols);
-    for (size_t i = 0; i < rows*cols; i++)
+    for (size_t i = 0; i < rows * cols; i++)
     {
       res2[i] = circle(mtx, i, rows, cols);
     }
@@ -176,8 +176,9 @@ namespace lachugin
     output << '\n';
     output.close();
   }
-  void copy(int *ptr, const int *mtx, size_t r, size_t c) {
-    for (size_t i = 0; i < r*c; i++)
+  void copy(int *ptr, const int *mtx, size_t r, size_t c)
+  {
+    for (size_t i = 0; i < r * c; i++)
     {
       ptr[i] = mtx[i];
     }
@@ -212,82 +213,59 @@ int main(int argc, char **argv)
   fin >> rows >> cols;
   if (fin.fail())
   {
-    std::cerr <<  "Error reading file\n";
+    std::cerr << "Error reading file\n";
     return 1;
   }
   std::ofstream output(argv[3]);
+  int *res1 = nullptr;
+  double *res2 = nullptr;
+  int *mtx = nullptr;
+  const int count = 10000;
+  int arr1[count];
+  double arr2[count];
+  int arr3[count];
   if (prmt == 2)
   {
-    int *res1 = nullptr;
-    double *res2 = nullptr;
-    int *mtx = nullptr;
     try
     {
-      res1 = new int[rows*cols];
-      res2 = new double[rows*cols];
-      mtx = new int[rows*cols];
-      lachugin::make(fin, rows, cols, res1);
-      if (fin.fail())
-      {
-        throw std::logic_error("Can't read\n");
-      }
-      if (fin.eof())
-      {
-        throw std::logic_error("Not enough data\n");
-      }
-      fin.close();
-      lachugin::copy(mtx, res1, rows, cols);
-      lachugin::LFT_BOT_CLK(res1, rows, cols);
-      lachugin::BLT_SMT_MTR(mtx, rows, cols, res2);
-      lachugin::output(output, rows, cols, res1, res2);
-      delete[] res1;
-      delete[] res2;
-      delete[] mtx;
+      res1 = new int[rows * cols];
+      res2 = new double[rows * cols];
+      mtx = new int[rows * cols];
     }
-    catch (std::bad_alloc &e)
+    catch (const std::bad_alloc &e)
     {
       std::cerr << e.what() << '\n';
       delete[] res1;
       delete[] res2;
       delete[] mtx;
-      return 1;
-    }
-    catch (std::logic_error &e)
-    {
-      std::cerr << e.what() << '\n';
-      delete[] mtx;
-      delete[] res1;
-      delete[] res2;
-      return 2;
+      return 3;
     }
   }
-  if (prmt == 1)
+  else
   {
-    int count = 10000;
-    int res1[count];
-    double res2[count];
-    int mtx[count];
-    try
-    {
-      lachugin::make(fin, rows, cols, res1);
-      if (fin.fail())
-      {
-        throw std::logic_error("Can't read\n");
-      }
-      if (fin.eof())
-      {
-        throw std::logic_error("Not enough data\n");
-      }
-      fin.close();
-      lachugin::copy(mtx, res1, rows, cols);
-      lachugin::LFT_BOT_CLK(res1, rows, cols);
-      lachugin::BLT_SMT_MTR(mtx, rows, cols, res2);
-      lachugin::output(output, rows, cols, res1, res2);
+    res1 = arr1;
+    res2 = arr2;
+    mtx = arr3;
+  }
+  lachugin::make(fin, rows, cols, res1);
+  if (fin.fail()) {
+    if (prmt == 2) {
+      delete[] res1;
+      delete[] res2;
+      delete[] mtx;
     }
-    catch (std::logic_error &e)
-    {
-      std::cerr<<e.what()<<'\n';
-      return 2;
-    }
+    std::cerr << "Cant read\n";
+    return 2;
+  }
+  fin.close();
+  lachugin::copy(mtx, res1, rows, cols);
+  lachugin::doLftBotClk(res1, rows, cols);
+  lachugin::fopy(res2, mtx, rows, cols);
+  lachugin::doBltSmtMtr(mtx, rows, cols, res2);
+  lachugin::output(output, rows, cols, res1, res2);
+  if (prmt == 2) {
+    delete[] res1;
+    delete[] res2;
+    delete[] mtx;
   }
 }
