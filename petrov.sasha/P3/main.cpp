@@ -3,10 +3,7 @@
 #include <cstdlib>
 #include <memory>
 
-namespace petrov
-{
-  void lftBotCnt(std::ofstream& out, int* a, size_t r, size_t c);
-  void fllIncWav(std::ofstream& out, int* a, size_t rows, size_t cols);
+namespace petrov {
   void rm(int* mtx) {
     if (!mtx) {
       return;
@@ -14,8 +11,7 @@ namespace petrov
     delete[] mtx;
   }
 
-  std::ifstream& readMTX(std::ifstream& in, int* a, size_t rows, size_t cols)
-  {
+  std::ifstream& readMTX(std::ifstream& in, int* a, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
         if (!(in >> a[i*cols+j])) {
@@ -31,53 +27,16 @@ namespace petrov
     return in;
   }
 
-  bool stat(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
-  {
-    if (rows == 0 || cols == 0) {
-      return true;
+  std::ofstream& writeMTX(std::ofstream& out, const int* a, size_t rows, size_t cols) {
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        out << a[i*cols+j] << ' ';
+      }
     }
-    if (rows * cols > 10000) {
-      std::cerr << "Matrix too big for static buffer\n";
-      return false;
-    }
-    int arr[10000] = {0};
-    try {
-      readMTX(in, arr, rows, cols);
-    } catch (const std::exception& e) {
-      std::cerr << e.what() << "\n";
-      return false;
-    }
-    lftBotCnt(out, arr, rows, cols);
-    return true;
+    return out;
   }
 
-  bool dyn(std::ifstream& in, std::ofstream& out, size_t rows, size_t cols)
-  {
-    if (rows == 0 || cols == 0) {
-      return true;
-    }
-    int* arr = nullptr;
-    try {
-      arr = new int[rows*cols];
-    } catch (const std::bad_alloc& e) {
-      rm(arr);
-      std::cerr << "Memory allocation failed\n";
-      return false;
-    }
-    try {
-      readMTX(in, arr, rows, cols);
-    } catch(const std::exception& e) {
-      rm(arr);
-      std::cerr << e.what() << "\n";
-      return false;
-    }
-    fllIncWav(out, arr, rows, cols);
-    rm(arr);
-    return true;
-  }
-
-  void lftBotCnt(std::ofstream& out, int* a, size_t r, size_t c)
-  {
+  void lftBotCnt(int* a, size_t r, size_t c) {
     if (r == 0 || c == 0 || !a) {
       return;
     }
@@ -105,15 +64,9 @@ namespace petrov
       left++;
       right--;
     }
-    for (size_t i = 0; i < r; ++i) {
-      for (size_t j = 0; j < c; ++j) {
-        out << a[i*c+j] << ' ';
-      }
-    }
   }
 
-  void fllIncWav(std::ofstream& out, int* a, size_t rows, size_t cols)
-  {
+  void fllIncWav(int* a, size_t rows, size_t cols) {
     size_t min_data = (rows < cols) ? rows : cols;
     size_t borders = (min_data + 1) / 2;
     for (size_t border = 0; border < borders; ++border) {
@@ -135,22 +88,16 @@ namespace petrov
         }
       }
     }
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
-        out << a[i*cols+j] << ' ';
-      }
-    }
   }
 }
 
-int main(int argc, char ** argv)
-{
+int main(int argc, char** argv) {
   if (argc != 4) {
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
   }
   char* endptr = nullptr;
-  long temp = std::strtol(argv[1], std::addressof(endptr), 10);
+  long var = std::strtol(argv[1], std::addressof(endptr), 10);
   if (argv[1] == endptr) {
     std::cerr << "First parameter is not a number\n";
     return 1;
@@ -159,7 +106,7 @@ int main(int argc, char ** argv)
     std::cerr << "First parameter contains invalid symbols\n";
     return 1;
   }
-  if (temp != 1 && temp != 2) {
+  if (var != 1 && var != 2) {
     std::cerr << "First parameter is out of range\n";
     return 1;
   }
@@ -174,13 +121,37 @@ int main(int argc, char ** argv)
     std::cerr << "Invalid matrix data\n";
     return 2;
   }
-  output << rows << " " << cols << " ";
-  bool success = true;
-  if (temp == 1) {
-    success = petrov::stat(input, output, rows, cols);
-  } else {
-    success = petrov::dyn(input, output, rows, cols);
+  output << rows << ' ' << cols << ' ';
+  try {
+    if (rows == 0 || cols  == 0) {
+      return 0;
+    }
+    int mtx_var1[10000] = {0};
+    int* mtx_var2 = nullptr;
+    int* mtx = nullptr;
+    if (var == 1) {
+      if (rows * cols > 10000) {
+        std::cerr << "Matrix too big for static buffer\n";
+        return 2;
+      }
+      mtx = mtx_var1;
+    } else {
+      mtx_var2 = new int[rows*cols]();
+      mtx = mtx_var2;
+    }
+    petrov::readMTX(input, mtx, rows, cols);
+    if (var == 1) {
+      petrov::lftBotCnt(mtx, rows, cols);
+    } else {
+      petrov::fllIncWav(mtx, rows, cols);
+    }
+    petrov::writeMTX(output, mtx, rows, cols);
+    if (var == 2) {
+      petrov::rm(mtx_var2);
+    }
+    return 0;
+  } catch (const std::exception& e) {
+    std::cerr << e.what() << "\n";
+    return 2;
   }
-  return success ? 0 : 2;
 }
-
