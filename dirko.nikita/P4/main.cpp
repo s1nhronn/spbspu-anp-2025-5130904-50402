@@ -59,6 +59,7 @@ namespace dirko
     if (size == copasity)
     {
       str = extendSize(str, size);
+      ++size;
       copasity *= 2;
     }
     return str;
