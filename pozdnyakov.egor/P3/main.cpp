@@ -2,112 +2,138 @@
 #include <fstream>
 #include <cstdlib>
 
+const size_t MAX_ELEMENTS = 10000;
+const size_t MAX_ROWS = 100;
+const size_t MAX_COLS = 100;
+
 namespace pozdnyakov {
 
-  const size_t MAX_ELEMENTS = 10000;
-  const size_t MAX_ROWS = 100;
-  const size_t MAX_COLS = 100;
-
-  size_t myMin(size_t a, size_t b)
+  int** allocateMatrix(size_t rows, size_t cols)
   {
-    return (a < b ? a : b);
-  }
-
-  int* createMatrix(size_t rows, size_t cols)
-  {
-    if (rows == 0 || cols == 0)
+    int** data = static_cast <int**> (std::malloc(rows * sizeof(int*)));
+    if (data == nullptr)
     {
       return nullptr;
     }
-    return static_cast<int*>(std::malloc(rows * cols * sizeof(int)));
-  }
 
-  void freeMatrix(int* matrix)
-  {
-    if (matrix != nullptr)
+    for (size_t i = 0; i < rows; i++)
     {
-      std::free(matrix);
-    }
-  }
-
-  bool readMatrix(std::istream& in, int* m, size_t rows, size_t cols)
-  {
-    size_t total = rows;
-    total *= cols;
-    for (size_t i = 0; i < total; i++)
-    {
-      if (!(in >> m[i]))
+      data[i] = static_cast <int*>(std::malloc(cols * sizeof(int)));
+      if (data[i] == nullptr)
       {
-        return false;
+        for (size_t j = 0; j < i; j++)
+        {
+          std::free(data[j]);
+        }
+        std::free(data);
+        return nullptr;
       }
     }
-    return true;
+
+    return data;
   }
 
-  void writeResults(std::ostream& out, int r18, int r8)
+  void freeMatrix(int** data, size_t rows)
   {
-    out << r18 << " " << r8;
-  }
-
-  int countDiag(const int* m, size_t rows, size_t cols,
-    size_t r, size_t c)
-  {
-    bool hasZero = false;
-    bool exists = false;
-    while (r < rows && c < cols)
+    if (data == nullptr)
     {
-      exists = true;
-      if (m[r * cols + c] == 0)
-      {
-        hasZero = true;
-        break;
-      }
-      r++;
-      c++;
+      return;
     }
-    return (exists && !hasZero) ? 1 : 0;
+
+    for (size_t i = 0; i < rows; i++)
+    {
+      std::free(data[i]);
+    }
+
+    std::free(data);
   }
 
-  int processTask18(const int* m, size_t rows, size_t cols)
+  std::istream& readDimensions(std::istream& in, size_t& rows, size_t& cols)
+  {
+    long r = 0;
+    long c = 0;
+
+    if (!(in >> r))
+    {
+      return in;
+    }
+
+    if (!(in >> c))
+    {
+      return in;
+    }
+
+    if (r <= 0 || c <= 0)
+    {
+      in.setstate(std::ios::failbit);
+      return in;
+    }
+
+    rows = static_cast <size_t> (r);
+    cols = static_cast <size_t> (c);
+
+    return in;
+  }
+
+  std::istream& readMatrix(std::istream& in, int** data, size_t rows, size_t cols)
+  {
+    for (size_t i = 0; i < rows; i++)
+    {
+      for (size_t j = 0; j < cols; j++)
+      {
+        if (!(in >> data[i][j]))
+        {
+          return in;
+        }
+      }
+    }
+
+    return in;
+  }
+
+  int processTask18(int** data, size_t rows, size_t cols)
   {
     int count = 0;
-    for (size_t c = 0; c < cols; c++)
+
+    size_t maxDiag = rows + cols - 2;
+
+    for (size_t k = 0; k <= maxDiag; k++)
     {
-      count += countDiag(m, rows, cols, 0, c);
+      bool exists = false;
+      bool hasZero = false;
+
+      for (size_t i = 0; i < rows; i++)
+      {
+        size_t j = (k >= i) ? (k - i) : MAX_COLS;
+
+        if (j < cols)
+        {
+          exists = true;
+          if (data[i][j] == 0)
+          {
+            hasZero = true;
+            break;
+          }
+        }
+      }
+
+      if (exists && !hasZero)
+      {
+        count++;
+      }
     }
-    for (size_t r = 1; r < rows; r++)
-    {
-      count += countDiag(m, rows, cols, r, 0);
-    }
+
     return count;
   }
 
-  bool processTask8(int* m, size_t rows, size_t cols, int& result)
+  void processTask8(int** data, size_t rows, size_t cols)
   {
-    if (rows == 0 || cols == 0)
-    {
-      result = 0;
-      return true;
-    }
+    size_t layers = rows < cols ? rows : cols;
+    layers = (layers + 1) / 2;
 
-    size_t total = rows;
-    total *= cols;
-
-    int* tmp = static_cast<int*>(std::malloc(total * sizeof(int)));
-    if (tmp == nullptr)
-    {
-      return false;
-    }
-
-    for (size_t i = 0; i < total; i++)
-    {
-      tmp[i] = m[i];
-    }
-
-    size_t layers = (myMin(rows, cols) + 1) / 2;
     for (size_t layer = 0; layer < layers; layer++)
     {
-      int inc = layer + 1;
+      int inc = static_cast <int>(layer + 1);
       size_t top = layer;
       size_t bottom = rows - layer - 1;
       size_t left = layer;
@@ -117,45 +143,77 @@ namespace pozdnyakov {
       {
         for (size_t c = layer; c < cols - layer; c++)
         {
-          bool border = (r == top || r == bottom ||
-            c == left || c == right);
+          bool border = false;
+
+          if (r == top || r == bottom || c == left || c == right)
+          {
+            border = true;
+          }
+
           if (border)
           {
-            tmp[r * cols + c] += inc;
+            data[r][c] += inc;
           }
         }
       }
     }
+  }
 
-    int sum = 0;
-    for (size_t i = 0; i < total; i++)
+  std::ostream& writeResults(std::ostream& out, int r18, int r8)
+  {
+    out << r18 << ' ' << r8;
+    return out;
+  }
+
+  bool validateArgs(int argc, char* argv[])
+  {
+    if (argc != 4)
     {
-      sum += tmp[i];
+      if (argc < 4)
+      {
+        std::cerr << "Not enough arguments\n";
+      }
+      else
+      {
+        std::cerr << "Too many arguments\n";
+      }
+      return false;
     }
 
-    result = sum;
-    std::free(tmp);
+    char* endptr = nullptr;
+    long num = std::strtol(argv[1], &endptr, 10);
+
+    if (endptr == argv[1] || *endptr != '\0')
+    {
+      std::cerr << "First parameter is not a number\n";
+      return false;
+    }
+
+    if (num != 1 && num != 2)
+    {
+      std::cerr << "First parameter is out of range\n";
+      return false;
+    }
+
     return true;
   }
+
 }
 
-int main()
+int main(int argc, char* argv[])
 {
   using namespace pozdnyakov;
 
-  int taskNum;
-  std::string inFile;
-  std::string outFile;
-
-  std::cin >> taskNum >> inFile >> outFile;
-
-  if (taskNum != 1 && taskNum != 2)
+  if (!validateArgs(argc, argv))
   {
-    std::cerr << "First parameter is out of range\n";
     return 1;
   }
 
-  std::ifstream in(inFile);
+  long taskType = std::strtol(argv[1], nullptr, 10);
+  const char* inputFile = argv[2];
+  const char* outputFile = argv[3];
+
+  std::ifstream in(inputFile);
   if (!in.is_open())
   {
     std::cerr << "Cannot open input file\n";
@@ -165,81 +223,52 @@ int main()
   size_t rows = 0;
   size_t cols = 0;
 
-  if (!(in >> rows))
+  if (!readDimensions(in, rows, cols))
   {
-    std::cerr << "File is empty\n";
-    return 2;
-  }
-  if (!(in >> cols))
-  {
-    std::cerr << "File is empty\n";
+    std::cerr << "Invalid matrix dimensions\n";
     return 2;
   }
 
-  int r18 = 0;
-  int r8 = 0;
-
-  if (rows == 0 || cols == 0)
-  {
-    std::ofstream out(outFile);
-    if (out.is_open())
-    {
-      writeResults(out, r18, r8);
-    }
-    std::cout << r18 << " " << r8 << '\n';
-    return 0;
-  }
-
-  bool exceeds = false;
-
-  if (rows > 0 && cols > MAX_ELEMENTS / rows)
-  {
-    exceeds = true;
-  }
-  if (!exceeds && (rows > MAX_ROWS || cols > MAX_COLS))
-  {
-    exceeds = true;
-  }
-
-  if (taskNum == 1 && exceeds)
+  if (taskType == 1 && rows * cols > MAX_ELEMENTS)
   {
     std::cerr << "Matrix size exceeds limits\n";
     return 2;
   }
 
-  int* m = createMatrix(rows, cols);
-  if (m == nullptr)
+  int** matrix = allocateMatrix(rows, cols);
+  if (matrix == nullptr)
   {
     std::cerr << "Memory allocation failed\n";
     return 2;
   }
 
-  if (!readMatrix(in, m, rows, cols))
+  if (!readMatrix(in, matrix, rows, cols))
   {
     std::cerr << "Invalid matrix data\n";
-    freeMatrix(m);
+    freeMatrix(matrix, rows);
     return 2;
   }
 
-  r18 = processTask18(m, rows, cols);
+  int result18 = processTask18(matrix, rows, cols);
+  processTask8(matrix, rows, cols);
 
-  bool ok = processTask8(m, rows, cols, r8);
-  if (!ok)
+  int result8 = 0;
+  for (size_t i = 0; i < rows; i++)
   {
-    std::cerr << "Memory allocation failed while processing the task\n";
-    freeMatrix(m);
-    return 3;
+    for (size_t j = 0; j < cols; j++)
+    {
+      result8 += matrix[i][j];
+    }
   }
 
-  std::ofstream out(outFile);
+  std::ofstream out(outputFile);
   if (out.is_open())
   {
-    writeResults(out, r18, r8);
+    writeResults(out, result18, result8);
   }
 
-  std::cout << r18 << " " << r8 << '\n';
+  std::cout << result18 << ' ' << result8 << '\n';
 
-  freeMatrix(m);
-
+  freeMatrix(matrix, rows);
   return 0;
 }
