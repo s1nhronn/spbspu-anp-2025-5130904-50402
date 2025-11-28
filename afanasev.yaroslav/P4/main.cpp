@@ -27,7 +27,7 @@ namespace afanasev
         delete[] str;
         throw;
       }
-      
+
       for (size_t i = 0; i < size; ++i)
       {
         tmp[i] = str[i];
