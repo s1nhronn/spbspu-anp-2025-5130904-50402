@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cctype>
+#include <cstring>
 
 namespace dirko
 {
@@ -23,10 +24,7 @@ namespace dirko
       free(str);
       throw std::bad_alloc();
     }
-    for (size_t i = 0; i < size; ++i)
-    {
-      newStr[i] = str[i];
-    }
+    std::strncpy(newStr, str, size);
     free(str);
     return newStr;
   }
@@ -57,6 +55,11 @@ namespace dirko
     if (isSkipWp)
     {
       in >> std::skipws;
+    }
+    if (size == copasity)
+    {
+      str = extendSize(str, size);
+      copasity *= 2;
     }
     return str;
   }
