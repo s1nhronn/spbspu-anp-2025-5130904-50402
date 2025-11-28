@@ -15,29 +15,37 @@ namespace dirko
     }
     return end;
   }
-  char *getLine(std::istream &in, size_t &size)
+  char *extendSize(char *str, size_t size)
+  {
+    char *newStr = reinterpret_cast<char *>(calloc(size * 2, sizeof(char)));
+    if (newStr == nullptr)
+    {
+      free(str);
+      throw std::bad_alloc();
+    }
+    for (size_t i = 0; i < size; ++i)
+    {
+      newStr[i] = str[i];
+    }
+    free(str);
+    return newStr;
+  }
+  char *getLine(std::istream &in, size_t &size, size_t &copasity)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
     if (isSkipWp)
     {
       in >> std::noskipws;
     }
-    char *str = nullptr;
+    char *str = reinterpret_cast<char *>(malloc(sizeof(char)));
     char ch = 0;
     while (in >> ch && ch != '\n')
     {
-      char *temp = reinterpret_cast< char * >(malloc(size + 1));
-      if (temp == nullptr)
+      if (size == copasity)
       {
-        free(str);
-        throw std::bad_alloc();
+        str = extendSize(str, size);
+        copasity *= 2;
       }
-      for (size_t i = 0; i < size; ++i)
-      {
-        temp[i] = str[i];
-      }
-      free(str);
-      str = temp;
       str[size] = ch;
       ++size;
     }
@@ -50,20 +58,6 @@ namespace dirko
     {
       in >> std::skipws;
     }
-    char *temp = reinterpret_cast< char * >(malloc(size + 1));
-    if (temp == nullptr)
-    {
-      free(str);
-      throw std::bad_alloc();
-    }
-    for (size_t i = 0; i < size; ++i)
-    {
-      temp[i] = str[i];
-    }
-    free(str);
-    str = temp;
-    str[size] = '\0';
-    ++size;
     return str;
   }
   size_t doDifLat(const char *str, size_t size)
@@ -95,10 +89,10 @@ namespace dirko
 int main()
 {
   char *str = nullptr;
-  size_t size = 0;
+  size_t size = 0, copasity = 1;
   try
   {
-    str = dirko::getLine(std::cin, size);
+    str = dirko::getLine(std::cin, size, copasity);
   }
   catch (const std::bad_alloc &e)
   {
@@ -111,7 +105,7 @@ int main()
     return 1;
   }
   size_t result1 = dirko::doDifLat(str, size);
-  char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * size));
+  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
     free(str);
