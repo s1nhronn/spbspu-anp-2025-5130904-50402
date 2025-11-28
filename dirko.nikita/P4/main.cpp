@@ -18,7 +18,7 @@ namespace dirko
   }
   char *extendSize(char *str, size_t size)
   {
-    char *newStr = reinterpret_cast<char *>(malloc(size * 2 * sizeof(char)));
+    char *newStr = reinterpret_cast< char * >(malloc(size * 2 * sizeof(char)));
     if (newStr == nullptr)
     {
       free(str);
@@ -39,7 +39,7 @@ namespace dirko
     {
       in >> std::noskipws;
     }
-    char *str = reinterpret_cast<char *>(malloc(sizeof(char)));
+    char *str = reinterpret_cast< char * >(malloc(sizeof(char)));
     char ch = 0;
     while (in >> ch && ch != '\n')
     {
@@ -113,7 +113,7 @@ int main()
     return 1;
   }
   size_t result1 = dirko::doDifLat(str, size);
-  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
+  char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
     free(str);
