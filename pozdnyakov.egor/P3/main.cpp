@@ -6,7 +6,8 @@ const size_t MAX_ELEMENTS = 10000;
 const size_t MAX_ROWS = 100;
 const size_t MAX_COLS = 100;
 
-namespace pozdnyakov {
+namespace pozdnyakov
+{
 
   int** allocateMatrix(size_t rows, size_t cols)
   {
@@ -63,14 +64,14 @@ namespace pozdnyakov {
       return in;
     }
 
-    if (r <= 0 || c <= 0)
+    if (r < 0 || c < 0)
     {
       in.setstate(std::ios::failbit);
       return in;
     }
 
-    rows = static_cast <size_t> (r);
-    cols = static_cast <size_t> (c);
+    rows = static_cast <size_t>(r);
+    cols = static_cast <size_t>(c);
 
     return in;
   }
@@ -93,8 +94,12 @@ namespace pozdnyakov {
 
   int processTask18(int** data, size_t rows, size_t cols)
   {
-    int count = 0;
+    if (rows == 0 || cols == 0)
+    {
+      return 0;
+    }
 
+    int count = 0;
     size_t maxDiag = rows + cols - 2;
 
     for (size_t k = 0; k <= maxDiag; k++)
@@ -128,6 +133,11 @@ namespace pozdnyakov {
 
   void processTask8(int** data, size_t rows, size_t cols)
   {
+    if (rows == 0 || cols == 0)
+    {
+      return;
+    }
+
     size_t layers = rows < cols ? rows : cols;
     layers = (layers + 1) / 2;
 
@@ -198,7 +208,7 @@ namespace pozdnyakov {
     return true;
   }
 
-}
+} // namespace pozdnyakov
 
 int main(int argc, char* argv[])
 {
@@ -227,6 +237,17 @@ int main(int argc, char* argv[])
   {
     std::cerr << "Invalid matrix dimensions\n";
     return 2;
+  }
+
+  if (rows == 0 || cols == 0)
+  {
+    std::ofstream out(outputFile);
+    if (out.is_open())
+    {
+      writeResults(out, 0, 0);
+    }
+    std::cout << 0 << ' ' << 0 << '\n';
+    return 0;
   }
 
   if (taskType == 1 && rows * cols > MAX_ELEMENTS)
