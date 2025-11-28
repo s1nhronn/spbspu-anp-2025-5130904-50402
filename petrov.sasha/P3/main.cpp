@@ -122,13 +122,13 @@ int main(int argc, char** argv) {
     return 2;
   }
   output << rows << ' ' << cols << ' ';
+  int mtx_var1[10000] = {0};
+  int* mtx_var2 = nullptr;
+  int* mtx = nullptr;
   try {
     if (rows == 0 || cols  == 0) {
       return 0;
     }
-    int mtx_var1[10000] = {0};
-    int* mtx_var2 = nullptr;
-    int* mtx = nullptr;
     if (var == 1) {
       if (rows * cols > 10000) {
         std::cerr << "Matrix too big for static buffer\n";
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
       petrov::fllIncWav(mtx, rows, cols);
     }
     petrov::writeMTX(output, mtx, rows, cols);
-    if (var == 2) {
+    if (var == 2 && mtx_var2 != nullptr) {
       petrov::rm(mtx_var2);
     }
     return 0;
