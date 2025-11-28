@@ -29,47 +29,47 @@ int main(int argc, char ** argv)
   size_t m = 0, n = 0;
   input >> m >> n;
 
-  if (input.fail() || m <= 0 || n <= 0) {
+  if (input.fail()) {
     std::cerr << "Invalid matrix dimensions \n";
     return 2;
   }
 
   const size_t ARRAY_SIZE = 10000;
-  int* arr = nullptr;
+  int * matrix = nullptr;
   int static_array[ARRAY_SIZE] = {};
 
   if (memory_type == '2') {
-    arr = reinterpret_cast<int*>(malloc(sizeof(int) * m * n));
-    if (arr == nullptr) {
+    matrix = reinterpret_cast<int*>(malloc(sizeof(int) * m * n));
+    if (matrix == nullptr) {
       std::cerr << "Memory allocation failed \n";
       return 2;
     }
   } else {
-    arr = static_array;
+    matrix = static_array;
   }
 
   for (int i = 0; i < m * n; ++i) {
-    input >> arr[i];
+    input >> matrix[i];
     if (input.fail()) {
       std::cerr << "Invalid matrix element \n";
       if (memory_type == '2') {
-        free(arr);
+        free(matrix);
       }
       return 2;
     }
   }
   input.close();
 
-  size_t counter = samarin::localMax(arr, n, m);
+  size_t counter = samarin::localMax(matrix, n, m);
 
   int size = std::min(m, n);
-  bool is_lower_left = samarin::isLowerTriangular(arr, size, n);
+  bool is_lower_left = samarin::isLowerTriangular(matrix, size, n);
 
   std::ofstream output(argv[3]);
   if (!output) {
     std::cerr << "Cannot open output file \n";
     if (memory_type == '2') {
-      free(arr);
+      free(matrix);
     }
     return 2;
   }
@@ -83,11 +83,10 @@ int main(int argc, char ** argv)
   }
 
   output.close();
-  char * file = argv[3];
 
   if (memory_type == '2') {
 
-    free(arr);
+    free(matrix);
   }
 
   return 0;
@@ -97,7 +96,6 @@ bool samarin::checkMax(int * a, int i, int j, int n)
 {
   int * upper_left_section = a + j-1 + ((i-1)*n);
   int * current = a + j + (i*n);
-  std::cout << current[0] << "\n" << upper_left_section[0];
   for (size_t di = 0; di <= 2; ++di) {
     for (size_t dj = 0; dj <= 2; ++dj) {
       if (di == 1 && dj == 1) {
@@ -126,12 +124,10 @@ bool samarin::isLowerTriangular(const int* a, int size, int n)
 
 size_t samarin::localMax(int * a, size_t n, size_t m)
 {
-  std::cout << " вызвана функция \n";
   size_t counter = 0;
   for (size_t i = 0; i < m; ++i) {
     for (size_t j = 0; j < n; ++j) {
       if (i != 0 && j !=0 && i != m-1 && j != n-1) {
-        std::cout << a[j + i * n] << "\n";
         if (samarin::checkMax(a, i, j, n)) {
           counter++;
         }
