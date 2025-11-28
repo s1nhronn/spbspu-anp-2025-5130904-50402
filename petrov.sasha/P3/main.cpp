@@ -30,7 +30,7 @@ namespace petrov {
   std::ofstream& writeMTX(std::ofstream& out, const int* a, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
-        out << a[i*cols+j] << ' ';
+        out << ' ' << a[i*cols+j];
       }
     }
     return out;
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
     std::cerr << "Invalid matrix data\n";
     return 2;
   }
-  output << rows << ' ' << cols << ' ';
+  output << rows << ' ' << cols;
   int mtx_var1[10000] = {0};
   int* mtx_var2 = nullptr;
   int* mtx = nullptr;
@@ -146,12 +146,15 @@ int main(int argc, char** argv) {
       petrov::fllIncWav(mtx, rows, cols);
     }
     petrov::writeMTX(output, mtx, rows, cols);
-    if (var == 2 && mtx_var2 != nullptr) {
+    if (var == 2) {
       petrov::rm(mtx_var2);
     }
     return 0;
   } catch (const std::exception& e) {
-    std::cerr << e.what() << "\n";
+    if (var == 2 && mtx_var2 != nullptr) {
+      petrov::rm(mtx_var2);
+    }
+    std::cerr << e.what() << '\n';
     return 2;
   }
 }
