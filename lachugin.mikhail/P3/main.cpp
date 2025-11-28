@@ -9,11 +9,11 @@ namespace lachugin
       fin >> mtx[i];
       if (fin.eof())
       {
-        break;
+        return fin;
       }
       if (fin.fail())
       {
-        break;
+        return fin;
       }
     }
     return fin;
@@ -266,6 +266,7 @@ int main(int argc, char **argv)
   lachugin::outputForInt(output, rows, cols, res1);
   output << '\n';
   lachugin::outputForDouble(output, rows, cols, res2);
+  output << '\n';
   output.close();
   if (prmt == 2)
     {
