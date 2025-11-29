@@ -80,6 +80,10 @@ char *shirokov::getline(std::istream &in, size_t &s)
   char *str = reinterpret_cast< char * >(malloc(capacity * sizeof(char)));
   if (str == nullptr)
   {
+    if (is_skipws)
+    {
+      in >> std::skipws;
+    }
     return nullptr;
   }
   while (in)
@@ -90,6 +94,10 @@ char *shirokov::getline(std::istream &in, size_t &s)
     }
     if (str == nullptr)
     {
+      if (is_skipws)
+      {
+        in >> std::skipws;
+      }
       return nullptr;
     }
     in >> str[s];
@@ -102,6 +110,10 @@ char *shirokov::getline(std::istream &in, size_t &s)
   if (in.bad() || s == 0)
   {
     free(str);
+    if (is_skipws)
+    {
+      in >> std::skipws;
+    }
     return nullptr;
   }
   str[s] = '\0';
