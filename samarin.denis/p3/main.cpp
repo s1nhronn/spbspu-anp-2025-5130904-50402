@@ -3,9 +3,9 @@
 #include <cstdlib>
 
 namespace samarin {
-  bool checkMax(int * a, int i, int j, int n);
-  bool isLowerTriangular(const int * a, int size, int n);
-  size_t localMax(int * a, size_t n, size_t m);
+  bool checkMax(const int * a, int i, int j, int n);
+  bool isLowerTriangular(const int * const a, size_t size, size_t n);
+  size_t localMax(const int * a, size_t n, size_t m);
 }
 
 int main(int argc, char ** argv)
@@ -39,7 +39,7 @@ int main(int argc, char ** argv)
   int static_array[ARRAY_SIZE] = {};
 
   if (memory_type == '2') {
-    matrix = reinterpret_cast<int*>(malloc(sizeof(int) * m * n));
+    matrix = reinterpret_cast< int* >(malloc(sizeof(int) * m * n));
     if (matrix == nullptr) {
       std::cerr << "Memory allocation failed \n";
       return 2;
@@ -48,7 +48,7 @@ int main(int argc, char ** argv)
     matrix = static_array;
   }
 
-  for (int i = 0; i < m * n; ++i) {
+  for (size_t i = 0; i < m * n; ++i) {
     input >> matrix[i];
     if (input.fail()) {
       std::cerr << "Invalid matrix element \n";
@@ -62,7 +62,7 @@ int main(int argc, char ** argv)
 
   size_t counter = samarin::localMax(matrix, n, m);
 
-  int size = std::min(m, n);
+  size_t size = std::min(m, n);
   bool is_lower_left = samarin::isLowerTriangular(matrix, size, n);
 
   std::ofstream output(argv[3]);
@@ -82,8 +82,6 @@ int main(int argc, char ** argv)
     output << "Матрица не нижняя треугольная\n";
   }
 
-  output.close();
-
   if (memory_type == '2') {
 
     free(matrix);
@@ -92,17 +90,17 @@ int main(int argc, char ** argv)
   return 0;
 }
 
-bool samarin::checkMax(int * a, int i, int j, int n)
+bool samarin::checkMax(const int * a, int i, int j, int n)
 {
-  int * upper_left_section = a + j-1 + ((i-1)*n);
-  int * current = a + j + (i*n);
+  const int * upper_left_section = a + j - 1 + ((i - 1) * n);
+  const int * current = a + j + (i * n);
   for (size_t di = 0; di <= 2; ++di) {
     for (size_t dj = 0; dj <= 2; ++dj) {
       if (di == 1 && dj == 1) {
         continue;
       }
 
-      if (upper_left_section[dj + di*n] >= current[0]) {
+      if (upper_left_section[dj + di * n] >= current[0]) {
         return false;
       }
     }
@@ -110,10 +108,10 @@ bool samarin::checkMax(int * a, int i, int j, int n)
   return true;
 }
 
-bool samarin::isLowerTriangular(const int* a, int size, int n)
+bool samarin::isLowerTriangular(const int * const a, size_t size, size_t n)
 {
-  for (int i = 0; i < size; ++i) {
-    for (int j = i + 1; j < size; ++j) {
+  for (size_t i = 0; i < size; ++i) {
+    for (size_t j = i + 1; j < size; ++j) {
       if (a[j + i * n] != 0) {
         return false;
       }
@@ -122,12 +120,12 @@ bool samarin::isLowerTriangular(const int* a, int size, int n)
   return true;
 }
 
-size_t samarin::localMax(int * a, size_t n, size_t m)
+size_t samarin::localMax(const int * a, size_t n, size_t m)
 {
   size_t counter = 0;
   for (size_t i = 0; i < m; ++i) {
     for (size_t j = 0; j < n; ++j) {
-      if (i != 0 && j !=0 && i != m-1 && j != n-1) {
+      if (i != 0 && j != 0 && i != m - 1 && j != n - 1) {
         if (samarin::checkMax(a, i, j, n)) {
           counter++;
         }
