@@ -36,8 +36,11 @@ int main(int argc, char ** argv)
   if (rows == 0 && cols == 0)
   {
     std::ofstream output(argv[3]);
-    output << '0' << '\n';
-    output << '0' << '\n';
+    if (!output || !(output << '0' << '\n' << '0' << '\n'))
+    {
+      std::cerr << "Parameters cannot output\n";
+      return 2;
+    }
     return 0;
   }
   bool isArrayDynamic = 0;
@@ -82,6 +85,11 @@ int main(int argc, char ** argv)
   std::ofstream output(argv[3]);
   output << "cnt_loc_max = " << cnt_loc_max << '\n';
   output << "lwr_tri_mtx = " << lwr_tri_mtx << '\n';
+  if (!output)
+  {
+    std::cerr << "Parameters cannot output\n";
+    return 2;
+  }
   output.close();
 
   if (isArrayDynamic)
@@ -137,13 +145,13 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
     {
       int t = a[j + i * cols];
       if (t > a[(j - 1) + (i - 1) * cols] &&
-      t > a[j + (i - 1) * cols]           &&
-      t > a[(j + 1) + (i - 1) * cols]     &&
-      t > a[(j - 1) + i * cols]           &&
-      t > a[(j + 1) + i * cols]           &&
-      t > a[(j - 1) + (i + 1) * cols]     &&
-      t > a[j + (i + 1) * cols]           &&
-      t > a[(j + 1) + (i + 1) * cols])
+       t > a[j + (i - 1) * cols] &&
+         t > a[(j + 1) + (i - 1) * cols] &&
+           t > a[(j - 1) + i * cols] &&
+             t > a[(j + 1) + i * cols] &&
+               t > a[(j - 1) + (i + 1) * cols] &&
+                 t > a[j + (i + 1) * cols] &&
+                   t > a[(j + 1) + (i + 1) * cols])
       {
         count++;
       }
@@ -159,11 +167,4 @@ bool chernikov::isParNum(const char * a)
     return 0;
   }
   return (a[0] == '1' || a[0] == '2') && a[1] == '\0';
-  /*const size_t MAX_CHECK = 32;
-  for (size_t i = 0; i < MAX_CHECK && a[i] != '\0'; ++i)
-  {
-     if (a[i] < '0' || a[i] > '9')
-     {
-       return 0;
-     }*/
 }
