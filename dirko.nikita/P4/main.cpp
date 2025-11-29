@@ -109,6 +109,12 @@ int main()
     std::cerr << "Cant read\n";
     return 1;
   }
+  if (size == 1)
+  {
+    free(str);
+    std::cerr << "Empty string\n";
+    return 1;
+  }
   size_t result1 = dirko::doDifLat(str, size);
   char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * size));
   if (result2 == nullptr)
