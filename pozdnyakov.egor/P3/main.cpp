@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-
-const size_t MAX_ELEMENTS = 10000;
-const size_t MAX_ROWS = 100;
-const size_t MAX_COLS = 100;
+#include <memory>
 
 namespace pozdnyakov
 {
+  const size_t MAX_ELEMENTS = 10000;
+  const size_t MAX_ROWS = 100;
+  const size_t MAX_COLS = 100;
 
   int** allocateMatrix(size_t rows, size_t cols)
   {
@@ -76,7 +76,10 @@ namespace pozdnyakov
     return in;
   }
 
-  std::istream& readMatrix(std::istream& in, int** data, size_t rows, size_t cols)
+  std::istream& readMatrix(std::istream& in,
+    int** data,
+    size_t rows,
+    size_t cols)
   {
     for (size_t i = 0; i < rows; i++)
     {
@@ -92,7 +95,7 @@ namespace pozdnyakov
     return in;
   }
 
-  int processTask18(int** data, size_t rows, size_t cols)
+  int countDiagonalsWithoutZero(int** data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -109,11 +112,15 @@ namespace pozdnyakov
 
       for (size_t i = 0; i < rows; i++)
       {
-        size_t j = (k >= i) ? (k - i) : MAX_COLS;
+        size_t j =
+          (k >= i)
+          ? (k - i)
+          : MAX_COLS;
 
         if (j < cols)
         {
           exists = true;
+
           if (data[i][j] == 0)
           {
             hasZero = true;
@@ -131,69 +138,61 @@ namespace pozdnyakov
     return count;
   }
 
-  void processTask8(int** data, size_t rows, size_t cols)
+  void transformMatrixLayers(int** data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
       return;
     }
 
-    size_t layers = rows < cols ? rows : cols;
+    size_t layers = (rows < cols ? rows : cols);
     layers = (layers + 1) / 2;
 
     for (size_t layer = 0; layer < layers; layer++)
     {
       int inc = static_cast <int>(layer + 1);
-      size_t top = layer;
-      size_t bottom = rows - layer - 1;
-      size_t left = layer;
-      size_t right = cols - layer - 1;
 
       for (size_t r = layer; r < rows - layer; r++)
       {
         for (size_t c = layer; c < cols - layer; c++)
         {
-          bool border = false;
-
-          if (r == top || r == bottom || c == left || c == right)
-          {
-            border = true;
-          }
-
-          if (border)
-          {
-            data[r][c] += inc;
-          }
+          data[r][c] += inc;
         }
       }
     }
   }
 
-  std::ostream& writeResults(std::ostream& out, int r18, int r8)
+  std::ostream& writeMatrixResults(std::ostream& out,
+    int diagCount,
+    int** data,
+    size_t rows,
+    size_t cols)
   {
-    out << r18 << ' ' << r8;
+    out << diagCount << '\n';
+
+    out << rows << ' ' << cols << '\n';
+    for (size_t i = 0; i < rows; i++)
+    {
+      for (size_t j = 0; j < cols; j++)
+      {
+        out << data[i][j];
+        if (j + 1 < cols)
+        {
+          out << ' ';
+        }
+      }
+      out << '\n';
+    }
+
     return out;
   }
 
-  bool validateArgs(int argc, char* argv[])
+  bool validateArgs(const char* s)
   {
-    if (argc != 4)
-    {
-      if (argc < 4)
-      {
-        std::cerr << "Not enough arguments\n";
-      }
-      else
-      {
-        std::cerr << "Too many arguments\n";
-      }
-      return false;
-    }
-
     char* endptr = nullptr;
-    long num = std::strtol(argv[1], &endptr, 10);
 
-    if (endptr == argv[1] || *endptr != '\0')
+    long num = std::strtol(s, std::addressof(endptr), 10);
+    if (endptr == s || *endptr != '\0')
     {
       std::cerr << "First parameter is not a number\n";
       return false;
@@ -207,14 +206,19 @@ namespace pozdnyakov
 
     return true;
   }
-
 }
 
 int main(int argc, char* argv[])
 {
   using namespace pozdnyakov;
 
-  if (!validateArgs(argc, argv))
+  if (argc != 4)
+  {
+    std::cerr << "Invalid number of arguments\n";
+    return 1;
+  }
+
+  if (!validateArgs(argv[1]))
   {
     return 1;
   }
@@ -242,10 +246,15 @@ int main(int argc, char* argv[])
   if (rows == 0 || cols == 0)
   {
     std::ofstream out(outputFile);
-    if (out.is_open())
+    if (!out.is_open())
     {
-      writeResults(out, 0, 0);
+      std::cerr << "Cannot open output file\n";
+      return 3;
     }
+
+    out << 0 << '\n';
+    out << 0 << ' ' << 0 << '\n';
+
     return 0;
   }
 
@@ -269,23 +278,18 @@ int main(int argc, char* argv[])
     return 2;
   }
 
-  int result18 = processTask18(matrix, rows, cols);
-  processTask8(matrix, rows, cols);
-
-  int result8 = 0;
-  for (size_t i = 0; i < rows; i++)
-  {
-    for (size_t j = 0; j < cols; j++)
-    {
-      result8 += matrix[i][j];
-    }
-  }
+  int diagCount = countDiagonalsWithoutZero(matrix, rows, cols);
+  transformMatrixLayers(matrix, rows, cols);
 
   std::ofstream out(outputFile);
-  if (out.is_open())
+  if (!out.is_open())
   {
-    writeResults(out, result18, result8);
+    std::cerr << "Cannot open output file\n";
+    freeMatrix(matrix, rows);
+    return 3;
   }
+
+  writeMatrixResults(out, diagCount, matrix, rows, cols);
 
   freeMatrix(matrix, rows);
   return 0;
