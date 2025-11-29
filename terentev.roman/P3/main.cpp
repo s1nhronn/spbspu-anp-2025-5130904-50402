@@ -108,8 +108,6 @@ int main(int argc, char** argv)
 void terentev::minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& kolmax)
 {
   size_t ix = m + 1;
-  size_t kolmin = 0;
-  size_t kolmax = 0;
   int min = a[m + 1];
   int max = a[m + 1];
   while (ix < n * m - 1 - m)
