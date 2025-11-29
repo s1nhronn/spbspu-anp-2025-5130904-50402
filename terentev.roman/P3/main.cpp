@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     std::cerr << "Failed to read matrix dimensions\n";
     return 2;
   }
-  if ((n * m) > 10000)
+  if ((n * m) > terentev::MAXOS)
   {
     std::cerr << "Array cannot exist\n";
     return 2;
