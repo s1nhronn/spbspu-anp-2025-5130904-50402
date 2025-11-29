@@ -61,11 +61,6 @@ int main(int argc, char** argv)
     output << "0\n";
     return 0;
   }
-  if (n == 2 || m == 2)
-  {
-    output << "0\n";
-    return 0;
-  }
   int buf[terentev::MAXOS] = {};
   int* a = nullptr;
   bool сhecker = false;
@@ -195,7 +190,7 @@ void terentev::minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& 
       {
         max = a[ix];
       }
-      ix = ix + 1;
+      ix++;
     }
   }
   for (size_t p = m; p < n * m - m; ++p)
