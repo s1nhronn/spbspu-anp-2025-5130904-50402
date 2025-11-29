@@ -157,6 +157,7 @@ int main()
   if (k == 0)
   {
     std::cerr << "Could not read the string\n";
+    free(line);
     return 1;
   }
 
