@@ -113,7 +113,7 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  data[0] = 0;
+  data[s] = 0;
   if (!karp::repsym(str, data, s)) {
     free(data);
     free(str);
@@ -131,7 +131,7 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  data2[0] = 0;
+  data2[s + s2] = 0;
 
   if (!karp::unitwo(str, str2, s, s2, data2)) {
     free(data2);
