@@ -6,7 +6,11 @@ namespace saldaev
 {
   size_t getLine(std::istream &in, char *&data, const size_t block_size)
   {
-    in >> std::noskipws;
+    bool skipws_on = in.flags() & std::ios_base::skipws;
+    if (skipws_on)
+    {
+      in >> std::noskipws;
+    }
     data = static_cast< char * >(malloc(block_size * sizeof(char)));
     if (data == nullptr)
     {
@@ -35,6 +39,10 @@ namespace saldaev
         data = tmp;
       }
       data[crnt_size - 1] = crnt_char;
+    }
+    if (skipws_on)
+    {
+      in >> std::skipws;
     }
     if (crnt_char == '\r' || crnt_char == '\n' || in.eof())
     {
