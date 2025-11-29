@@ -45,7 +45,7 @@ namespace dirko
     str = reinterpret_cast< char * >(malloc(sizeof(char) * copasity));
     if (str == nullptr)
     {
-      return;
+      return in;
     }
     char ch = 0;
     while (in >> ch && ch != '\n')
@@ -68,6 +68,7 @@ namespace dirko
       copasity *= 2;
     }
     ++size;
+    return in;
   }
   size_t doDifLat(const char *str, size_t size)
   {
