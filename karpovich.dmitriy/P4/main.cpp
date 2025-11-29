@@ -46,12 +46,11 @@ namespace karpovich
     }
     return str;
   }
-  void repsym(const char* str, char* data, const size_t size)
+  char* repsym(const char* str, char* data, const size_t size)
   {
     size_t MAX_ascii = 256;
     if (!str || !data) {
-      data[0] = 0;
-      return;
+      return nullptr;
     }
 
     int repeat[MAX_ascii] = {};
@@ -70,11 +69,12 @@ namespace karpovich
       }
     }
     data[pos] = 0;
+    return data;
   }
-  void unitwo(const char* str1, const char* str2, size_t s1, size_t s2, char* data)
+  char* unitwo(const char* str1, const char* str2, size_t s1, size_t s2, char* data)
   {
     if (!str1 || !str2 || !data) {
-      return;
+      return nullptr;
     }
     size_t i = 0, j = 0, k = 0;
     while (i < s1 && j < s2) {
@@ -88,6 +88,7 @@ namespace karpovich
       data[k++] = str2[j++];
     }
     data[k] = 0;
+    return data;
   }
 }
 
@@ -107,7 +108,13 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  karp::repsym(str, data, s);
+  data[0] = 0;
+  if (!karp::repsym(str, data, s)) {
+    free(data);
+    free(str);
+    std::cerr << "repsym failed";
+    return 1;
+  }
 
   size_t s2 = 4;
   const char* str2 = "def ";
@@ -119,7 +126,15 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  karp::unitwo(str, str2, s, s2, data2);
+  data[0] = 0;
+
+  if (!karp::unitwo(str, str2, s, s2, data2)) {
+    free(data2);
+    free(data);
+    free(str);
+    std::cerr << "unitwo failed";
+    return 1;
+  }
 
   std::cout << data << '\n';
   std::cout << data2 << '\n';
