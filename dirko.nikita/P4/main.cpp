@@ -17,7 +17,7 @@ namespace dirko
     }
     return end;
   }
-  void extendSize(char *str, size_t size)
+  void extendSize(char *&str, size_t size)
   {
     char *newStr = reinterpret_cast< char * >(malloc(size * 2 * sizeof(char)));
     if (newStr == nullptr)
@@ -35,7 +35,7 @@ namespace dirko
     free(str);
     str = newStr;
   }
-  std::istream &getLine(std::istream &in, char *str, size_t &size, size_t &copasity)
+  std::istream &getLine(std::istream &in, char *&str, size_t &size, size_t &copasity)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
     if (isSkipWp)
@@ -55,8 +55,7 @@ namespace dirko
         extendSize(str, size);
         copasity *= 2;
       }
-      str[size] = ch;
-      ++size;
+      str[size++] = ch;
     }
     if (isSkipWp)
     {
@@ -100,7 +99,6 @@ int main()
 {
   char *str = nullptr;
   size_t size = 0, copasity = 1;
-
   dirko::getLine(std::cin, str, size, copasity);
   if (str == nullptr)
   {
