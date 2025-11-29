@@ -76,7 +76,7 @@ int main(int argc, char** argv)
   }
   else
   {
-    a = reinterpret_cast<int*>(malloc(n * m * sizeof(int)));
+    a = reinterpret_cast< int* >(malloc(n * m * sizeof(int)));
     if (!a)
     {
       std::cerr << "bad_alloc\n";
