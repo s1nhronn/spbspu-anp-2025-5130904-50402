@@ -123,10 +123,7 @@ namespace pozdnyakov
     }
   }
 
-  std::ostream& writeMatrix(std::ostream& out,
-    const int* data,
-    size_t rows,
-    size_t cols)
+  std::ostream& writeMatrix(std::ostream& out, const int* data, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows; i++)
     {
@@ -214,7 +211,7 @@ int main(int argc, char* argv[])
     }
 
     out << 0 << '\n';
-    writeMatrix(out, reinterpret_cast <const int*> (nullptr), 0, 0);
+    writeMatrix(out, nullptr, 0, 0);
     return 0;
   }
 
