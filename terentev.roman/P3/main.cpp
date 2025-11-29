@@ -56,11 +56,6 @@ int main(int argc, char** argv)
     std::cerr << "Array cannot exist\n";
     return 2;
   }
-  if (n == 0 && m == 0)
-  {
-    output << "0\n";
-    return 0;
-  }
   if (n <= 2 || m <= 2)
   {
     output << "0\n";
