@@ -28,6 +28,7 @@ namespace saldaev
         char *tmp = static_cast< char * >(malloc((crnt_msize + block_size) * sizeof(char)));
         if (tmp == nullptr)
         {
+          free(data);
           return 0;
         }
         crnt_msize += block_size;
@@ -48,6 +49,7 @@ namespace saldaev
     {
       return crnt_size;
     }
+    free(data);
     return 0;
   }
 
@@ -163,6 +165,7 @@ int main()
   if (nk == 0)
   {
     std::cerr << "Could not convert the string\n";
+    free(line);
     return 1;
   }
   for (size_t i = 0; i < nk; ++i)
@@ -170,11 +173,13 @@ int main()
     std::cout << new_line[i];
   }
   std::cout << "\n";
-
+  free(new_line);
+  new_line = nullptr;
   nk = saldaev::latRmv(line, k, new_line);
   if (nk == 0)
   {
     std::cerr << "Could not convert the string\n";
+    free(line);
     return 1;
   }
   for (size_t i = 0; i < nk; ++i)
