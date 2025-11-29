@@ -44,17 +44,17 @@ int main(int argc, char ** argv)
     return 0;
   }
   bool isArrayDynamic = 0;
-  int * a = nullptr;
+  int * array = nullptr;
   int nums[MAX_SIZE] = {};
   if (std::strcmp(argv[1], "1") == 0)
   {
-    a = nums;
+    array = nums;
     isArrayDynamic = 0;
   }
   else if (std::strcmp(argv[1], "2") == 0)
   {
-    a = reinterpret_cast< int * >(malloc(sizeof(int) * (rows * cols)));
-    if (a == nullptr)
+    array = reinterpret_cast< int * >(malloc(sizeof(int) * (rows * cols)));
+    if (array == nullptr)
     {
       std::cerr << "Memory allocation failed\n";
       return 2;
@@ -68,24 +68,23 @@ int main(int argc, char ** argv)
   }
   for (size_t i = 0; i < (rows * cols); ++i)
   {
-    if (!(input >> a[i]))
+    if (!(input >> array[i]))
     {
       std::cerr << "Failed to count element\n";
       if (isArrayDynamic)
       {
-        free(a);
+        free(array);
       }
       return 2;
     }
   }
   input.close();
 
-  bool lwr_tri_mtx = chernikov::isDownTriangleMatrix(a, rows, cols);
-  size_t cnt_loc_max = chernikov::localMaxQuantity(a, rows, cols);
+  bool lwr_tri_mtx = chernikov::isDownTriangleMatrix(array, rows, cols);
+  size_t cnt_loc_max = chernikov::localMaxQuantity(array, rows, cols);
   std::ofstream output(argv[3]);
-  output << "cnt_loc_max = " << cnt_loc_max << '\n';
-  output << "lwr_tri_mtx = " << lwr_tri_mtx << '\n';
-  if (!output)
+  if (!output || !(output << "cnt_loc_max = " << cnt_loc_max << '\n'
+   << "lwr_tri_mtx = " << lwr_tri_mtx << '\n'))
   {
     std::cerr << "Parameters cannot output\n";
     return 2;
@@ -94,19 +93,19 @@ int main(int argc, char ** argv)
 
   if (isArrayDynamic)
   {
-    free(a);
-    a = nullptr;
+    free(array);
+    array = nullptr;
   }
   return 0;
 }
 
-bool chernikov::isDownTriangleMatrix(const int * a, size_t rows, size_t cols)
+bool chernikov::isDownTriangleMatrix(const int * array, size_t rows, size_t cols)
 {
   if (rows == 0 && cols == 0)
   {
     return 0;
   }
-  if (a == nullptr)
+  if (array == nullptr)
   {
     return 0;
   }
@@ -119,7 +118,7 @@ bool chernikov::isDownTriangleMatrix(const int * a, size_t rows, size_t cols)
     for (size_t j = i + 1; j < cols; ++j)
     {
       size_t index = i * cols + j;
-      if (a[index] != 0)
+      if (array[index] != 0)
       {
         return 0;
       }
@@ -128,13 +127,13 @@ bool chernikov::isDownTriangleMatrix(const int * a, size_t rows, size_t cols)
   return 1;
 }
 
-size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
+size_t chernikov::localMaxQuantity(const int * array, size_t rows, size_t cols)
 {
   if (rows < 3 || cols < 3)
   {
     return 0;
   }
-  if (a == nullptr)
+  if (array == nullptr)
   {
     return 0;
   }
@@ -143,15 +142,15 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
   {
     for (size_t j = 1; j < (cols - 1); ++j)
     {
-      int t = a[j + i * cols];
-      if (t > a[(j - 1) + (i - 1) * cols] &&
-       t > a[j + (i - 1) * cols] &&
-         t > a[(j + 1) + (i - 1) * cols] &&
-           t > a[(j - 1) + i * cols] &&
-             t > a[(j + 1) + i * cols] &&
-               t > a[(j - 1) + (i + 1) * cols] &&
-                 t > a[j + (i + 1) * cols] &&
-                   t > a[(j + 1) + (i + 1) * cols])
+      int t = array[j + i * cols];
+      if (t > array[(j - 1) + (i - 1) * cols]
+            && t > array[j + (i - 1) * cols]
+            && t > array[(j + 1) + (i - 1) * cols]
+            && t > array[(j - 1) + i * cols]
+            && t > array[(j + 1) + i * cols]
+            && t > array[(j - 1) + (i + 1) * cols]
+            && t > array[j + (i + 1) * cols]
+            && t > array[(j + 1) + (i + 1) * cols])
       {
         count++;
       }
@@ -160,11 +159,11 @@ size_t chernikov::localMaxQuantity(const int * a, size_t rows, size_t cols)
   return count;
 }
 
-bool chernikov::isParNum(const char * a)
+bool chernikov::isParNum(const char * array)
 {
-  if (a == nullptr)
+  if (array == nullptr)
   {
     return 0;
   }
-  return (a[0] == '1' || a[0] == '2') && a[1] == '\0';
+  return (array[0] == '1' || array[0] == '2') && array[1] == '\0';
 }
