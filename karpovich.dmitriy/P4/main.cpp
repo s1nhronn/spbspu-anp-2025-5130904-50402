@@ -27,13 +27,6 @@ namespace karpovich
       str[s] = ch;
       ++s;
     }
-    if (in.fail() && s == 0 && ch != '\n') {
-      free(str);
-      if (is_skipws) {
-        in >> std::skipws;
-      }
-      return nullptr;
-    }
     char* temp = reinterpret_cast< char* >(malloc(s + 1));
     if (temp == nullptr) {
       free(str);
@@ -78,25 +71,23 @@ namespace karpovich
     }
     data[pos] = 0;
   }
-  void unitwo(const char* str1, const char* str2, const size_t s1, const size_t s2, char* data)
+  void unitwo(const char* str1, const char* str2, size_t s1, size_t s2, char* data)
   {
-      if (!str1 || !str2 || !data) {
-          data[0] = 0;
-          return;
-      }
-
-      size_t i = 0, j = 0, k = 0;
-      while (i < s1 && j < s2) {
-          data[k++] = str1[i++];
-          data[k++] = str2[j++];
-      }
-      while (i < s1) {
-        data[k++] = str1[i++];
-      }
-      while (j < s2) {
-        data[k++] = str2[j++];
-      }
-      data[k] = 0;
+    if (!str1 || !str2 || !data) {
+      return;
+    }
+    size_t i = 0, j = 0, k = 0;
+    while (i < s1 && j < s2) {
+      data[k++] = str1[i++];
+      data[k++] = str2[j++];
+    }
+    while (i < s1) {
+      data[k++] = str1[i++];
+    }
+    while (j < s2) {
+      data[k++] = str2[j++];
+    }
+    data[k] = 0;
   }
 }
 
@@ -117,7 +108,6 @@ int main() {
     return 1;
   }
   karp::repsym(str, data, s);
-
 
   size_t s2 = 4;
   const char* str2 = "def ";
