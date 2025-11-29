@@ -101,6 +101,11 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
+  if (s == 0 && std::cin.eof()) {
+    free(str);
+    std::cerr << "No input";
+    return 1;
+  }
 
   char* data = reinterpret_cast< char* >(malloc(s + 1));
   if (!data) {
@@ -126,7 +131,7 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  data[0] = 0;
+  data2[0] = 0;
 
   if (!karp::unitwo(str, str2, s, s2, data2)) {
     free(data2);
