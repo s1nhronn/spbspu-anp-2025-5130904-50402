@@ -61,6 +61,11 @@ int main(int argc, char** argv)
     output << "0\n";
     return 0;
   }
+  if (n <= 2 || m <= 2)
+  {
+    output << "0\n";
+    return 0;
+  }
   int buf[terentev::MAXOS] = {};
   int* a = nullptr;
   bool сhecker = false;
