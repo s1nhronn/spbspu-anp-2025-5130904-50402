@@ -4,7 +4,7 @@
 #include <cstring>
 namespace terentev
 {
-  void minmax(const int* a, size_t n, size_t m, std::ostream& output);
+  void minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& kolmax);
   const size_t MAXOS = 10000;
 }
 int main(int argc, char** argv)
@@ -67,43 +67,45 @@ int main(int argc, char** argv)
     output << "0\n";
     return 0;
   }
+  int buf[terentev::MAXOS] = {};
+  int* a = nullptr;
+  bool сhecker = false;
   if (bruh == 1)
   {
-    int a[terentev::MAXOS] = {};
-    for (size_t i = 0; i < n * m; ++i)
-    {
-      input >> a[i];
-      if (!input)
-      {
-        std::cerr << "Failed to read array element\n";
-        return 2;
-      }
-    }
-    terentev::minmax(a, n, m, output);
+    a = buf;
   }
   else
   {
-    int* a = reinterpret_cast<int*>(malloc(n * m * sizeof(int)));
+    a = reinterpret_cast<int*>(malloc(n * m * sizeof(int)));
     if (!a)
     {
       std::cerr << "bad_alloc\n";
       return 3;
     }
-    for (size_t i = 0; i < n * m; ++i)
+    сhecker = true;
+  }
+  for (size_t i = 0; i < n * m; ++i)
+  {
+    input >> a[i];
+    if (!input)
     {
-      input >> a[i];
-      if (!input)
+      std::cerr << "Failed to read array element\n";
+      if (сhecker)
       {
-        std::cerr << "Failed to read array element\n";
         free(a);
-        return 2;
       }
+      return 2;
     }
-    terentev::minmax(a, n, m, output);
+  }
+  size_t kolmin = 0, kolmax = 0;
+  terentev::minmax(a, n, m, kolmin, kolmax);
+  output << kolmin << '\n' << kolmax << '\n';
+  if (сhecker)
+  {
     free(a);
   }
 }
-void terentev::minmax(const int* a, size_t n, size_t m, std::ostream & output)
+void terentev::minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& kolmax)
 {
   size_t ix = m + 1;
   size_t kolmin = 0;
@@ -162,5 +164,4 @@ void terentev::minmax(const int* a, size_t n, size_t m, std::ostream & output)
       kolmax = kolmax + 1;
     }
   }
-  output << kolmin << '\n' << kolmax << '\n';
 }
