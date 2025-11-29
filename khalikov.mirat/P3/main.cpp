@@ -6,26 +6,17 @@ namespace khalikov
 {
   bool proverka(const char * str);
   void outputMtx(std::ostream & out, const int * a, size_t n, size_t m);
-  std::istream & inputMtx(std::istream & in, int * a, size_t n, size_t m, size_t & count);
+  std::istream & inputMtx(std::istream & in, int * a, size_t n, size_t m);
   size_t countSeddle(const int * a, size_t n, size_t m);
   int * spiral(const int * a, int * res, size_t n, size_t m,
-  size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c);
+    size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c);
   int * spiral(const int * a, int * res, size_t n, size_t m);
   const size_t MTXSIZE = 10000;
 }
 
 bool khalikov::proverka(const char * str)
 {
-  if (str == nullptr)
-  {
-    return false;
-  }
   size_t length = strlen(str);
-
-  if (length > 1)
-  {
-    return false;
-  }
 
   if (length != 1)
   {
@@ -37,25 +28,17 @@ bool khalikov::proverka(const char * str)
 
 void khalikov::outputMtx(std::ostream & out, const int * a, size_t n, size_t m)
 {
+  out << m << ' ' << n;
   for (size_t i = 0; i < n; ++i)
   {
     for (size_t j = 0; j < m; ++j)
     {
-      out << a[i*m+j];
-      if (j < m-1)
-      {
-        out << ' ';
-      }
-    }
-    if (i < n-1)
-    {
-      out << ' ';
+      out << ' ' << a[i*m+j];
     }
   }
 }
 
-std::istream & khalikov::inputMtx(std::istream & in, int * a,
-size_t n, size_t m, size_t & count)
+std::istream & khalikov::inputMtx(std::istream & in, int * a, size_t n, size_t m)
 {
   for (size_t i = 0; i < n*m; ++i)
   {
@@ -63,7 +46,6 @@ size_t n, size_t m, size_t & count)
     {
       return in;
     }
-    count++;
   }
   return in;
 }
@@ -83,13 +65,13 @@ size_t khalikov::countSeddle(const int * a, size_t n, size_t m)
       {
         for (size_t w = 1; w < n; ++w)
           {
-            if (a[i*m + k] < min)
+            if (a[i*m+k] < min)
             {
-              min = a[i*m + k];
+              min = a[i*m+k];
             }
-            if (a[w*m + j] > max)
+            if (a[w*m+j] > max)
             {
-              max = a[w*m + j];
+              max = a[w*m+j];
             }
           }
       }
@@ -103,21 +85,21 @@ size_t khalikov::countSeddle(const int * a, size_t n, size_t m)
 }
 
 int * khalikov::spiral(const int * a, int * res, size_t n, size_t m,
-size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c)
+  size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c)
 {
   if (st_row > end_row || st_col > end_col)
   {
     return res;
   }
 
-  for(size_t i = st_col; i <= end_col; ++i)
+  for (size_t i = st_col; i <= end_col; ++i)
   {
     size_t step = st_row * m + i;
     res[step] = a[step] - c;
     ++c;
   }
 
-  for(size_t i = st_row + 1; i <= end_row; ++i)
+  for (size_t i = st_row + 1; i <= end_row; ++i)
   {
     size_t step = end_col + i * m;
     res[step] = a[step] - c;
@@ -126,7 +108,7 @@ size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c)
 
   if (st_row < end_row)
   {
-    for(size_t i = end_col - 1; i >= st_col; --i)
+    for (size_t i = end_col - 1; i >= st_col; --i)
     {
       size_t step = end_row * m + i;
       res[step] = a[step] - c;
@@ -140,7 +122,7 @@ size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c)
 
   if (st_col < end_col)
   {
-    for(size_t i = end_row - 1; i > st_row; --i)
+    for (size_t i = end_row - 1; i > st_row; --i)
     {
       size_t step = st_col + i * m;
       res[step] = a[step] - c;
@@ -166,7 +148,6 @@ int * khalikov::spiral(const int * a, int * res, size_t n, size_t m)
 
 int main(int argc, char ** argv)
 {
-
   namespace kh = khalikov;
 
   if (argc < 4)
@@ -192,7 +173,9 @@ int main(int argc, char ** argv)
   std::ifstream input(argv[2]);
   size_t n = 0;
   size_t m = 0;
-  size_t count = 0;
+  int * a = nullptr;
+  int * res = nullptr;
+  int b[kh::MTXSIZE] = {};
   input >> n >> m;
   if (input.fail())
   {
@@ -201,26 +184,14 @@ int main(int argc, char ** argv)
   }
   if (*argv[1] == '1')
   {
-    int a[kh::MTXSIZE] = {};
-    kh::inputMtx(input, a, n, m, count);
-    if (count != n*m)
-    {
-      std::cerr << "Input error" << '\n';
-      return 2;
-    }
-    input.close();
-    std::ofstream output(argv[3]);
-    kh::outputMtx(output, a, n, m);
-    output << '\n';
-    output << kh::countSeddle(a, n, m) << '\n';
+    a = b;
+    res = b;
   }
-  if (*argv[1] == '2')
+  else
   {
-    int * b = nullptr;
-    int * res = nullptr;
     try
     {
-      b = new int[n*m];
+      a = new int[n*m];
     }
     catch (const std::bad_alloc &)
     {
@@ -234,26 +205,35 @@ int main(int argc, char ** argv)
     catch (const std::bad_alloc &)
     {
       std::cerr << "bad_alloc" << '\n';
-      delete[] b;
+      delete[] a;
       return 2;
     }
-    kh::inputMtx(input, b, n, m, count);
-    if (count != n*m)
+  }
+  kh::inputMtx(input, a, n, m);
+  if (input.fail())
+  {
+    std::cerr << "Input error" << '\n';
+    if (*argv[1] == '2')
     {
-      std::cerr << "Input error" << '\n';
       delete[] res;
-      delete[] b;
-      return 2;
+      delete[] a;
     }
-    input.close();
-    std::ofstream output(argv[3]);
-    kh::outputMtx(output, b, n, m);
-    output << '\n';
-    res = kh::spiral(b, res, n, m);
-    kh::outputMtx(output, res, n, m);
-    output << '\n';
+    return 2;
+  }
+  input.close();
+  std::ofstream output(argv[3]);
+  kh::outputMtx(output, a, n, m);
+  output << '\n';
+  output << "the first number: " << '\n';
+  output << kh::countSeddle(a, n, m) << '\n';
+  res = kh::spiral(a, res, n, m);
+  output << "the second number: " << '\n';
+  kh::outputMtx(output, res, n, m);
+  output << '\n';
+  if (*argv[1] == '2')
+  {
     delete[] res;
-    delete[] b;
+    delete[] a;
   }
   return 0;
 }
