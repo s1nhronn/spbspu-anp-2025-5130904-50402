@@ -51,7 +51,7 @@ namespace saldaev
     return 0;
   }
 
-  size_t createCompactArray(char *data, const size_t length, char *&new_array)
+  size_t createCompactArray1(const char *data, const size_t length, char *&new_array)
   {
     char prev = ' ';
     char crnt = ' ';
@@ -59,12 +59,12 @@ namespace saldaev
     size_t spaces = 0;
     for (size_t i = 0; i < length; ++i)
     {
-      char crnt = data[i];
+      crnt = data[i];
       if (crnt != ' ')
       {
         leters++;
       }
-      if (prev != ' ' && crnt == ' ')
+      else if (prev != ' ' && crnt == ' ')
       {
         spaces++;
       }
