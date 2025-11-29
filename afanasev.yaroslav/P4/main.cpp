@@ -32,9 +32,9 @@ namespace afanasev
       {
         tmp[i] = str[i];
       }
+      tmp[size] = n;
       delete[] str;
       str = tmp;
-      str[size] = n;
       size++;
     }
 
@@ -44,7 +44,7 @@ namespace afanasev
       delete[] str;
       throw std::invalid_argument("empty string");
     }
-
+/*
     tmp = new char[size + 1];
     if (tmp == nullptr)
     {
@@ -56,7 +56,7 @@ namespace afanasev
       tmp[i] = str[i];
     }
     delete[] str;
-    str = tmp;
+    str = tmp;*/
     str[size] = '\0';
     size++;
 
