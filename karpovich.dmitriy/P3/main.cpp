@@ -122,11 +122,11 @@ int main(int argc, char** argv)
 
   size_t size = rows * cols;
   int* active_arr = nullptr;
-  int arr_static[karp::MAX];
+  int fixed_length_array[karp::MAX];
   bool is_dynamic = false;
 
   if (num == 1) {
-    active_arr = arr_static;
+    active_arr = fixed_length_array;
   } else {
     try {
       active_arr = new int[size];
