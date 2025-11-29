@@ -112,30 +112,22 @@ namespace pozdnyakov
 
   std::ostream& writeMatrix (std::ostream& out, const int* data, size_t rows, size_t cols)
   {
-    out << rows << ' ' << cols << '\n';
-
-    if (rows == 0 || cols == 0)
-    {
-      return out;
-    }
-
     for (size_t i = 0; i < rows; i++)
     {
       for (size_t j = 0; j < cols; j++)
       {
         out << data[i * cols + j];
-        out << ' ';
+        if (j + 1 < cols)
+        {
+          out << ' ';
+        }
       }
-      out << '\n';
+      if (i + 1 < rows)
+      {
+        out << '\n';
+      }
     }
 
-    return out;
-  }
-
-  std::ostream& writeResult (std::ostream& out, const int* data, size_t rows, size_t cols, size_t diagCount)
-  {
-    out << diagCount << '\n';
-    writeMatrix (out, data, rows, cols);
     return out;
   }
 
@@ -203,7 +195,8 @@ int main (int argc, char* argv[])
       std::cerr << "Cannot open output file\n";
       return 3;
     }
-    writeResult (out, nullptr, 0, 0, 0);
+    out << 0 << '\n';
+    out << 0 << ' ' << 0 << '\n';
     return 0;
   }
 
@@ -257,7 +250,9 @@ int main (int argc, char* argv[])
     return 3;
   }
 
-  writeResult (out, dataPtr, rows, cols, diagCount);
+  out << diagCount << '\n';
+  out << rows << ' ' << cols << '\n';
+  writeMatrix (out, dataPtr, rows, cols);
 
   if (mode == 2)
   {
