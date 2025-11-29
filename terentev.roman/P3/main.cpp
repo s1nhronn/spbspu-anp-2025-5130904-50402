@@ -113,7 +113,7 @@ void terentev::minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& 
   {
     if (ix % m == 0)
     {
-      ix = ix + 1;
+      ix++;
     }
     else if (ix % m == m - 1)
     {
@@ -202,11 +202,11 @@ void terentev::minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& 
   {
     if (a[p] == min && p % m != 0 && p % m != m - 1)
     {
-      kolmin = kolmin + 1;
+      kolmin++;
     }
     if (a[p] == max && p % m != 0 && p % m != m - 1)
     {
-      kolmax = kolmax + 1;
+      kolmax++;
     }
   }
 }
