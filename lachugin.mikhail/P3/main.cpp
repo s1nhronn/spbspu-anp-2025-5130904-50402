@@ -2,7 +2,7 @@
 #include <fstream>
 namespace lachugin
 {
-  std::ifstream &make(std::ifstream &fin, size_t rows, size_t cols, int *mtx)
+  std::istream &make(std::istream &fin, size_t rows, size_t cols, int *mtx)
   {
     for (size_t i = 0; i < rows * cols; i++)
     {
