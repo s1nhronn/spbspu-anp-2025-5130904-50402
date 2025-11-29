@@ -20,18 +20,17 @@ int main(int argc, char** argv)
     return 1;
   }
   int bruh;
-  try
+  if (std::strcmp(argv[1], "1") == 0)
   {
-    bruh = std::stoi(argv[1]);
+    bruh = 1;
   }
-  catch (const std::exception& e)
+  else if (std::strcmp(argv[1], "2") == 0)
   {
-    std::cerr << "First parameter is not a number\n";
-    return 1;
+    bruh = 2;
   }
-  if (bruh < 1 || bruh > 2)
+  else
   {
-    std::cerr << "First parameter is out of range\n";
+    std::cerr << "First parameter is not a number or out of range\n";
     return 1;
   }
   std::ifstream input(argv[2]);
