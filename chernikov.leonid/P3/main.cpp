@@ -83,14 +83,13 @@ int main(int argc, char ** argv)
   bool lwr_tri_mtx = chernikov::isDownTriangleMatrix(array, rows, cols);
   size_t cnt_loc_max = chernikov::localMaxQuantity(array, rows, cols);
   std::ofstream output(argv[3]);
-  if (!output || !(output << "cnt_loc_max = " << cnt_loc_max << '\n'
-   << "lwr_tri_mtx = " << lwr_tri_mtx << '\n'))
+  if (!output.is_open())
   {
     std::cerr << "Parameters cannot output\n";
     return 2;
   }
-  output.close();
-
+  output << "LWR_TRI_MTX = " << lwr_tri_mtx << "\n";
+  output << "CNT_LOC_MAX = " << cnt_loc_max << "\n";
   if (isArrayDynamic)
   {
     free(array);
