@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 namespace samarin {
-  bool checkMax(const int * a, int i, int j, int n);
+  bool checkMax(const int * a, size_t i, size_t j, size_t n);
   bool isLowerTriangular(const int * const a, size_t size, size_t n);
   size_t localMax(const int * a, size_t n, size_t m);
 }
@@ -90,7 +90,7 @@ int main(int argc, char ** argv)
   return 0;
 }
 
-bool samarin::checkMax(const int * a, int i, int j, int n)
+bool samarin::checkMax(const int * a, size_t i, size_t j, size_t n)
 {
   const int * upper_left_section = a + j - 1 + ((i - 1) * n);
   const int * current = a + j + (i * n);
