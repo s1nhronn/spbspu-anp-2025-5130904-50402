@@ -27,11 +27,10 @@ namespace dirko
       return;
     }
     std::strncpy(newStr, str, size);
-    /*for (size_t i = size; i < size * 2; ++i)
+    for (size_t i = size; i < size * 2; ++i)
     {
       newStr[i] = '\0';
-    }*/
-    newStr[size + 1] = '\0';
+    }
     free(str);
     str = newStr;
   }
