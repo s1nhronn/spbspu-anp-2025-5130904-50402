@@ -123,27 +123,75 @@ void terentev::minmax(const int* a, size_t n, size_t m, size_t& kolmin, size_t& 
     else
     {
       bool ifi = true;
-      if (a[ix] >= a[ix - m - 1]) ifi = false;
-      if (a[ix] >= a[ix - m]) ifi = false;
-      if (a[ix] >= a[ix - m + 1]) ifi = false;
-      if (a[ix] >= a[ix - 1]) ifi = false;
-      if (a[ix] >= a[ix + 1]) ifi = false;
-      if (a[ix] >= a[ix + m - 1]) ifi = false;
-      if (a[ix] >= a[ix + m]) ifi = false;
-      if (a[ix] >= a[ix + m + 1]) ifi = false;
+      if (a[ix] >= a[ix - m - 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix - m])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix - m + 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix - 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix + 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix + m - 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix + m])
+      {
+        ifi = false;
+      }
+      if (a[ix] >= a[ix + m + 1])
+      {
+        ifi = false;
+      }
       if (ifi)
       {
         min = a[ix];
       }
       ifi = true;
-      if (a[ix] <= a[ix - m - 1]) ifi = false;
-      if (a[ix] <= a[ix - m]) ifi = false;
-      if (a[ix] <= a[ix - m + 1]) ifi = false;
-      if (a[ix] <= a[ix - 1]) ifi = false;
-      if (a[ix] <= a[ix + 1]) ifi = false;
-      if (a[ix] <= a[ix + m - 1]) ifi = false;
-      if (a[ix] <= a[ix + m]) ifi = false;
-      if (a[ix] <= a[ix + m + 1]) ifi = false;
+      if (a[ix] <= a[ix - m - 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix - m])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix - m + 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix - 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix + 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix + m - 1])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix + m])
+      {
+        ifi = false;
+      }
+      if (a[ix] <= a[ix + m + 1])
+      {
+        ifi = false;
+      }
       if (ifi)
       {
         max = a[ix];
