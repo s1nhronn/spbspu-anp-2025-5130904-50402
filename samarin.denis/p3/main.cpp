@@ -4,7 +4,7 @@
 
 namespace samarin {
   bool checkMax(const int * a, size_t i, size_t j, size_t n);
-  bool isLowerTriangular(const int * const a, size_t size, size_t n);
+  bool isLowerTriangular(const int * a, size_t size, size_t n);
   size_t localMax(const int * a, size_t n, size_t m);
 }
 
@@ -36,7 +36,7 @@ int main(int argc, char ** argv)
 
   const size_t ARRAY_SIZE = 10000;
   int * matrix = nullptr;
-  int static_array[ARRAY_SIZE] = {};
+  int fixed_array[ARRAY_SIZE] = {};
 
   if (memory_type == '2') {
     matrix = reinterpret_cast< int* >(malloc(sizeof(int) * m * n));
@@ -45,7 +45,7 @@ int main(int argc, char ** argv)
       return 2;
     }
   } else {
-    matrix = static_array;
+    matrix = fixed_array;
   }
 
   for (size_t i = 0; i < m * n; ++i) {
@@ -108,7 +108,7 @@ bool samarin::checkMax(const int * a, size_t i, size_t j, size_t n)
   return true;
 }
 
-bool samarin::isLowerTriangular(const int * const a, size_t size, size_t n)
+bool samarin::isLowerTriangular(const int * a, size_t size, size_t n)
 {
   for (size_t i = 0; i < size; ++i) {
     for (size_t j = i + 1; j < size; ++j) {
