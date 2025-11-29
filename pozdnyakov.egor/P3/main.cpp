@@ -9,44 +9,17 @@ namespace pozdnyakov
   const size_t MAX_ROWS = 100;
   const size_t MAX_COLS = 100;
 
-  int** allocateMatrix(size_t rows, size_t cols)
+  int* allocateMatrix(size_t rows, size_t cols)
   {
-    int** data = static_cast <int**> (std::malloc(rows * sizeof(int*)));
-    if (data == nullptr)
-    {
-      return nullptr;
-    }
-
-    for (size_t i = 0; i < rows; i++)
-    {
-      data[i] = static_cast <int*>(std::malloc(cols * sizeof(int)));
-      if (data[i] == nullptr)
-      {
-        for (size_t j = 0; j < i; j++)
-        {
-          std::free(data[j]);
-        }
-        std::free(data);
-        return nullptr;
-      }
-    }
-
-    return data;
+    return reinterpret_cast <int*> (std::malloc(rows * cols * sizeof(int)));
   }
 
-  void freeMatrix(int** data, size_t rows)
+  void freeMatrix(int* data)
   {
-    if (data == nullptr)
+    if (data != nullptr)
     {
-      return;
+      std::free(data);
     }
-
-    for (size_t i = 0; i < rows; i++)
-    {
-      std::free(data[i]);
-    }
-
-    std::free(data);
   }
 
   std::istream& readDimensions(std::istream& in, size_t& rows, size_t& cols)
@@ -58,12 +31,10 @@ namespace pozdnyakov
     {
       return in;
     }
-
     if (!(in >> c))
     {
       return in;
     }
-
     if (r < 0 || c < 0)
     {
       in.setstate(std::ios::failbit);
@@ -72,37 +43,31 @@ namespace pozdnyakov
 
     rows = static_cast <size_t>(r);
     cols = static_cast <size_t>(c);
-
     return in;
   }
 
-  std::istream& readMatrix(std::istream& in,
-    int** data,
-    size_t rows,
-    size_t cols)
+  std::istream& readMatrix(std::istream& in, int* data, size_t rows, size_t cols)
   {
-    for (size_t i = 0; i < rows; i++)
+    size_t total = rows * cols;
+
+    for (size_t i = 0; i < total; i++)
     {
-      for (size_t j = 0; j < cols; j++)
+      if (!(in >> data[i]))
       {
-        if (!(in >> data[i][j]))
-        {
-          return in;
-        }
+        return in;
       }
     }
-
     return in;
   }
 
-  int countDiagonalsWithoutZero(int** data, size_t rows, size_t cols)
+  int countDiagonalsWithoutZero(const int* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
       return 0;
     }
 
-    int count = 0;
+    size_t count = 0;
     size_t maxDiag = rows + cols - 2;
 
     for (size_t k = 0; k <= maxDiag; k++)
@@ -112,16 +77,12 @@ namespace pozdnyakov
 
       for (size_t i = 0; i < rows; i++)
       {
-        size_t j =
-          (k >= i)
-          ? (k - i)
-          : MAX_COLS;
+        size_t j = (k >= i) ? (k - i) : MAX_COLS;
 
         if (j < cols)
         {
           exists = true;
-
-          if (data[i][j] == 0)
+          if (data[i * cols + j] == 0)
           {
             hasZero = true;
             break;
@@ -135,10 +96,10 @@ namespace pozdnyakov
       }
     }
 
-    return count;
+    return static_cast <int> (count);
   }
 
-  void transformMatrixLayers(int** data, size_t rows, size_t cols)
+  void transformMatrixLayers(int* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -156,32 +117,31 @@ namespace pozdnyakov
       {
         for (size_t c = layer; c < cols - layer; c++)
         {
-          data[r][c] += inc;
+          data[r * cols + c] += inc;
         }
       }
     }
   }
 
-  std::ostream& writeMatrixResults(std::ostream& out,
-    int diagCount,
-    int** data,
+  std::ostream& writeMatrix(std::ostream& out,
+    const int* data,
     size_t rows,
     size_t cols)
   {
-    out << diagCount << '\n';
-
-    out << rows << ' ' << cols << '\n';
     for (size_t i = 0; i < rows; i++)
     {
       for (size_t j = 0; j < cols; j++)
       {
-        out << data[i][j];
+        out << data[i * cols + j];
         if (j + 1 < cols)
         {
           out << ' ';
         }
       }
-      out << '\n';
+      if (i + 1 < rows)
+      {
+        out << '\n';
+      }
     }
 
     return out;
@@ -206,6 +166,7 @@ namespace pozdnyakov
 
     return true;
   }
+
 }
 
 int main(int argc, char* argv[])
@@ -223,7 +184,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  long taskType = std::strtol(argv[1], nullptr, 10);
+  long mode = std::strtol(argv[1], nullptr, 10);
   const char* inputFile = argv[2];
   const char* outputFile = argv[3];
 
@@ -253,44 +214,68 @@ int main(int argc, char* argv[])
     }
 
     out << 0 << '\n';
-    out << 0 << ' ' << 0 << '\n';
-
+    writeMatrix(out, reinterpret_cast <const int*> (nullptr), 0, 0);
     return 0;
   }
 
-  if (taskType == 1 && rows * cols > MAX_ELEMENTS)
+  if (mode == 1)
   {
-    std::cerr << "Matrix size exceeds limits\n";
-    return 2;
+    if (rows * cols > MAX_ELEMENTS || rows > MAX_ROWS || cols > MAX_COLS)
+    {
+      std::cerr << "Matrix size exceeds limits\n";
+      return 2;
+    }
   }
 
-  int** matrix = allocateMatrix(rows, cols);
-  if (matrix == nullptr)
+  int fixedData[MAX_ROWS * MAX_COLS] = { 0 };
+  int* dataPtr = nullptr;
+
+  if (mode == 1)
   {
-    std::cerr << "Memory allocation failed\n";
-    return 2;
+    dataPtr = fixedData;
+  }
+  else
+  {
+    dataPtr = allocateMatrix(rows, cols);
+    if (dataPtr == nullptr)
+    {
+      std::cerr << "Memory allocation failed\n";
+      return 2;
+    }
   }
 
-  if (!readMatrix(in, matrix, rows, cols))
+  if (!readMatrix(in, dataPtr, rows, cols))
   {
     std::cerr << "Invalid matrix data\n";
-    freeMatrix(matrix, rows);
+    if (mode == 2)
+    {
+      freeMatrix(dataPtr);
+    }
     return 2;
   }
 
-  int diagCount = countDiagonalsWithoutZero(matrix, rows, cols);
-  transformMatrixLayers(matrix, rows, cols);
+  int diagCount = countDiagonalsWithoutZero(dataPtr, rows, cols);
+  transformMatrixLayers(dataPtr, rows, cols);
 
   std::ofstream out(outputFile);
   if (!out.is_open())
   {
     std::cerr << "Cannot open output file\n";
-    freeMatrix(matrix, rows);
+    if (mode == 2)
+    {
+      freeMatrix(dataPtr);
+    }
     return 3;
   }
 
-  writeMatrixResults(out, diagCount, matrix, rows, cols);
+  out << diagCount << '\n';
+  out << rows << ' ' << cols << '\n';
+  writeMatrix(out, dataPtr, rows, cols);
 
-  freeMatrix(matrix, rows);
+  if (mode == 2)
+  {
+    freeMatrix(dataPtr);
+  }
+
   return 0;
 }
