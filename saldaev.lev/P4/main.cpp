@@ -174,6 +174,7 @@ int main()
   }
   std::cout << "\n";
   free(new_line);
+  
   new_line = nullptr;
   nk = saldaev::latRmv(line, k, new_line);
   if (nk == 0)
