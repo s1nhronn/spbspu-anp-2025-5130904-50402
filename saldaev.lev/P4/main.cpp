@@ -82,9 +82,27 @@ namespace saldaev
     return (leters + spaces);
   }
 
-  size_t spcRmv(char *arr, size_t length, char *&new_arr)
+  size_t createCompactArray2(const char *data, const size_t length, char *&new_array)
   {
-    size_t new_length = createCompactArray(arr, length, new_arr);
+    size_t new_length = length;
+    for (size_t i = 0; i < length; ++i)
+    {
+      if (isalpha(data[i]))
+      {
+        new_length--;
+      }
+    }
+    new_array = static_cast< char * >(malloc(new_length * sizeof(char)));
+    if (new_array == nullptr)
+    {
+      return 0;
+    }
+    return new_length;
+  }
+
+  size_t spcRmv(const char *arr, size_t length, char *&new_arr)
+  {
+    size_t new_length = createCompactArray1(arr, length, new_arr);
     if (new_length == 0)
     {
       return 0;
@@ -106,29 +124,64 @@ namespace saldaev
     }
     return new_length;
   }
+  size_t latRmv(char *arr, size_t length, char *&new_arr)
+  {
+    size_t new_length = createCompactArray2(arr, length, new_arr);
+    if (new_length == 0)
+    {
+      return 0;
+    }
+    size_t crnt_digit = 0;
+    char crnt_char = ' ';
+    size_t i = 0;
+    while (crnt_digit < new_length)
+    {
+      crnt_char = arr[i];
+      if (!isalpha(crnt_char))
+      {
+        new_arr[crnt_digit] = crnt_char;
+        crnt_digit++;
+      }
+      i++;
+    }
+    return new_length;
+  }
 }
 
 int main()
 {
-  char *a = nullptr;
-  size_t k = saldaev::getLine(std::cin, a, 10);
+  char *line = nullptr;
+  size_t k = saldaev::getLine(std::cin, line, 10);
   if (k == 0)
   {
     std::cerr << "Could not read the string\n";
     return 1;
   }
-  char *b = nullptr;
-  k = saldaev::spcRmv(a, k, b);
-  if (k == 0)
+
+  char *new_line = nullptr;
+  size_t nk = saldaev::spcRmv(line, k, new_line);
+  if (nk == 0)
   {
     std::cerr << "Could not convert the string\n";
     return 1;
   }
-  for (size_t i = 0; i < k; ++i)
+  for (size_t i = 0; i < nk; ++i)
   {
-    std::cout << b[i];
+    std::cout << new_line[i];
   }
   std::cout << "\n";
-  free(a);
-  free(b);
+
+  nk = saldaev::latRmv(line, k, new_line);
+  if (nk == 0)
+  {
+    std::cerr << "Could not convert the string\n";
+    return 1;
+  }
+  for (size_t i = 0; i < nk; ++i)
+  {
+    std::cout << new_line[i];
+  }
+  std::cout << "\n";
+  free(line);
+  free(new_line);
 }
