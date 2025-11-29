@@ -5,6 +5,7 @@
 
 namespace dirko
 {
+  const size_t alphaSize = 26;
   const char *find(const char *start, const char *end, char target)
   {
     for (const char *ch = start; ch < end; ++ch)
@@ -16,13 +17,14 @@ namespace dirko
     }
     return end;
   }
-  char *extendSize(char *str, size_t size)
+  void extendSize(char *str, size_t size)
   {
-    char *newStr = reinterpret_cast< char * >(malloc(size * 2 * sizeof(char)));
+    char *newStr = reinterpret_cast<char *>(malloc(size * 2 * sizeof(char)));
     if (newStr == nullptr)
     {
       free(str);
-      throw std::bad_alloc();
+      str = nullptr;
+      return;
     }
     std::strncpy(newStr, str, size);
     for (size_t i = size; i < size * 2; ++i)
@@ -30,31 +32,30 @@ namespace dirko
       newStr[i] = '\0';
     }
     free(str);
-    return newStr;
+    str = newStr;
   }
-  char *getLine(std::istream &in, size_t &size, size_t &copasity)
+  std::istream &getLine(std::istream &in, char *str, size_t &size, size_t &copasity)
   {
     bool isSkipWp = in.flags() & std::ios::skipws;
     if (isSkipWp)
     {
       in >> std::noskipws;
     }
-    char *str = reinterpret_cast< char * >(malloc(sizeof(char)));
+    str = reinterpret_cast<char *>(malloc(sizeof(char) * copasity));
+    if (str == nullptr)
+    {
+      return;
+    }
     char ch = 0;
     while (in >> ch && ch != '\n')
     {
       if (size == copasity)
       {
-        str = extendSize(str, size);
+        extendSize(str, size);
         copasity *= 2;
       }
       str[size] = ch;
       ++size;
-    }
-    if (in.fail())
-    {
-      free(str);
-      throw std::logic_error("Cant read");
     }
     if (isSkipWp)
     {
@@ -62,16 +63,15 @@ namespace dirko
     }
     if (size == copasity)
     {
-      str = extendSize(str, size);
+      extendSize(str, size);
       copasity *= 2;
     }
     ++size;
-    return str;
   }
   size_t doDifLat(const char *str, size_t size)
   {
     size_t count = 0;
-    char seen[26] = {};
+    char seen[alphaSize] = {};
     for (size_t i = 0; i < size; ++i)
     {
       if (std::isalpha(str[i]))
@@ -89,7 +89,7 @@ namespace dirko
   {
     for (size_t i = 0; i < size; ++i)
     {
-      distention[i] = std::tolower(source[i]);
+      distention[i] = (std::isalpha(source[i])) ? std::tolower(source[i]) : source[i];
     }
     return distention;
   }
@@ -98,22 +98,20 @@ int main()
 {
   char *str = nullptr;
   size_t size = 0, copasity = 1;
-  try
-  {
-    str = dirko::getLine(std::cin, size, copasity);
-  }
-  catch (const std::bad_alloc &e)
+
+  dirko::getLine(std::cin, str, size, copasity);
+  if (str == nullptr)
   {
     std::cerr << "Cant alloc\n";
     return 1;
   }
-  catch (const std::logic_error &e)
+  if (std::cin.fail())
   {
-    std::cerr << e.what() << "\n";
+    std::cerr << "Cant read\n";
     return 1;
   }
   size_t result1 = dirko::doDifLat(str, size);
-  char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * size));
+  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * size));
   if (result2 == nullptr)
   {
     free(str);
