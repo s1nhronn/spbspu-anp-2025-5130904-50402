@@ -71,7 +71,7 @@ int main(int argc, char **argv)
       delete[] matrix;
     }
     return 2;
-  };
+  }
   std::ofstream out(argv[3]);
   if (!out.is_open())
   {
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
   shirokov::spiral(matrix, m, n);
   out << "Решение варианта 1:\n";
   shirokov::outputMatrix(out, matrix, m, n) << '\n';
-  out << "Решение варианта 2:\n" << (res2 ? "true" : "false") << '\n';
+  out << "Решение варианта 2:\n" << std::boolalpha << res2 << '\n';
   if (num == 2)
   {
     delete[] matrix;
