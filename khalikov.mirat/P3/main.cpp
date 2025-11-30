@@ -197,6 +197,7 @@ int main(int argc, char ** argv)
     catch (const std::bad_alloc &)
     {
       std::cerr << "bad_alloc" << '\n';
+      delete[] res_array;
       return 2;
     }
   }
@@ -207,6 +208,7 @@ int main(int argc, char ** argv)
     if (*argv[1] == '2')
     {
       delete[] default_array;
+      delete[] res_array;
     }
     return 2;
   }
@@ -215,6 +217,11 @@ int main(int argc, char ** argv)
   if (!output.is_open())
   {
     std::cerr << "Output file is not opened";
+    if (*argv[1] == '2')
+    {
+      delete[] default_array;
+      delete[] res_array;
+    }
     return 2;
   }
   result_count = kh::countSeddle(default_array, n, m);
@@ -227,6 +234,7 @@ int main(int argc, char ** argv)
   if (*argv[1] == '2')
   {
     delete[] default_array;
+    delete[] res_array;
   }
   return 0;
 }
