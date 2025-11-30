@@ -9,7 +9,7 @@ namespace petrov
   {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
-        b[i*cols+j] = a[i*cols+j];
+        b[i * cols + j] = a[i * cols + j];
       }
     }
   }
@@ -18,7 +18,7 @@ namespace petrov
   {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
-        in >> a[i*cols+j];
+        in >> a[i * cols + j];
         if (in.fail()) {
           return in;
         }
@@ -32,7 +32,7 @@ namespace petrov
     out << rows << ' ' << cols;
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
-        out << ' ' << a[i*cols+j];
+        out << ' ' << a[i * cols + j];
       }
     }
     return out;
@@ -47,19 +47,19 @@ namespace petrov
     int counter = 1;
     while (up <= down && left <= right) {
       for (size_t j = left; j <= right; ++j) {
-        a[down*c+j] += counter++;
+        a[down * c + j] += counter++;
       }
       for (size_t i = down - 1; i >= up && i < r; --i) {
-        a[i*c+right] += counter++;
+        a[i * c + right] += counter++;
       }
       if (up < down) {
         for (size_t j = right - 1; j >= left && j < c; --j) {
-          a[up*c+j] += counter++;
+          a[up * c + j] += counter++;
         }
       }
       if (left < right) {
         for (size_t i = up + 1; i < down; ++i) {
-          a[i*c+left] += counter++;
+          a[i * c + left] += counter++;
         }
       }
       up++;
@@ -76,19 +76,19 @@ namespace petrov
     for (size_t border = 0; border < borders; ++border) {
       int counter = border + 1;
       for (size_t j = border; j < cols - border; ++j) {
-        a[border*cols+j]+=counter;
+        a[border * cols + j] += counter;
       }
       for (size_t i = border + 1; i < rows - border; ++i) {
-        a[i*cols+(cols-1-border)]+=counter;
+        a[i * cols + (cols - 1 - border)] += counter;
       }
       if (border < rows - 1 - border) {
         for (size_t j = cols - 1 - border; j-- > border; ) {
-          a[(rows-1-border)*cols+j]+=counter;
+          a[(rows - 1 - border) * cols + j] += counter;
         }
       }
       if (border < cols - 1 - border) {
         for (size_t i = rows - 1 - border; i-- > border + 1; ) {
-          a[i*cols+border]+=counter;
+          a[i * cols + border] += counter;
         }
       }
     }
@@ -134,46 +134,38 @@ int main(int argc, char** argv)
   int mtx_var1[max_lenght] = {0};
   int* mtx1 = nullptr;
   int* mtx2 = nullptr;
-  try {
-    if (rows == 0 || cols == 0) {
-      return 0;
-    }
-    if (var == 1) {
-      mtx1 = mtx_var1;
-      mtx2 = new int[rows*cols]();
-    } else {
-      mtx1 = new int[rows*cols]();
-      mtx2 = new int[rows*cols]();
-    }
-    if (petrov::readMTX(input, mtx1, rows, cols).fail()) {
-      std::cerr << "Cant read matrix" << '\n';
-      if (var == 1)
-      {
-        delete[] mtx1;
-      } else {
-        delete[] mtx1;
-        delete[] mtx2;
-      }
-      return 2;
-    }
-    petrov::copyMTX(mtx1, mtx2, rows, cols);
-    petrov::lftBotCnt(mtx1, rows, cols);
-    petrov::fllIncWav(mtx2, rows, cols);
-    output << "Var-1 ";
-    petrov::writeMTX(output, mtx1, rows, cols) << '\n';
-    output << "Var-2 ";
-    petrov::writeMTX(output, mtx2, rows, cols) << '\n';
-    if (var == 2) {
-      delete[] mtx1;
-    }
-    delete[] mtx2;
+  if (rows == 0 || cols == 0) {
     return 0;
-  } catch (const std::exception& e) {
-    if (var == 2) {
+  }
+  if (var == 1) {
+    mtx1 = mtx_var1;
+    mtx2 = new int[rows * cols]();
+  } else {
+    mtx1 = new int[rows * cols]();
+    mtx2 = new int[rows * cols]();
+  }
+  if (petrov::readMTX(input, mtx1, rows, cols).fail()) {
+    std::cerr << "Cant read matrix" << '\n';
+    if (var == 1) {
+      delete[] mtx2;
+    } else {
       delete[] mtx1;
+      delete[] mtx2;
     }
-    delete[] mtx2;
-    std::cerr << e.what() << '\n';
     return 2;
   }
+  petrov::copyMTX(mtx1, mtx2, rows, cols);
+  petrov::lftBotCnt(mtx1, rows, cols);
+  petrov::fllIncWav(mtx2, rows, cols);
+  output << "Var-1 ";
+  petrov::writeMTX(output, mtx1, rows, cols) << '\n';
+  output << "Var-2 ";
+  petrov::writeMTX(output, mtx2, rows, cols) << '\n';
+  if (var == 1) {
+    delete[] mtx2;
+  } else {
+    delete[] mtx1;
+    delete[] mtx2;
+  }
+  return 0;
 }
