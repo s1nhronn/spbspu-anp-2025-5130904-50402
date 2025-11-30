@@ -3,31 +3,33 @@
 #include <cstdlib>
 #include <memory>
 
-namespace petrov {
-  void rm(int* mtx) {
-    if (!mtx) {
-      return;
-    }
-    delete[] mtx;
-  }
-
-  std::ifstream& readMTX(std::ifstream& in, int* a, size_t rows, size_t cols) {
+namespace petrov
+{
+  void copyMTX(const int* a, int* b, size_t rows, size_t cols)
+  {
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
-        if (!(in >> a[i*cols+j])) {
-          throw std::runtime_error("Failed to read matrix element");
+        b[i*cols+j] = a[i*cols+j];
+      }
+    }
+  }
+
+  std::ifstream& readMTX(std::ifstream& in, int* a, size_t rows, size_t cols)
+  {
+    for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+        in >> a[i*cols+j];
+        if (in.fail()) {
+          return in;
         }
       }
     }
-    char temp = ' ';
-    if (in >> temp) {
-      throw std::runtime_error("Too many arguments for array");
-    }
-    in.clear();
     return in;
   }
 
-  std::ofstream& writeMTX(std::ofstream& out, const int* a, size_t rows, size_t cols) {
+  std::ofstream& writeMTX(std::ofstream& out, const int* a, size_t rows, size_t cols)
+  {
+    out << rows << ' ' << cols;
     for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
         out << ' ' << a[i*cols+j];
@@ -36,7 +38,8 @@ namespace petrov {
     return out;
   }
 
-  void lftBotCnt(int* a, size_t r, size_t c) {
+  void lftBotCnt(int* a, size_t r, size_t c)
+  {
     if (r == 0 || c == 0 || !a) {
       return;
     }
@@ -66,7 +69,8 @@ namespace petrov {
     }
   }
 
-  void fllIncWav(int* a, size_t rows, size_t cols) {
+  void fllIncWav(int* a, size_t rows, size_t cols)
+  {
     size_t min_data = (rows < cols) ? rows : cols;
     size_t borders = (min_data + 1) / 2;
     for (size_t border = 0; border < borders; ++border) {
@@ -91,7 +95,8 @@ namespace petrov {
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
   if (argc != 4) {
     std::cerr << (argc < 4 ? "Not enough arguments\n" : "Too many arguments\n");
     return 1;
@@ -116,44 +121,58 @@ int main(int argc, char** argv) {
     std::cerr << "Cannot open file\n";
     return 2;
   }
-  int rows = 0, cols = 0;
+  size_t rows = 0, cols = 0;
   if (!(input >> rows >> cols)) {
     std::cerr << "Invalid matrix data\n";
     return 2;
   }
-  output << rows << ' ' << cols;
-  int mtx_var1[10000] = {0};
-  int* mtx_var2 = nullptr;
-  int* mtx = nullptr;
+  if (rows * cols > 10000) {
+    std::cerr << "Matrix too big for matrix\n";
+    return 2;
+  }
+  const size_t max_lenght = 10000;
+  int mtx_var1[max_lenght] = {0};
+  int* mtx1 = nullptr;
+  int* mtx2 = nullptr;
   try {
-    if (rows == 0 || cols  == 0) {
+    if (rows == 0 || cols == 0) {
       return 0;
     }
     if (var == 1) {
-      if (rows * cols > 10000) {
-        std::cerr << "Matrix too big for static buffer\n";
-        return 2;
+      mtx1 = mtx_var1;
+      mtx2 = new int[rows*cols]();
+    } else {
+      mtx1 = new int[rows*cols]();
+      mtx2 = new int[rows*cols]();
+    }
+    if (petrov::readMTX(input, mtx1, rows, cols).fail()) {
+      std::cerr << "Cant read matrix" << '\n';
+      if (var == 1)
+      {
+        delete[] mtx1;
+      } else {
+        delete[] mtx1;
+        delete[] mtx2;
       }
-      mtx = mtx_var1;
-    } else {
-      mtx_var2 = new int[rows*cols]();
-      mtx = mtx_var2;
+      return 2;
     }
-    petrov::readMTX(input, mtx, rows, cols);
-    if (var == 1) {
-      petrov::lftBotCnt(mtx, rows, cols);
-    } else {
-      petrov::fllIncWav(mtx, rows, cols);
-    }
-    petrov::writeMTX(output, mtx, rows, cols);
+    petrov::copyMTX(mtx1, mtx2, rows, cols);
+    petrov::lftBotCnt(mtx1, rows, cols);
+    petrov::fllIncWav(mtx2, rows, cols);
+    output << "Var-1 ";
+    petrov::writeMTX(output, mtx1, rows, cols) << '\n';
+    output << "Var-2 ";
+    petrov::writeMTX(output, mtx2, rows, cols) << '\n';
     if (var == 2) {
-      petrov::rm(mtx_var2);
+      delete[] mtx1;
     }
+    delete[] mtx2;
     return 0;
   } catch (const std::exception& e) {
-    if (var == 2 && mtx_var2 != nullptr) {
-      petrov::rm(mtx_var2);
+    if (var == 2) {
+      delete[] mtx1;
     }
+    delete[] mtx2;
     std::cerr << e.what() << '\n';
     return 2;
   }
