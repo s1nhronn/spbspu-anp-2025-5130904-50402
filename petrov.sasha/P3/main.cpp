@@ -3,8 +3,7 @@
 #include <cstdlib>
 #include <memory>
 
-namespace petrov
-{
+namespace petrov {
   void copyMTX(const int* a, int* b, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows; ++i) {
