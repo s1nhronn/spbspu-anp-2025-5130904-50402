@@ -57,7 +57,7 @@ namespace strelnikov {
       }
       if (top <= bot && left <= right) {
         for (size_t j = right + 1; j >= left && j > 0; --j) {
-          mtx[top * c + j-1] += cnt++;
+          mtx[top * c + j - 1] += cnt++;
         }
         ++top;
       }
