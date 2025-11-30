@@ -246,7 +246,7 @@ int main(int argc, char ** argv)
   if (*argv[1] == '2')
   {
     delete[] default_array;
-    delete[] res_array;
   }
+  delete[] res_array;
   return 0;
 }
