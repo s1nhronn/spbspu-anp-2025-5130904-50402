@@ -220,8 +220,8 @@ int main(int argc, char ** argv)
     if (*argv[1] == '2')
     {
       delete[] default_array;
-      delete[] res_array;
     }
+    delete[] res_array;
     return 2;
   }
   input.close();
@@ -232,8 +232,8 @@ int main(int argc, char ** argv)
     if (*argv[1] == '2')
     {
       delete[] default_array;
-      delete[] res_array;
     }
+    delete[] res_array;
     return 2;
   }
   result_count = kh::countSeddle(default_array, n, m);
