@@ -4,6 +4,7 @@
 
 namespace khalikov
 {
+  bool proverka(const char * str);
   void outputMtx(std::ostream & out, const int * a, size_t n, size_t m);
   std::istream & inputMtx(std::istream & in, int * a, size_t n, size_t m);
   size_t countSeddle(const int * a, size_t n, size_t m);
@@ -11,6 +12,18 @@ namespace khalikov
     size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c);
   int * spiral(const int * a, int * res, size_t n, size_t m);
   const size_t MTXSIZE = 10000;
+}
+
+bool khalikov::proverka(const char * str)
+{
+  size_t length = strlen(str);
+
+  if (length != 1)
+  {
+    return false;
+  }
+
+  return true;
 }
 
 void khalikov::outputMtx(std::ostream & out, const int * a, size_t n, size_t m)
@@ -136,7 +149,6 @@ int * khalikov::spiral(const int * a, int * res, size_t n, size_t m)
 int main(int argc, char ** argv)
 {
   namespace kh = khalikov;
-  size_t length = std::strlen(argv[1]);
   if (argc < 4)
   {
     std::cerr << "Not enough arguments" << '\n';
@@ -147,7 +159,7 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments" << '\n';
     return 1;
   }
-  if (length != 1)
+  if (!kh::proverka(argv[1]))
   {
     std::cerr << "First parameter is not a number" << '\n';
     return 1;
