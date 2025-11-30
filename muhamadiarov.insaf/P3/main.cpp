@@ -7,15 +7,13 @@
 
 namespace muhamadiarov
 {
-  int maxInt();
-  int minInt();
-  int* fllIncWav(int* ptr, int rows, int colons);
-  void outMatric(std::ofstream &output, int r, int c, int* res1);
-  long long toFindMaxRight(int* ptr, int order);
-  long long toFindMaxinLeft(int* ptr, int order);
-  long long maxSumMdg(int* ptr, int order);
-  bool checkSizeMatric(int r, int c);
-  void inputMatric(int* ptr, int r, int c, std::istream &input);
+  size_t maxSize();
+  int* fllIncWav(int* ptr, size_t rows, size_t colons);
+  void outMatric(std::ofstream &output, size_t r, size_t c, int* res1);
+  long long toFindMaxRight(int* ptr, size_t order);
+  long long toFindMaxinLeft(int* ptr, size_t order);
+  long long maxSumMdg(int* ptr, size_t order);
+  bool checkSizeMatric(size_t r, size_t c);
 }
 
 int main(int argc, char* argv[])
@@ -52,7 +50,8 @@ int main(int argc, char* argv[])
     std::cerr << "Error is openning file\n";
     return 2;
   }
-  int rows, colons = 0;
+  size_t rows = 0;
+  size_t colons = 0;
   input >> rows >> colons;
   if (input.eof() || input.fail())
   {
@@ -60,14 +59,11 @@ int main(int argc, char* argv[])
     return 2;
   }
   bool isSizeWrong = muh::checkSizeMatric(rows, colons);
-  if (input.eof() || input.fail())
   if (isSizeWrong)
   {
     std::cerr << "Wrong size of matric\n";
     return 2;
   }
-  int* res1 = nullptr;
-  long long int res2 = 0;
   if (rows == 0 && colons == 0)
   {
     std::ofstream output(argv[3], std::ios::app);
@@ -80,15 +76,6 @@ int main(int argc, char* argv[])
   if (mode == 1)
   {
     ptr = arr;
-    try
-    {
-      muh::inputMatric(ptr, rows, colons, input);
-    }
-    catch (const std::logic_error &e)
-    {
-      std::cerr << e.what() << '\n';
-      return 2;
-    }
   }
   else if (mode == 2)
   {
@@ -98,23 +85,35 @@ int main(int argc, char* argv[])
       std::cerr << "Failed to allocate memory\n";
       return 1;
     }
-    try
+  }
+  for (size_t i = 0; i < rows * colons; ++i)
+  {
+    input >> ptr[i];
+    if (input.eof())
     {
-      muh::inputMatric(ptr, rows, colons, input);
+      std::cerr << "Not enough the numbers of elements\n";
+      if (mode == 2)
+      {
+        free(ptr);
+      }
+      return 2;
     }
-    catch (const std::logic_error &e)
+    else if (input.fail())
     {
-      free(ptr);
-      std::cerr << e.what() << '\n';
-      return 1;
+      std::cerr << "Wrong working read\n";
+      if (mode == 2)
+      {
+        free(ptr);
+      }
+      return 2;
     }
   }
   input.close();
-  int order = std::min(rows, colons);
-  res2 = muh::maxSumMdg(ptr, order);
-  res1 = muh::fllIncWav(ptr, rows, colons);
+  size_t order = std::min(rows, colons);
+  long long int res2 = muh::maxSumMdg(ptr, order);
+  int* res1 = muh::fllIncWav(ptr, rows, colons);
   std::ofstream output(argv[3], std::ios::app);
-  if(!output)
+  if (!output)
   {
     std::cerr << "Error in opening file\n";
     if (mode == 2)
@@ -126,6 +125,7 @@ int main(int argc, char* argv[])
   muh::outMatric(output, rows, colons, res1);
   output << '\n';
   output << res2;
+  output << '\n';
   output.close();
   if (mode == 2)
   {
@@ -134,17 +134,17 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-int* muhamadiarov::fllIncWav(int* ptr, int rows, int colons)
+int* muhamadiarov::fllIncWav(int* ptr, size_t rows, size_t colons)
 {
-  for (int j = 0; j < rows; ++j)
+  for (size_t j = 0; j < rows; ++j)
   {
-    for (int i = 0; i < colons; ++i)
+    for (size_t i = 0; i < colons; ++i)
     {
-      int increase = 0;
-      int top = j;
-      int bottom = rows - 1 - j;
-      int left = i;
-      int right = colons - 1 - i;
+      size_t increase = 0;
+      size_t top = j;
+      size_t bottom = rows - 1 - j;
+      size_t left = i;
+      size_t right = colons - 1 - i;
       increase = std::min(std::min(top, bottom), std::min(left, right)) + 1;
       ptr[j * colons + i] += increase;
     }
@@ -152,7 +152,7 @@ int* muhamadiarov::fllIncWav(int* ptr, int rows, int colons)
   return ptr;
 }
 
-long long muhamadiarov::maxSumMdg(int* ptr, int order)
+long long muhamadiarov::maxSumMdg(int* ptr, size_t order)
 {
   namespace muh = muhamadiarov;
   long long max_result = 0;
@@ -162,16 +162,22 @@ long long muhamadiarov::maxSumMdg(int* ptr, int order)
   return max_result;
 }
 
-long long muhamadiarov::toFindMaxinLeft(int* ptr, int order)
+long long muhamadiarov::toFindMaxinLeft(int* ptr, size_t order)
 {
   long long max_r = 0;
   long long result = 0;
-  int diag = 0;
+  size_t diag = 0;
   while (diag < order)
   {
-    for (int i = diag, j = 0; i >= 0 && j <= diag; --i, ++j)
+    size_t i = diag;
+    for (size_t j = 0; j <= diag; ++j)
     {
       result += ptr[j * order + i];
+      if (i == 0)
+      {
+        break;
+      }
+      --i;
     }
     ++diag;
     max_r = std::max(result, max_r);
@@ -180,14 +186,14 @@ long long muhamadiarov::toFindMaxinLeft(int* ptr, int order)
   return max_r;
 }
 
-long long muhamadiarov::toFindMaxRight(int* ptr, int order)
+long long muhamadiarov::toFindMaxRight(int* ptr, size_t order)
 {
   long long int max_r = 0;
   long long int result = 0;
-  int diag = order - 1;
+  size_t diag = order - 1;
   while (diag > 0)
   {
-    for (int i = order - 1, j = diag; j < order && i >= diag; --i, ++j)
+    for (size_t i = order - 1, j = diag; j < order && i >= diag; --i, ++j)
     {
       result += ptr[j * order + i];
     }
@@ -198,47 +204,25 @@ long long muhamadiarov::toFindMaxRight(int* ptr, int order)
   return max_r;
 }
 
-void muhamadiarov::outMatric(std::ofstream &output, int r, int c, int* res1)
+void muhamadiarov::outMatric(std::ofstream &output, size_t r, size_t c, int* res1)
 {
-  for (int i = 0; i < r * c; ++i)
+  for (size_t i = 0; i < r * c; ++i)
   {
-    output << res1[i] << " ";
+    output << res1[i] << ' ';
   }
 }
 
-int muhamadiarov::maxInt()
+size_t muhamadiarov::maxSize()
 {
   using namespace std;
-  return numeric_limits<int>::max();
+  return numeric_limits< size_t >::max();
 }
 
-int muhamadiarov::minInt()
-{
-  using namespace std;
-  return numeric_limits<int>::min();
-}
-
-bool muhamadiarov::checkSizeMatric(int r, int c)
+bool muhamadiarov::checkSizeMatric(size_t r, size_t c)
 {
   namespace muh = muhamadiarov;
   bool c1 = (r != 0 && c == 0) || (r == 0 && c != 0);
-  bool c2 = r > muh::maxInt() || c < muh::minInt() || c < 0 || r < 0;
+  bool c2 = r > muh::maxSize() || c > muh::maxSize();
   return c1 || c2;
 }
 
-void muhamadiarov::inputMatric(int* ptr, int r, int c, std::istream &input)
-{
-  namespace muh = muhamadiarov;
-  for (int i = 0; i < r * c; ++i)
-  {
-    input >> ptr[i];
-    if (input.eof())
-    {
-      throw std::logic_error("Not enough the numbers of elements\n");
-    }
-    else if (input.fail())
-    {
-      throw std::logic_error("Wrong working read\n");
-    }
-  }
-}
