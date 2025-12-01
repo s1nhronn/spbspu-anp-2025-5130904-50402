@@ -1,16 +1,18 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include <limits>
 
 namespace saldaev
 {
   const size_t block_size = 10;
-  size_t getLine(std::istream &in, char *&data, const size_t block_size)
+  
+  char * getLine(std::istream &in, const size_t block_size)
   {
-    data = reinterpret_cast< char * >(malloc(block_size * sizeof(char)));
+    char * data = reinterpret_cast< char * >(malloc((block_size + 1) * sizeof(char)));
     if (data == nullptr)
     {
-      return 0;
+      return nullptr;
     }
     bool skipws_on = in.flags() & std::ios_base::skipws;
     if (skipws_on)
@@ -26,7 +28,7 @@ namespace saldaev
       size++;
       if (size > capacity)
       {
-        char *tmp = reinterpret_cast< char * >(malloc((capacity + block_size) * sizeof(char)));
+        char *tmp = reinterpret_cast< char * >(malloc((capacity + block_size + 1) * sizeof(char)));
         if (tmp == nullptr)
         {
           free(data);
@@ -34,7 +36,7 @@ namespace saldaev
           {
             in >> std::skipws;
           }
-          return 0;
+          return nullptr;
         }
         capacity += block_size;
         for (size_t i = 0; i < size - 1; ++i)
@@ -52,41 +54,50 @@ namespace saldaev
     }
     if (crnt_char == '\r' || crnt_char == '\n' || in.eof())
     {
-      return size;
+      data[size] = '\0';
+      return data;
     }
     free(data);
-    return 0;
+    return nullptr;
   }
 
-  size_t createCompactArray1(const char *data, const size_t length, char *&new_array)
+  char * createCompactArray1(const char *data)
   {
+    if (data == nullptr)
+    {
+        return nullptr;
+    }
     char prev = ' ';
     char crnt = ' ';
     size_t leters = 0;
     size_t spaces = 0;
-    for (size_t i = 0; i < length; ++i)
+    size_t i = 0;
+    crnt = data[i];
+    while (crnt != '\0')
     {
-      crnt = data[i];
-      if (crnt != ' ')
-      {
-        leters++;
-      }
-      else if (prev != ' ' && crnt == ' ')
-      {
-        spaces++;
-      }
-      prev = crnt;
+        if (crnt != ' ')
+        {
+            leters++;
+        }
+        else if (prev != ' ' && crnt == ' ')
+        {
+            spaces++;
+        }
+        prev = crnt;
+        i++;
+        crnt = data[i];
     }
-    if (leters && crnt == ' ')
+    if (leters && prev == ' ')
     {
-      spaces--;
+        spaces--;
     }
-    new_array = reinterpret_cast< char * >(malloc((leters + spaces) * sizeof(char)));
+    char *new_array = reinterpret_cast<char *>(malloc((leters + spaces + 1) * sizeof(char)));
     if (new_array == nullptr)
     {
-      return 0;
+        return nullptr;
     }
-    return (leters + spaces);
+    new_array[leters + spaces] = '\0';
+    return new_array;
   }
 
   size_t createCompactArray2(const char *data, const size_t length, char *&new_array)
