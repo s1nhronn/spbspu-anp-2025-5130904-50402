@@ -3,29 +3,23 @@
 
 namespace strelnikov {
 
-  void addSymb(char** str, size_t& s, char ch)
+  char * addSymb(char* str, size_t& s, char ch)
   {
     char* tmp = reinterpret_cast< char* >(malloc(s + 2));
     if (tmp == nullptr) {
-      if (*str) {
-        free(*str);
-      }
-      throw std::bad_alloc();
+      return nullptr;
     }
 
     for (size_t i = 0; i < s; ++i) {
-      tmp[i] = (*str)[i];
+      tmp[i] = str[i];
     }
 
     tmp[s] = ch;
     tmp[s + 1] = '\0';
 
-    if (*str) {
-      free(*str);
-    }
-
-    *str = tmp;
     ++s;
+    free(str);
+    return tmp;
   }
 
   char* getString(std::istream& in, size_t& s)
@@ -39,19 +33,15 @@ namespace strelnikov {
 
     char ch;
     while (in >> ch && ch != '\n') {
-      try {
-        addSymb(&res, s, ch);
-      } catch (const std::bad_alloc& e) {
-        if (res) {
-          free(res);
-        }
-        throw;
+      res = addSymb(res, s, ch);
+      if(res == nullptr){
+        return nullptr;
       }
     }
 
     if (in.fail() && !in.eof()) {
       free(res);
-      throw std::logic_error("In fail");
+      return nullptr;
     }
 
     return res;
@@ -77,7 +67,7 @@ namespace strelnikov {
     for (size_t i = 0; i < s2; ++i) {
       if (std::isdigit(static_cast< unsigned char >(str2[i]))) {
         try {
-          addSymb(&a, cnt, str2[i]);
+          a = addSymb(a, cnt, str2[i]);
         } catch (const std::bad_alloc& e) {
           free(a);
           return nullptr;
@@ -107,26 +97,8 @@ namespace strelnikov {
 int main()
 {
   size_t s1 = 0;
-  char* str1 = nullptr;
-  try {
-    str1 = strelnikov::getString(std::cin, s1);
-  } catch (const std::bad_alloc& e) {
-    std::cerr << e.what() << "\n";
-    if (str1) {
-      free(str1);
-    }
-    return 1;
-  } catch (const std::logic_error& e) {
-    std::cerr << e.what() << "\n";
-    if (str1) {
-      free(str1);
-    }
-    return 2;
-  }
-  if (s1 == 0) {
-    if (str1) {
-      free(str1);
-    }
+  char* str1 = strelnikov::getString(std::cin, s1);
+  if(str1 == nullptr || s1 == 0){
     return 1;
   }
   char strHas[] = "abc";
@@ -134,8 +106,7 @@ int main()
   std::cout << hasCommon << '\n';
   char strDgt[] = "g1h2k";
   char* result2 = strelnikov::doDgtSnd(str1, s1, strDgt, 5);
-  if (!result2) {
-    std::cerr << "Memory allocation failed\n";
+  if (result2 == nullptr) {
     free(str1);
     return 1;
   }
