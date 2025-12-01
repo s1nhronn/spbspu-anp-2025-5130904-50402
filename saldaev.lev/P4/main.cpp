@@ -4,42 +4,47 @@
 
 namespace saldaev
 {
+  const size_t block_size = 10;
   size_t getLine(std::istream &in, char *&data, const size_t block_size)
   {
+    data = reinterpret_cast< char * >(malloc(block_size * sizeof(char)));
+    if (data == nullptr)
+    {
+      return 0;
+    }
     bool skipws_on = in.flags() & std::ios_base::skipws;
     if (skipws_on)
     {
       in >> std::noskipws;
     }
-    data = static_cast< char * >(malloc(block_size * sizeof(char)));
-    if (data == nullptr)
-    {
-      return 0;
-    }
 
-    size_t crnt_msize = block_size;
-    size_t crnt_size = 0;
+    size_t capacity = block_size;
+    size_t size = 0;
     char crnt_char = ' ';
     while (in >> crnt_char && crnt_char != '\r' && crnt_char != '\n')
     {
-      crnt_size++;
-      if (crnt_size > crnt_msize)
+      size++;
+      if (size > capacity)
       {
-        char *tmp = static_cast< char * >(malloc((crnt_msize + block_size) * sizeof(char)));
+        char *tmp = reinterpret_cast< char * >(malloc((capacity + block_size) * sizeof(char)));
         if (tmp == nullptr)
         {
           free(data);
+          if (skipws_on)
+          {
+            in >> std::skipws;
+          }
           return 0;
         }
-        crnt_msize += block_size;
-        for (size_t i = 0; i < crnt_size - 1; ++i)
+        capacity += block_size;
+        for (size_t i = 0; i < size - 1; ++i)
         {
           tmp[i] = data[i];
         }
         free(data);
         data = tmp;
       }
-      data[crnt_size - 1] = crnt_char;
+      data[size - 1] = crnt_char;
     }
     if (skipws_on)
     {
@@ -47,7 +52,7 @@ namespace saldaev
     }
     if (crnt_char == '\r' || crnt_char == '\n' || in.eof())
     {
-      return crnt_size;
+      return size;
     }
     free(data);
     return 0;
@@ -76,7 +81,7 @@ namespace saldaev
     {
       spaces--;
     }
-    new_array = static_cast< char * >(malloc((leters + spaces) * sizeof(char)));
+    new_array = reinterpret_cast< char * >(malloc((leters + spaces) * sizeof(char)));
     if (new_array == nullptr)
     {
       return 0;
@@ -89,12 +94,12 @@ namespace saldaev
     size_t new_length = length;
     for (size_t i = 0; i < length; ++i)
     {
-      if (isalpha(data[i]))
+      if (std::isalpha(data[i]))
       {
         new_length--;
       }
     }
-    new_array = static_cast< char * >(malloc(new_length * sizeof(char)));
+    new_array = reinterpret_cast< char * >(malloc(new_length * sizeof(char)));
     if (new_array == nullptr)
     {
       return 0;
@@ -153,7 +158,7 @@ namespace saldaev
 int main()
 {
   char *line = nullptr;
-  size_t k = saldaev::getLine(std::cin, line, 10);
+  size_t k = saldaev::getLine(std::cin, line, saldaev::block_size);
   if (k == 0)
   {
     std::cerr << "Could not read the string\n";
