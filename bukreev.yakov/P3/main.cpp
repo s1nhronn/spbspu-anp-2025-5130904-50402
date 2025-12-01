@@ -142,10 +142,10 @@ size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
 
   for (size_t i = 0; i < cols; i++)
   {
-    int maxElem = std::numeric_limits< int >::min();
+    int maxElem = matrix[i];
     size_t maxIndex = 0;
 
-    for (size_t j = 0; j < rows; j++)
+    for (size_t j = 1; j < rows; j++)
     {
       int elem = matrix[j * cols + i];
       if (elem > maxElem)
@@ -160,10 +160,10 @@ size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
 
   for (size_t i = 0; i < rows; i++)
   {
-    int minElem = std::numeric_limits< int >::max();
+    int minElem = matrix[i * cols];
     size_t minIndex = 0;
 
-    for (size_t j = 0; j < cols; j++)
+    for (size_t j = 1; j < cols; j++)
     {
       int elem = matrix[i * cols + j];
       if (elem < minElem)
