@@ -3,28 +3,28 @@
 
 namespace strelnikov {
 
-  void addSymb(char*& str, size_t& s, char ch)
+  void addSymb(char** str, size_t& s, char ch)
   {
     char* tmp = reinterpret_cast< char* >(malloc(s + 2));
     if (tmp == nullptr) {
-      if (str) {
-        free(str);
+      if (*str) {
+        free(*str);
       }
       throw std::bad_alloc();
     }
 
     for (size_t i = 0; i < s; ++i) {
-      tmp[i] = str[i];
+      tmp[i] = (*str)[i];
     }
 
     tmp[s] = ch;
     tmp[s + 1] = '\0';
 
-    if (str) {
-      free(str);
+    if (*str) {
+      free(*str);
     }
 
-    str = tmp;
+    *str = tmp;
     ++s;
   }
 
@@ -38,12 +38,9 @@ namespace strelnikov {
     s = 0;
 
     char ch;
-    while (in >> ch) {
-      if (ch == '\n') {
-        break;
-      }
+    while (in >> ch && ch != '\n') {
       try {
-        addSymb(res, s, ch);
+        addSymb(&res, s, ch);
       } catch (const std::bad_alloc& e) {
         if (res) {
           free(res);
@@ -53,25 +50,17 @@ namespace strelnikov {
     }
 
     if (in.fail() && !in.eof()) {
+      free(res);
       throw std::logic_error("In fail");
-    }
-    try {
-      addSymb(res, s, '\0');
-      --s;
-    } catch (const std::exception& e) {
-      if (res) {
-        free(res);
-      }
-      throw;
     }
 
     return res;
   }
 
-  int doHasSam(char* str1, size_t s1, char* str2, size_t s2)
+  int doHasSam(char* str1, char* str2)
   {
-    for (size_t i = 0; i < s1; ++i) {
-      for (size_t j = 0; j < s2; ++j) {
+    for (size_t i = 0; str1[i] != '\0'; ++i) {
+      for (size_t j = 0; str2[j] != '\0'; ++j) {
         if (str1[i] == str2[j]) {
           return 1;
         }
@@ -88,7 +77,7 @@ namespace strelnikov {
     for (size_t i = 0; i < s2; ++i) {
       if (std::isdigit(static_cast< unsigned char >(str2[i]))) {
         try {
-          addSymb(a, cnt, str2[i]);
+          addSymb(&a, cnt, str2[i]);
         } catch (const std::bad_alloc& e) {
           free(a);
           return nullptr;
@@ -140,10 +129,10 @@ int main()
     }
     return 1;
   }
-  char strHas[] = {'a', 'b', 'c'};
-  int hasCommon = strelnikov::doHasSam(str1, s1, strHas, 3);
+  char strHas[] = "abc";
+  int hasCommon = strelnikov::doHasSam(str1, strHas);
   std::cout << hasCommon << '\n';
-  char strDgt[] = {'g', '1', 'h', '2', 'k'};
+  char strDgt[] = "g1h2k";
   char* result2 = strelnikov::doDgtSnd(str1, s1, strDgt, 5);
   if (!result2) {
     std::cerr << "Memory allocation failed\n";
