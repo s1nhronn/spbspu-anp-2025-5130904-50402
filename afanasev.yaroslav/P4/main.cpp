@@ -13,58 +13,66 @@ namespace afanasev
     }
 
     char * str = nullptr;
-    size_t cap = 0;
-    size = 0;
-    char ch;
-
-    try
+    char * tmp = nullptr;
+    char n = 0;
+    while (input >> n && n != '\n')
     {
-      while (input >> ch && ch != '\n')
+      try
       {
-        if (size >= cap)
-        {
-          size_t new_cap = cap ? cap * 2 : 16;
-          char * new_str = new char[new_cap];
-
-          for (size_t i = 0; i < size; ++i)
-          {
-            new_str[i] = str[i];
-          }
-
-          delete[] str;
-          str = new_str;
-          cap = new_cap;
-        }
-
-        str[size++] = ch;
+        tmp = new char[size + 1];
       }
-
-      if (input.eof() && size == 0)
+      catch(...)
       {
-        throw std::invalid_argument("invalid string");
-      }
-
-      if (size >= cap)
-      {
-        char * new_str = new char[size + 1];
-        for (size_t i = 0; i < size; i++)
-        {
-          new_str[i] = str[i];
-        }
         delete[] str;
-        str = new_str;
+        if (isSkipWp)
+        {
+          input >> std::skipws;
+        }
+        throw std::bad_alloc();
       }
-      str[size] = '\0';
+
+      for (size_t i = 0; i < size; ++i)
+      {
+        tmp[i] = str[i];
+      }
+      delete[] str;
+      str = tmp;
+      str[size] = n;
+      size++;
     }
-    catch (...)
+
+    tmp = nullptr;
+    if (input.eof())
     {
       delete[] str;
       if (isSkipWp)
       {
         input >> std::skipws;
       }
-      throw;
+      throw std::logic_error("incorrect input");
     }
+
+    try
+    {
+      tmp = new char[size + 1];
+    }
+    catch(...)
+    {
+      delete[] str;
+      if (isSkipWp)
+      {
+        input >> std::skipws;
+      }
+      throw std::bad_alloc();
+    }
+
+    for (size_t i = 0; i < size; ++i)
+    {
+      tmp[i] = str[i];
+    }
+    delete[] str;
+    str = tmp;
+    str[size] = '\0';
 
     if (isSkipWp)
     {
@@ -74,13 +82,14 @@ namespace afanasev
     return str;
   }
 
-  void deletingLetters(const char * str, const char * let, char * out, size_t str_l, size_t & out1_l)
+  void deletingLetters(const char * str, const char * let, char * out)
   {
     size_t i = 0;
+    size_t out1_l = 0;
 
-    while (str[i] != '\0' && out1_l < str_l - 1)
+    while (str[i] != '\0')
     {
-      if (!strchr(let, str[i]))
+      if (!std::strchr(let, str[i]))
       {
         out[out1_l] = str[i];
         out1_l++;
@@ -90,10 +99,10 @@ namespace afanasev
     out[out1_l] = '\0';
   }
 
-  void deleteVowels(const char * str, char * output, size_t size, size_t & output1)
+  void deleteVowels(const char * str, char * output)
   {
     const char * vowels = "aeiouyAEIOUY";
-    deletingLetters(str, vowels, output, size, output1);
+    deletingLetters(str, vowels, output);
   }
 }
 
@@ -106,47 +115,57 @@ int main()
   {
     str = afanasev::getline(std::cin, str_lenght_link);
   }
+  catch (std::bad_alloc)
+  {
+    std::cerr << "Get memory failed" << '\n';
+    return 1;
+  }
+  catch (std::logic_error)
+  {
+    std::cerr << "Incorrect input" << '\n';
+    return 1;
+  }
   catch (...)
   {
-    std::cerr << "Incorrect input or get memory failed" << '\n';
+    std::cerr << "Undefinde error" << '\n';
     return 1;
   }
 
-  size_t output1_lenght = 0;
-  size_t & output1_lenght_link = output1_lenght;
   char * output1 = nullptr;
-  output1 = new char[str_lenght];
-  if (output1 == nullptr)
+  try
+  {
+    output1 = new char[str_lenght + 1];
+    output1[0] = '\0';
+  }
+  catch(...)
   {
     delete[] str;
     std::cerr << "Get memory failed" << '\n';
     return 1;
   }
-  afanasev::deleteVowels(str, output1, str_lenght, output1_lenght_link);
-  for (size_t i = 0; i < output1_lenght_link; i++)
-  {
-    std::cout << output1[i];
-  }
-  std::cout << '\n';
-  delete[] output1;
 
-  size_t output2_lenght = 0;
-  size_t & output2_lenght_link = output2_lenght;
   const char * let = "abcd";
   char * output2 = nullptr;
-  output2 = new char[str_lenght];
-  if (output2 == nullptr)
+  try
+  {
+    output2 = new char[str_lenght + 1];
+    output2[0] = '\0';
+  }
+  catch(...)
   {
     delete[] str;
+    delete[] output1;
     std::cerr << "Get memory failed" << '\n';
     return 1;
   }
-  afanasev::deletingLetters(str, let, output2, str_lenght, output2_lenght_link);
-  for (size_t i = 0; i < output2_lenght_link; i++)
-  {
-    std::cout << output2[i];
-  }
-  std::cout << '\n';
+
+  afanasev::deleteVowels(str, output1);
+  afanasev::deletingLetters(str, let, output2);
+
+  std::cout << output1 << '\n';
+  delete[] output1;
+  
+  std::cout << output2 << '\n';
   delete[] output2;
 
   return 0;
