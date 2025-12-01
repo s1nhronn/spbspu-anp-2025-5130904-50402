@@ -77,7 +77,7 @@ namespace strelnikov {
   void doDgtSnd(char* res, size_t size, const char* str)
   {
     size_t i = 0;
-    for (i; str[i] != '\0'; ++i) {
+    for (; str[i] != '\0'; ++i) {
       res[size + i] = str[i];
     }
     res[size + i] = '\0';
