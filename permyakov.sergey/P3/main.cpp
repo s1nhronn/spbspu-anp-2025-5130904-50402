@@ -7,7 +7,7 @@ namespace permyakov
   void lftTopClk(int * arr1, int * arr, size_t n, size_t m);
   void lftBotCnt(int * arr2, int * arr, size_t n, size_t m);
   std::ifstream & arrInFromFile(std::ifstream & in, int * arr, size_t n, size_t m);
-  std::ofstream & arrOutInFile(std::ofstream & out, int * arr, size_t n, size_t m);
+  std::ofstream & arrOutInFile(std::ofstream & out, const int * arr, size_t n, size_t m);
 }
 
 int main(int argc, char ** argv)
@@ -62,15 +62,9 @@ int main(int argc, char ** argv)
   int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
   if (arr1 == nullptr || arr2 == nullptr) {
     std::cerr << "Failure to allocate memory\n";
-    if (arr1 != nullptr) {
-      free(arr1);
-    }
-    if (arr2 != nullptr) {
-      free(arr2);
-    }
-    if (task == 2) {
-      free(arr);
-    }
+   free(arr1);
+    free(arr2);
+    free(arr);
     return 3;
   }
   per::lftTopClk(arr1, arr, n, m);
@@ -178,7 +172,7 @@ std::ifstream & permyakov::arrInFromFile(std::ifstream & in, int * arr, size_t n
   return in;
 }
 
-std::ofstream & permyakov::arrOutInFile(std::ofstream & out, int * arr, size_t n, size_t m)
+std::ofstream & permyakov::arrOutInFile(std::ofstream & out, const int * arr, size_t n, size_t m)
 {
   out << n << ' ' << m;
   for (size_t i = 0; i < n * m; ++i) {
