@@ -28,7 +28,7 @@ namespace afanasev
         {
           input >> std::skipws;
         }
-        throw std::bad_alloc();
+        throw;
       }
 
       for (size_t i = 0; i < size; ++i)
@@ -63,7 +63,7 @@ namespace afanasev
       {
         input >> std::skipws;
       }
-      throw std::bad_alloc();
+      throw;
     }
 
     for (size_t i = 0; i < size; ++i)
@@ -115,12 +115,12 @@ int main()
   {
     str = afanasev::getline(std::cin, str_lenght_link);
   }
-  catch (std::bad_alloc)
+  catch (const std::bad_alloc&)
   {
     std::cerr << "Get memory failed" << '\n';
     return 1;
   }
-  catch (std::logic_error)
+  catch (const std::logic_error&)
   {
     std::cerr << "Incorrect input" << '\n';
     return 1;
@@ -167,6 +167,6 @@ int main()
 
   std::cout << output2 << '\n';
   delete[] output2;
-
+  delete[] str;
   return 0;
 }
