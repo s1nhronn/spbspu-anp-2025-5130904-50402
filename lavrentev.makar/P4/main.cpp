@@ -36,7 +36,7 @@ int main()
   {
     std::cerr << "Memory allocation fail" << '\n';
     delete[] s1;
-    return 1;  
+    return 1;
   }
 
   buf1[ex] = '\0';
