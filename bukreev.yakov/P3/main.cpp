@@ -6,7 +6,6 @@
 namespace bukreev
 {
   std::istream& inputMatrix(std::istream& in, int* matrix, size_t rows, size_t cols);
-  void deleteMatrix(int mode, const int* matrix);
 
   size_t cntSdlPnt(const int* matrix, size_t rows, size_t cols);
   void lftTopClk(int* matrix, size_t rows, size_t cols);
@@ -81,7 +80,10 @@ int main(int argc, char* argv[])
   bukreev::inputMatrix(input, matrix, rows, cols);
   if (input.fail())
   {
-    bukreev::deleteMatrix(mode, matrix);
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
     std::cerr << "Content of the input file is invalid.\n";
     return 2;
   }
@@ -95,7 +97,10 @@ int main(int argc, char* argv[])
   }
   catch (const std::bad_alloc& e)
   {
-    bukreev::deleteMatrix(mode, matrix);
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
     return 3;
   }
 
@@ -112,7 +117,10 @@ int main(int argc, char* argv[])
   bukreev::outputMatrix(output, matrix, rows, cols);
   output << '\n';
 
-  bukreev::deleteMatrix(mode, matrix);
+  if (mode == 2)
+  {
+    delete[] matrix;
+  }
 
   return 0;
 }
@@ -124,14 +132,6 @@ std::istream& bukreev::inputMatrix(std::istream& in, int* matrix, size_t rows, s
     in >> matrix[i];
   }
   return in;
-}
-
-void bukreev::deleteMatrix(int mode, const int* matrix)
-{
-  if (mode == 2)
-  {
-    delete[] matrix;
-  }
 }
 
 size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
