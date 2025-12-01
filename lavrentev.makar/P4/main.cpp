@@ -32,7 +32,7 @@ int main()
   {
     buf1 = new char[ex];
   }
-  catch (std::bad_alloc)
+  catch (std::bad_alloc&)
   {
     std::cerr << "Memory allocation fail" << '\n';
     delete[] s1;
@@ -49,7 +49,7 @@ int main()
   {
     result = new char[ex + ex2];
   }
-  catch (std::bad_alloc)
+  catch (std::bad_alloc&)
   {
     std::cerr << "Memory allocation fail" << '\n';
     delete[] s1;
@@ -111,15 +111,16 @@ size_t lavrentev::difLat(char* buf1, char* s1)
 void lavrentev::uniTwo(char* s1, const char s2[], size_t ex, size_t ex2, char* result)
 {
   size_t min = 0;
-  char max_s[ex];
+  char* max_s = nullptr;
   if (ex < ex2)
   {
     min = ex;
-    char max_s[ex2];
+    max_s = new char[ex2];
   }
   else
   {
     min = ex2;
+    max_s = new char[ex];
   }
 
   if (min == ex)
