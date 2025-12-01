@@ -13,52 +13,58 @@ namespace afanasev
     }
 
     char * str = nullptr;
-    char * tmp = nullptr;
-    char n = 0;
-    while (input >> n && n != '\n')
+    size_t cap = 0;
+    size = 0;
+    char ch;
+
+    try
     {
-      tmp = new char[size + 1];
-      if (tmp == nullptr || input.fail())
+      while (input >> ch && ch != '\n')
       {
-        if (input.fail())
+        if (size >= cap)
         {
-          delete[] tmp;
+          size_t new_cap = cap ? cap * 2 : 16;
+          char * new_str = new char[new_cap];
+
+          for (size_t i = 0; i < size; ++i)
+          {
+            new_str[i] = str[i];
+          }
+
+          delete[] str;
+          str = new_str;
+          cap = new_cap;
+        }
+
+        str[size++] = ch;
+      }
+
+      if (input.eof() && size == 0)
+      {
+        throw std::invalid_argument("invalid string");
+      }
+
+      if (size >= cap)
+      {
+        char * new_str = new char[size + 1];
+        for (size_t i = 0; i < size; i++)
+        {
+          new_str[i] = str[i];
         }
         delete[] str;
-        throw;
+        str = new_str;
       }
-
-      for (size_t i = 0; i < size; ++i)
+      str[size] = '\0';
+    }
+    catch (...)
+    {
+      delete[] str;
+      if (isSkipWp)
       {
-        tmp[i] = str[i];
+        input >> std::skipws;
       }
-      tmp[size] = n;
-      delete[] str;
-      str = tmp;
-      size++;
-    }
-
-    tmp = nullptr;
-    if (input.eof())
-    {
-      delete[] str;
-      throw std::invalid_argument("empty string");
-    }
-/*
-    tmp = new char[size + 1];
-    if (tmp == nullptr)
-    {
-      delete[] str;
       throw;
     }
-    for (size_t i = 0; i < size; ++i)
-    {
-      tmp[i] = str[i];
-    }
-    delete[] str;
-    str = tmp;*/
-    str[size] = '\0';
-    size++;
 
     if (isSkipWp)
     {
