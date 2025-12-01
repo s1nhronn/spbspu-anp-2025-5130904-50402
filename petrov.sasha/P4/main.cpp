@@ -1,8 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cctype>
-namespace petrov
-{
+namespace petrov {
   char* getLine(std::istream& input, size_t& lenght) {
     bool skipWs = input.flags() & std::ios::skipws;
     if(skipWs) {
