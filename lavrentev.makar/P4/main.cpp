@@ -111,30 +111,32 @@ size_t lavrentev::difLat(char* buf1, char* s1)
 void lavrentev::uniTwo(char* s1, const char s2[], size_t ex, size_t ex2, char* result)
 {
   size_t min = 0;
-  char* max_s = nullptr;
+  char max_s1[ex];
+  char max_s2[ex2];
+  char* max_s_ptr;
   if (ex < ex2)
   {
     min = ex;
-    max_s = new char[ex2];
+    max_s_ptr = max_s2;
   }
   else
   {
     min = ex2;
-    max_s = new char[ex];
+    max_s_ptr = max_s1;
   }
 
   if (min == ex)
   {
     for (size_t i = 0; i < ex2; ++i)
     {
-      max_s[i] = s2[i];
+      max_s_ptr[i] = s2[i];
     }
   }
   else
   {
     for (size_t i = 0; i < ex; ++i)
     {
-      max_s[i] = s1[i];
+      max_s_ptr[i] = s1[i];
     }
   }
 
@@ -151,7 +153,7 @@ void lavrentev::uniTwo(char* s1, const char s2[], size_t ex, size_t ex2, char* r
 
   for (size_t i = min * 2; i < ex + ex2; ++i)
   {
-    result[i] = max_s[t];
+    result[i] = max_s_ptr[t];
     ++t;
   }
   result += '\0';
