@@ -164,7 +164,7 @@ int main()
 
   std::cout << output1 << '\n';
   delete[] output1;
-  
+
   std::cout << output2 << '\n';
   delete[] output2;
 
