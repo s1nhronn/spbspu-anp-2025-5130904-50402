@@ -30,7 +30,7 @@ int main()
   char* buf1 = nullptr;
   try
   {
-    buf1 = new char[ex];
+    buf1 = new char[ex + 1];
   }
   catch (std::bad_alloc&)
   {
@@ -47,7 +47,7 @@ int main()
   char* result = nullptr;
   try
   {
-    result = new char[ex + ex2];
+    result = new char[ex + ex2 + 1];
   }
   catch (std::bad_alloc&)
   {
