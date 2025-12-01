@@ -136,12 +136,23 @@ int main(int argc, char** argv)
   if (rows == 0 || cols == 0) {
     return 0;
   }
+  try {
+    mtx2 = new int[rows * cols]();
+  } catch (const std::bad_alloc& e) {
+    std::cerr << "Memory add failed\n";
+    delete[] mtx2;
+    return 2;
+  }
   if (var == 1) {
     mtx1 = mtx_var1;
-    mtx2 = new int[rows * cols]();
   } else {
-    mtx1 = new int[rows * cols]();
-    mtx2 = new int[rows * cols]();
+    try {
+      mtx1 = new int[rows * cols]();
+    } catch (const std::bad_alloc& e) {
+      std::cerr << "Memory add failed\n";
+      delete[] mtx1;
+      return 2;
+    }
   }
   if (petrov::readMTX(input, mtx1, rows, cols).fail()) {
     std::cerr << "Cant read matrix" << '\n';
