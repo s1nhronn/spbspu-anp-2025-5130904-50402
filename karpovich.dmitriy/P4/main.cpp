@@ -48,7 +48,7 @@ namespace karpovich
   }
   char* repsym(const char* str, char* data, const size_t size)
   {
-    size_t MAX_ascii = 256;
+    constexpr size_t MAX_ascii = 256;
     if (!str || !data) {
       return nullptr;
     }
