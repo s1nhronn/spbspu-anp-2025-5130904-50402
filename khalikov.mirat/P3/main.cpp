@@ -4,7 +4,6 @@
 
 namespace khalikov
 {
-  bool proverka(const char * str);
   void outputMtx(std::ostream & out, const int * a, size_t n, size_t m);
   std::istream & inputMtx(std::istream & in, int * a, size_t n, size_t m);
   size_t countSeddle(const int * a, size_t n, size_t m);
@@ -12,18 +11,6 @@ namespace khalikov
     size_t st_row, size_t st_col, size_t end_row, size_t end_col, size_t & c);
   int * spiral(const int * a, int * res, size_t n, size_t m);
   const size_t MTXSIZE = 10000;
-}
-
-bool khalikov::proverka(const char * str)
-{
-  size_t length = strlen(str);
-
-  if (length != 1)
-  {
-    return false;
-  }
-
-  return true;
 }
 
 void khalikov::outputMtx(std::ostream & out, const int * a, size_t n, size_t m)
@@ -159,7 +146,7 @@ int main(int argc, char ** argv)
     std::cerr << "Too many arguments" << '\n';
     return 1;
   }
-  if (!kh::proverka(argv[1]))
+  if (std::strlen(argv[1]) != 1)
   {
     std::cerr << "First parameter is not a number" << '\n';
     return 1;
@@ -175,7 +162,6 @@ int main(int argc, char ** argv)
     std::cerr << "Input file is not opened";
     return 2;
   }
-  size_t result_count = 0;
   size_t n = 0;
   size_t m = 0;
   int * default_array = nullptr;
@@ -184,16 +170,6 @@ int main(int argc, char ** argv)
   if (input.fail())
   {
     std::cerr << "Input error" << '\n';
-    return 2;
-  }
-  int * res_array = nullptr;
-  try
-  {
-    res_array = new int[n * m];
-  }
-  catch (const std::bad_alloc &)
-  {
-    std::cerr << "bad_alloc" << '\n';
     return 2;
   }
   if (*argv[1] == '1')
@@ -209,7 +185,6 @@ int main(int argc, char ** argv)
     catch (const std::bad_alloc &)
     {
       std::cerr << "bad_alloc" << '\n';
-      delete[] res_array;
       return 2;
     }
   }
@@ -221,10 +196,19 @@ int main(int argc, char ** argv)
     {
       delete[] default_array;
     }
-    delete[] res_array;
     return 2;
   }
   input.close();
+  int * res_array = nullptr;
+  try
+  {
+    res_array = new int[n * m];
+  }
+  catch (const std::bad_alloc &)
+  {
+    std::cerr << "bad_alloc" << '\n';
+    return 2;
+  }
   std::ofstream output(argv[3]);
   if (!output.is_open())
   {
@@ -236,7 +220,7 @@ int main(int argc, char ** argv)
     delete[] res_array;
     return 2;
   }
-  result_count = kh::countSeddle(default_array, n, m);
+  size_t result_count = kh::countSeddle(default_array, n, m);
   res_array = kh::spiral(default_array, res_array, n, m);
   output << "the first number: " << '\n';
   output << result_count << '\n';
