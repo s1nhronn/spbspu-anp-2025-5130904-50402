@@ -9,7 +9,7 @@ namespace pozdnyakov
   const size_t MAX_ROWS = 100;
   const size_t MAX_COLS = 100;
 
-  std::istream& readDimensions (std::istream& in, size_t& rows, size_t& cols)
+  std::istream& readDimensions(std::istream& in, size_t& rows, size_t& cols)
   {
     long r = 0;
     long c = 0;
@@ -24,16 +24,16 @@ namespace pozdnyakov
     }
     if (r < 0 || c < 0)
     {
-      in.setstate (std::ios::failbit);
+      in.setstate(std::ios::failbit);
       return in;
     }
 
-    rows = static_cast< size_t > (r);
-    cols = static_cast< size_t > (c);
+    rows = static_cast< size_t >(r);
+    cols = static_cast< size_t >(c);
     return in;
   }
 
-  std::istream& readMatrix (std::istream& in, int* data, size_t rows, size_t cols)
+  std::istream& readMatrix(std::istream& in, int* data, size_t rows, size_t cols)
   {
     size_t total = rows * cols;
 
@@ -47,7 +47,7 @@ namespace pozdnyakov
     return in;
   }
 
-  size_t countDiagonalsWithoutZero (const int* data, size_t rows, size_t cols)
+  size_t countDiagonalsWithoutZero(const int* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -86,7 +86,7 @@ namespace pozdnyakov
     return count;
   }
 
-  void transformMatrixLayers (int* data, size_t rows, size_t cols)
+  void transformMatrixLayers(int* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -98,7 +98,7 @@ namespace pozdnyakov
 
     for (size_t layer = 0; layer < layers; layer++)
     {
-      int inc = static_cast< int > (layer + 1);
+      int inc = static_cast<int>(layer + 1);
 
       for (size_t r = layer; r < rows - layer; r++)
       {
@@ -110,32 +110,25 @@ namespace pozdnyakov
     }
   }
 
-  std::ostream& writeMatrix (std::ostream& out, const int* data, size_t rows, size_t cols)
+  std::ostream& writeMatrix(std::ostream& out, const int* data, size_t rows, size_t cols)
   {
-    for (size_t i = 0; i < rows; i++)
+    size_t total = rows * cols;
+    for (size_t i = 0; i < total; i++)
     {
-      for (size_t j = 0; j < cols; j++)
+      out << data[i];
+      if (i + 1 < total)
       {
-        out << data[i * cols + j];
-        if (j + 1 < cols)
-        {
-          out << ' ';
-        }
-      }
-      if (i + 1 < rows)
-      {
-        out << '\n';
+        out << ' ';
       }
     }
-
     return out;
   }
 
-  bool validateArgs (const char* s)
+  bool validateArgs(const char* s)
   {
     char* endptr = nullptr;
 
-    long num = std::strtol (s, std::addressof (endptr), 10);
+    long num = std::strtol(s, std::addressof(endptr), 10);
     if (endptr == s || *endptr != '\0')
     {
       return false;
@@ -151,7 +144,7 @@ namespace pozdnyakov
 
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
   using namespace pozdnyakov;
 
@@ -161,18 +154,18 @@ int main (int argc, char* argv[])
     return 1;
   }
 
-  if (!validateArgs (argv[1]))
+  if (!validateArgs(argv[1]))
   {
     std::cerr << "Invalid first argument\n";
     return 1;
   }
 
-  long mode = std::strtol (argv[1], nullptr, 10);
+  long mode = std::strtol(argv[1], nullptr, 10);
   const char* inputFile = argv[2];
   const char* outputFile = argv[3];
 
-  std::ifstream in (inputFile);
-  if (!in.is_open ())
+  std::ifstream in(inputFile);
+  if (!in.is_open())
   {
     std::cerr << "Cannot open input file\n";
     return 2;
@@ -181,7 +174,7 @@ int main (int argc, char* argv[])
   size_t rows = 0;
   size_t cols = 0;
 
-  if (!readDimensions (in, rows, cols))
+  if (!readDimensions(in, rows, cols))
   {
     std::cerr << "Invalid matrix dimensions\n";
     return 2;
@@ -189,8 +182,8 @@ int main (int argc, char* argv[])
 
   if (rows == 0 || cols == 0)
   {
-    std::ofstream out (outputFile);
-    if (!out.is_open ())
+    std::ofstream out(outputFile);
+    if (!out.is_open())
     {
       std::cerr << "Cannot open output file\n";
       return 3;
@@ -218,7 +211,7 @@ int main (int argc, char* argv[])
   }
   else
   {
-    dataPtr = reinterpret_cast< int* >(std::malloc (rows * cols * sizeof (int)));
+    dataPtr = reinterpret_cast<int*>(std::malloc(rows * cols * sizeof(int)));
     if (dataPtr == nullptr)
     {
       std::cerr << "Memory allocation failed\n";
@@ -226,37 +219,37 @@ int main (int argc, char* argv[])
     }
   }
 
-  if (!readMatrix (in, dataPtr, rows, cols))
+  if (!readMatrix(in, dataPtr, rows, cols))
   {
     std::cerr << "Invalid matrix data\n";
     if (mode == 2)
     {
-      std::free (dataPtr);
+      std::free(dataPtr);
     }
     return 2;
   }
 
-  size_t diagCount = countDiagonalsWithoutZero (dataPtr, rows, cols);
-  transformMatrixLayers (dataPtr, rows, cols);
+  size_t diagCount = countDiagonalsWithoutZero(dataPtr, rows, cols);
+  transformMatrixLayers(dataPtr, rows, cols);
 
-  std::ofstream out (outputFile);
-  if (!out.is_open ())
+  std::ofstream out(outputFile);
+  if (!out.is_open())
   {
     std::cerr << "Cannot open output file\n";
     if (mode == 2)
     {
-      std::free (dataPtr);
+      std::free(dataPtr);
     }
     return 3;
   }
 
   out << diagCount << '\n';
-  out << rows << ' ' << cols << '\n';
-  writeMatrix (out, dataPtr, rows, cols);
+  out << rows << ' ' << cols << ' ';
+  writeMatrix(out, dataPtr, rows, cols);
 
   if (mode == 2)
   {
-    std::free (dataPtr);
+    std::free(dataPtr);
   }
 
   return 0;
