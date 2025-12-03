@@ -140,7 +140,6 @@ int main(int argc, char** argv)
     mtx2 = new int[rows * cols]();
   } catch (const std::bad_alloc& e) {
     std::cerr << "Memory add failed\n";
-    delete[] mtx2;
     return 2;
   }
   if (var == 1) {
@@ -150,7 +149,7 @@ int main(int argc, char** argv)
       mtx1 = new int[rows * cols]();
     } catch (const std::bad_alloc& e) {
       std::cerr << "Memory add failed\n";
-      delete[] mtx1;
+      delete[] mtx2;
       return 2;
     }
   }
