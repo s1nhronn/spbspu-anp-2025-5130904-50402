@@ -2,7 +2,7 @@
 #include <iomanip>
 namespace karpovich
 {
-  char* extend(char* old_str, size_t old_size) 
+  char* extend(char* old_str, size_t old_size)
   {
     char* new_str = reinterpret_cast<char*>(malloc(old_size + 1));
     if (new_str == nullptr) {
