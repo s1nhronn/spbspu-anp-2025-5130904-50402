@@ -40,31 +40,31 @@ int main(int argc, char ** argv)
     return 2;
   }
   int * arr = nullptr;
+  int * arrD = nullptr;
   const size_t SIZE_OF_MATRIX = 10000;
   int cArr[SIZE_OF_MATRIX]{};
   if (task == 1) {
     arr = cArr;
   } else {
-    arr = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
+    arrD = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
     if (arr == nullptr) {
       std::cerr << "Failure to allocate memoty\n";
       return 3;
     }
+    arr = arrD;
   }
   if (!per::arrInFromFile(input, arr, n, m)) {
     std::cerr << "Failure to define array\n";
-    if (task == 2) {
-      free(arr);
-    }
+    free(arrD);
     return 2;
   }
   int * arr1 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));;
   int * arr2 = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-  if (task == 2 && (arr1 == nullptr || arr2 == nullptr)) {
+  if (arr1 == nullptr || arr2 == nullptr) {
     std::cerr << "Failure to allocate memory\n";
     free(arr1);
     free(arr2);
-    free(arr);
+    free(arrD);
     return 3;
   }
   per::lftTopClk(arr1, arr, n, m);
@@ -77,9 +77,7 @@ int main(int argc, char ** argv)
   output << '\n';
   free(arr1);
   free(arr2);
-  if (task == 2) {
-    free(arr);
-  }
+  free(arrD);
 }
 
 void permyakov::lftTopClk(int * arr1, int * arr, size_t n, size_t m)
