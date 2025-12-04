@@ -9,7 +9,7 @@ namespace karpovich
       in >> std::noskipws;
     }
     char* str = nullptr;
-    char ch = 0;
+    char ch = '\0';
     while (in >> ch && ch != '\n') {
       char* temp = reinterpret_cast< char* >(malloc(s + 1));
       if (temp == nullptr) {
@@ -54,16 +54,16 @@ namespace karpovich
     }
 
     int repeat[MAX_ascii] = {};
-    for (size_t i = 0; str[i] != 0; ++i) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
       unsigned char c = static_cast< unsigned char >(str[i]);
       ++repeat[c];
     }
 
     int saw[MAX_ascii] = {};
     size_t pos = 0;
-    for (size_t i = 0; str[i] != 0; ++i) {
+    for (size_t i = 0; str[i] != '\0'; ++i) {
       unsigned char c = static_cast< unsigned char >(str[i]);
-      if (repeat[c] > 1 && saw[c] == 0) {
+      if (repeat[c] > 1 && saw[c] == '\0') {
         data[pos++] = c;
         saw[c] = 1;
       }
