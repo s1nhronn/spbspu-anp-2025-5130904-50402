@@ -5,11 +5,11 @@ namespace karpovich
   char* getline(std::istream& in, size_t& s)
   {
     bool is_skipws = in.flags() & std::ios_base::skipws;
-    char* str = nullptr;
-    char ch = 0;
     if (is_skipws) {
       in >> std::noskipws;
     }
+    char* str = nullptr;
+    char ch = 0;
     while (in >> ch && ch != '\n') {
       char* temp = reinterpret_cast< char* >(malloc(s + 1));
       if (temp == nullptr) {
@@ -46,7 +46,7 @@ namespace karpovich
     }
     return str;
   }
-  char* repsym(const char* str, char* data, const size_t size)
+  char* repsym(const char* str, char* data, size_t size)
   {
     constexpr size_t MAX_ascii = 256;
     if (!str || !data) {
@@ -54,14 +54,14 @@ namespace karpovich
     }
 
     int repeat[MAX_ascii] = {};
-    for (size_t i = 0; i < size && str[i] != 0; ++i) {
+    for (size_t i = 0; str[i] != 0; ++i) {
       unsigned char c = static_cast< unsigned char >(str[i]);
       ++repeat[c];
     }
 
     int saw[MAX_ascii] = {};
     size_t pos = 0;
-    for (size_t i = 0; i < size && str[i] != 0; ++i) {
+    for (size_t i = 0; str[i] != 0; ++i) {
       unsigned char c = static_cast< unsigned char >(str[i]);
       if (repeat[c] > 1 && saw[c] == 0) {
         data[pos++] = c;
