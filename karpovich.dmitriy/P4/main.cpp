@@ -40,7 +40,7 @@ namespace karpovich
     }
     free(str);
     str = temp;
-    str[s] = 0;
+    str[s] = '\0';
     if (is_skipws) {
       in >> std::skipws;
     }
@@ -68,7 +68,7 @@ namespace karpovich
         saw[c] = 1;
       }
     }
-    data[pos] = 0;
+    data[pos] = '\0';
     return data;
   }
   char* unitwo(const char* str1, const char* str2, size_t s1, size_t s2, char* data)
@@ -87,7 +87,7 @@ namespace karpovich
     while (j < s2) {
       data[k++] = str2[j++];
     }
-    data[k] = 0;
+    data[k] = '\0';
     return data;
   }
 }
@@ -113,7 +113,7 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  data[s] = 0;
+  data[s] = '\0';
   if (!karp::repsym(str, data)) {
     free(data);
     free(str);
@@ -131,7 +131,7 @@ int main() {
     std::cerr << "Failed to alloc memory";
     return 1;
   }
-  data2[s + s2] = 0;
+  data2[s + s2] = '\0';
 
   if (!karp::unitwo(str, str2, s, s2, data2)) {
     free(data2);
