@@ -207,6 +207,10 @@ int main(int argc, char ** argv)
   catch (const std::bad_alloc &)
   {
     std::cerr << "bad_alloc" << '\n';
+    if (*argv[1] == '2')
+    {
+      delete[] default_array;
+    }
     return 2;
   }
   std::ofstream output(argv[3]);
