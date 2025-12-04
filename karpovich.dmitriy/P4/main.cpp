@@ -2,6 +2,19 @@
 #include <iomanip>
 namespace karpovich
 {
+  char* extend(char* old_str, size_t old_size) 
+  {
+    char* new_str = reinterpret_cast<char*>(malloc(old_size + 1));
+    if (new_str == nullptr) {
+      free(old_str);
+      return nullptr;
+    }
+    for (size_t i = 0; i < old_size; ++i) {
+      new_str[i] = old_str[i];
+    }
+    free(old_str);
+    return new_str;
+  }
   char* getline(std::istream& in, size_t& s)
   {
     bool is_skipws = in.flags() & std::ios_base::skipws;
@@ -10,35 +23,25 @@ namespace karpovich
     }
     char* str = nullptr;
     char ch = '\0';
-    while (in >> ch && ch != '\n') {
-      char* temp = reinterpret_cast< char* >(malloc(s + 1));
+    while(in >> ch && ch != '\n') {
+      char* temp = extend(str, s);
       if (temp == nullptr) {
-        free(str);
         if (is_skipws) {
           in >> std::skipws;
         }
         return nullptr;
       }
-      for (size_t i = 0; i < s; ++i) {
-        temp[i] = str[i];
-      }
-      free(str);
       str = temp;
       str[s] = ch;
       ++s;
     }
-    char* temp = reinterpret_cast< char* >(malloc(s + 1));
+    char* temp = extend(str, s);
     if (temp == nullptr) {
-      free(str);
       if (is_skipws) {
         in >> std::skipws;
       }
       return nullptr;
     }
-    for (size_t i = 0; i < s; ++i) {
-      temp[i] = str[i];
-    }
-    free(str);
     str = temp;
     str[s] = '\0';
     if (is_skipws) {
