@@ -47,7 +47,7 @@ int main(int argc, char ** argv)
     arr = cArr;
   } else {
     arrD = reinterpret_cast< int * >(malloc(sizeof(int) * n * m));
-    if (arr == nullptr) {
+    if (arrD == nullptr) {
       std::cerr << "Failure to allocate memoty\n";
       return 3;
     }
