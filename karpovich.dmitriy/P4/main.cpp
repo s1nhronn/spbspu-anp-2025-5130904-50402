@@ -46,7 +46,7 @@ namespace karpovich
     }
     return str;
   }
-  char* repsym(const char* str, char* data, size_t size)
+  char* repsym(const char* str, char* data)
   {
     constexpr size_t MAX_ascii = 256;
     if (!str || !data) {
@@ -114,7 +114,7 @@ int main() {
     return 1;
   }
   data[s] = 0;
-  if (!karp::repsym(str, data, s)) {
+  if (!karp::repsym(str, data)) {
     free(data);
     free(str);
     std::cerr << "repsym failed";
