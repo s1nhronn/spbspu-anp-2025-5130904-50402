@@ -129,13 +129,13 @@ int main(int argc, char** argv)
     std::cerr << "Matrix too big for matrix\n";
     return 2;
   }
+  if (rows == 0 || cols == 0) {
+    return 0;
+  }
   const size_t max_lenght = 10000;
   int mtx_var1[max_lenght] = {0};
   int* mtx1 = nullptr;
   int* mtx2 = nullptr;
-  if (rows == 0 || cols == 0) {
-    return 0;
-  }
   try {
     mtx2 = new int[rows * cols]();
   } catch (const std::bad_alloc& e) {
@@ -155,11 +155,9 @@ int main(int argc, char** argv)
   }
   if (petrov::readMTX(input, mtx1, rows, cols).fail()) {
     std::cerr << "Cant read matrix" << '\n';
-    if (var == 1) {
-      delete[] mtx2;
-    } else {
+    delete[] mtx2;
+    if (var == 2) {
       delete[] mtx1;
-      delete[] mtx2;
     }
     return 2;
   }
@@ -170,11 +168,9 @@ int main(int argc, char** argv)
   petrov::writeMTX(output, mtx1, rows, cols) << '\n';
   output << "Var-2 ";
   petrov::writeMTX(output, mtx2, rows, cols) << '\n';
-  if (var == 1) {
-    delete[] mtx2;
-  } else {
+  delete[] mtx1;
+  if (var == 2) {
     delete[] mtx1;
-    delete[] mtx2;
   }
   return 0;
 }
