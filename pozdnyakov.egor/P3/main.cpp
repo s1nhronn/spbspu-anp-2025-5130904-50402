@@ -98,7 +98,7 @@ namespace pozdnyakov
 
     for (size_t layer = 0; layer < layers; layer++)
     {
-      int inc = static_cast<int>(layer + 1);
+      int inc = static_cast< int >(layer + 1);
 
       for (size_t r = layer; r < rows - layer; r++)
       {
@@ -112,15 +112,14 @@ namespace pozdnyakov
 
   std::ostream& writeMatrix(std::ostream& out, const int* data, size_t rows, size_t cols)
   {
+    out << rows << ' ' << cols << ' ';
     size_t total = rows * cols;
+
     for (size_t i = 0; i < total; i++)
     {
-      out << data[i];
-      if (i + 1 < total)
-      {
-        out << ' ';
-      }
+      out << data[i] << ' ';
     }
+
     return out;
   }
 
