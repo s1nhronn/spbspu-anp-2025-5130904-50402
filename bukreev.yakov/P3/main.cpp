@@ -1,19 +1,15 @@
 #include <iostream>
-#include <string>
+#include <cstring>
 #include <fstream>
-#include <limits>
 
 namespace bukreev
 {
-  int mode = 0;
-
-  int* inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size_t* cols);
-  void deleteMatrix(const int* matrix);
+  std::istream& inputMatrix(std::istream& in, int* matrix, size_t rows, size_t cols);
 
   size_t cntSdlPnt(const int* matrix, size_t rows, size_t cols);
   void lftTopClk(int* matrix, size_t rows, size_t cols);
 
-  void output(std::ostream& out, size_t sdl, const int* matrix, size_t rows, size_t cols);
+  void outputMatrix(std::ostream& out, const int* matrix, size_t rows, size_t cols);
 }
 
 int main(int argc, char* argv[])
@@ -30,53 +26,65 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  int arg1 = 0;
-  try
-  {
-    arg1 = std::stoi(argv[1]);
-  }
-  catch(const std::invalid_argument& e)
-  {
-    std::cerr << "First parameter is not a number.\n";
-    return 1;
-  }
-  catch(const std::out_of_range& e)
+  if (std::strlen(argv[1]) != 1)
   {
     std::cerr << "First parameter is out of range.\n";
     return 1;
   }
 
-  if (arg1 != 1 && arg1 != 2)
+  int mode = std::atoi(argv[1]);
+  if (mode == 0)
+  {
+    if (argv[1][0] != '0')
+    {
+      std::cerr << "First parameter is not a number.\n";
+    }
+    else
+    {
+      std::cerr << "First parameter is out of range.\n";
+    }
+    return 1;
+  }
+
+  if (mode != 1 && mode != 2)
   {
     std::cerr << "First parameter is out of range.\n";
     return 1;
   }
 
-  bukreev::mode = arg1;
-
-  int* matrix = nullptr;
-  size_t rows = 0, cols = 0;
   std::ifstream input(argv[2]);
-  if (arg1 == 1)
-  {
-    const size_t MTX_MAX_SIZE = 10000;
-    int stackMatrix[MTX_MAX_SIZE] = {};
-    matrix = stackMatrix;
-  }
 
-  try
+  size_t rows = 0, cols = 0;
+  input >> rows >> cols;
+
+  if (input.fail())
   {
-    matrix = bukreev::inputMatrix(input, matrix, &rows, &cols);
-  }
-  catch(const std::invalid_argument& e)
-  {
-    std::cerr << "Content of the input file is invalid: ";
-    std::cerr << e.what() << ".\n";
+    std::cerr << "No width or height of matrix.\n";
     return 2;
   }
-  catch(const std::bad_alloc& e)
+
+  const size_t MTX_MAX_SIZE = 10000;
+  int stackMatrix[MTX_MAX_SIZE] = {};
+  int* matrix = nullptr;
+
+  if (mode == 1)
   {
-    return 3;
+    matrix = stackMatrix;
+  }
+  else
+  {
+    matrix = new int[rows * cols];
+  }
+
+  bukreev::inputMatrix(input, matrix, rows, cols);
+  if (input.fail())
+  {
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
+    std::cerr << "Content of the input file is invalid.\n";
+    return 2;
   }
 
   input.close();
@@ -86,69 +94,43 @@ int main(int argc, char* argv[])
   {
     sdl = bukreev::cntSdlPnt(matrix, rows, cols);
   }
-  catch(const std::bad_alloc& e)
+  catch (const std::bad_alloc& e)
   {
-    bukreev::deleteMatrix(matrix);
+    if (mode == 2)
+    {
+      delete[] matrix;
+    }
     return 3;
   }
 
   bukreev::lftTopClk(matrix, rows, cols);
 
   std::ofstream output(argv[3]);
-
-  bukreev::output(output, sdl, matrix, rows, cols);
-
-  output.close();
-
-  bukreev::deleteMatrix(matrix);
-
-  return 0;
-}
-
-int* bukreev::inputMatrix(std::istream& in, int* stackMatrix, size_t* rows, size_t* cols)
-{
-  int* matrix = nullptr;
-
-  size_t n = 0, m = 0;
-  in >> n >> m;
-
-  if (in.fail())
+  if (!output.is_open())
   {
-    throw std::invalid_argument("No width or height of matrix");
+    std::cerr << "Failed to open output file.\n";
+    return 2;
   }
 
-  if (mode == 1)
-  {
-    matrix = stackMatrix;
-  }
-  else
-  {
-    matrix = new int[n * m];
-  }
+  output << sdl << '\n';
+  bukreev::outputMatrix(output, matrix, rows, cols);
+  output << '\n';
 
-  for (size_t i = 0; i < n * m; i++)
-  {
-    in >> matrix[i];
-  }
-
-  if (in.fail())
-  {
-    deleteMatrix(matrix);
-    throw std::invalid_argument("Not enough elements of matrix");
-  }
-
-  *rows = n;
-  *cols = m;
-
-  return matrix;
-}
-
-void bukreev::deleteMatrix(const int* matrix)
-{
   if (mode == 2)
   {
     delete[] matrix;
   }
+
+  return 0;
+}
+
+std::istream& bukreev::inputMatrix(std::istream& in, int* matrix, size_t rows, size_t cols)
+{
+  for (size_t i = 0; i < rows * cols; i++)
+  {
+    in >> matrix[i];
+  }
+  return in;
 }
 
 size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
@@ -159,10 +141,10 @@ size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
 
   for (size_t i = 0; i < cols; i++)
   {
-    int maxElem = std::numeric_limits<int>::min();
+    int maxElem = matrix[i];
     size_t maxIndex = 0;
 
-    for (size_t j = 0; j < rows; j++)
+    for (size_t j = 1; j < rows; j++)
     {
       int elem = matrix[j * cols + i];
       if (elem > maxElem)
@@ -177,10 +159,10 @@ size_t bukreev::cntSdlPnt(const int* matrix, size_t rows, size_t cols)
 
   for (size_t i = 0; i < rows; i++)
   {
-    int minElem = std::numeric_limits<int>::max();
+    int minElem = matrix[i * cols];
     size_t minIndex = 0;
 
-    for (size_t j = 0; j < cols; j++)
+    for (size_t j = 1; j < cols; j++)
     {
       int elem = matrix[i * cols + j];
       if (elem < minElem)
@@ -255,19 +237,17 @@ void bukreev::lftTopClk(int* matrix, size_t rows, size_t cols)
       sub++;
     }
 
-    start+=1;
+    start++;
     n -= 2;
     m -= 2;
   }
 }
 
-void bukreev::output(std::ostream& out, size_t sdl, const int* matrix, size_t rows, size_t cols)
+void bukreev::outputMatrix(std::ostream& out, const int* matrix, size_t rows, size_t cols)
 {
-  out << sdl << '\n';
-  out << rows << ' ' << cols << ' ';
+  out << rows << ' ' << cols;
   for (size_t i = 0; i < rows * cols; i++)
   {
-    out << matrix[i] << ' ';
+    out << ' ' << matrix[i];
   }
-  out << '\n';
 }
