@@ -37,17 +37,6 @@ int main(int argc, char** argv)
     std::cerr << "Error: cannot open input file: " << inputName << "\n";
     return 2;
   }
-  char byte;
-  while (fin.get(byte))
-  {
-    if (byte == '\0')
-    {
-      std::cerr << "Error: null byte in input\n";
-      return 2;
-    }
-  }
-  fin.clear();
-  fin.seekg(0);
   size_t rows = 0, cols = 0;
   if (!(fin >> rows >> cols))
   {
@@ -70,12 +59,27 @@ int main(int argc, char** argv)
       return 1;
     }
     int stackArr[max_size];
-    if (!islamov::matrixReader(fin, stackArr, totalElements))
+    for (size_t i = 0; i < totalElements; ++i)
+    {
+      int val;
+      if (!(fin >> val))
+      {
+        std::cerr << "Error: input file content is not a valid matrix\n";
+        return 2;
+      }
+      stackArr[i] = val;
+    }
+    std::string remaining;
+    if (fin >> remaining)
     {
       std::cerr << "Error: input file content is not a valid matrix\n";
       return 2;
     }
-    fin.close();
+    if (!fin.eof() && fin.fail())
+    {
+      std::cerr << "Error: input file content is not a valid matrix\n";
+      return 2;
+    }
     res1 = islamov::colsdiffnumbers(stackArr, rows, cols);
     res2 = islamov::zeroChecker(stackArr, rows, cols);
     std::ofstream fout(outputName, std::ios::binary);
@@ -90,13 +94,30 @@ int main(int argc, char** argv)
   else
   {
     int* dynArr = new int[totalElements];
-    if (!islamov::matrixReader(fin, dynArr, totalElements))
+    for (size_t i = 0; i < totalElements; ++i)
+    {
+      int val;
+      if (!(fin >> val))
+      {
+        delete[] dynArr;
+        std::cerr << "Error: input file content is not a valid matrix\n";
+        return 2;
+      }
+      dynArr[i] = val;
+    }
+    std::string remaining;
+    if (fin >> remaining)
     {
       delete[] dynArr;
       std::cerr << "Error: input file content is not a valid matrix\n";
       return 2;
     }
-    fin.close();
+    if (!fin.eof() && fin.fail())
+    {
+      delete[] dynArr;
+      std::cerr << "Error: input file content is not a valid matrix\n";
+      return 2;
+    }
     res1 = islamov::colsdiffnumbers(dynArr, rows, cols);
     res2 = islamov::zeroChecker(dynArr, rows, cols);
     std::ofstream out(outputName, std::ios::binary);
