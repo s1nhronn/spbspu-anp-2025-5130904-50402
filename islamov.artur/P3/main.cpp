@@ -3,11 +3,13 @@
 #include <cstdlib>
 #include <limits>
 #include <cstring>
+#include <memory>
 namespace islamov
 {
   int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
   int zeroChecker(const int* arr, size_t rows, size_t cols);
   bool intArg(const char* s, int& out);
+  bool matrixReader(std::istream& in, int* arr, size_t totalElements);
 }
 int main(int argc, char** argv)
 {
@@ -27,7 +29,7 @@ int main(int argc, char** argv)
     std::cerr << "Error: first parameter is out of range\n";
     return 1;
   }
-  const char* inputName  = argv[2];
+  const char* inputName = argv[2];
   const char* outputName = argv[3];
   std::ifstream fin(inputName, std::ios::binary);
   if (!fin)
@@ -68,23 +70,7 @@ int main(int argc, char** argv)
       return 1;
     }
     int stackArr[max_size];
-    for (size_t i = 0; i < totalElements; ++i)
-    {
-      long long val;
-      if (!(fin >> val))
-      {
-        std::cerr << "Error: input file content is not a valid matrix\n";
-        return 2;
-      }
-      if (val < std::numeric_limits<int>::min() || val > std::numeric_limits<int>::max())
-      {
-        std::cerr << "Error: value out of int range\n";
-        return 2;
-      }
-      stackArr[i] = static_cast <int> (val);
-    }
-    long long dummy;
-    if (fin >> dummy)
+    if (!islamov::matrixReader(fin, stackArr, totalElements))
     {
       std::cerr << "Error: input file content is not a valid matrix\n";
       return 2;
@@ -104,26 +90,7 @@ int main(int argc, char** argv)
   else
   {
     int* dynArr = new int[totalElements];
-    for (size_t i = 0; i < totalElements; ++i)
-    {
-      long long val;
-      if (!(fin >> val))
-      {
-        delete[] dynArr;
-        std::cerr << "Error: input file content is not a valid matrix\n";
-        return 2;
-      }
-      if (val < std::numeric_limits<int>::min() || val > std::numeric_limits<int>::max())
-      {
-        delete[] dynArr;
-        std::cerr << "Error: value out of int range\n";
-        return 2;
-      }
-      
-      dynArr[i] = static_cast <int> (val);
-    }
-    long long dummy;
-    if (fin >> dummy)
+    if (!islamov::matrixReader(fin, dynArr, totalElements))
     {
       delete[] dynArr;
       std::cerr << "Error: input file content is not a valid matrix\n";
@@ -210,7 +177,7 @@ int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
 bool islamov::intArg(const char* s, int& out)
 {
   char* endptr = nullptr;
-  long val = std::strtol(s, &endptr, 10);
+  long val = std::strtol(s, std::addressof(endptr), 10);
   if (endptr == s || *endptr != '\0')
   {
     return false;
@@ -220,5 +187,23 @@ bool islamov::intArg(const char* s, int& out)
     return false;
   }
   out = static_cast <int> (val);
+  return true;
+}
+bool islamov::matrixReader(std::istream& in, int* arr, size_t totalElements)
+{
+  for (size_t i = 0; i < totalElements; ++i)
+  {
+    int val;
+    if (!(in >> val))
+    {
+      return false;
+    }
+    arr[i] = val;
+  }
+    int dummy;
+  if (in >> dummy)
+  {
+    return false;
+  }
   return true;
 }
