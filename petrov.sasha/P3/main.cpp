@@ -168,7 +168,7 @@ int main(int argc, char** argv)
   petrov::writeMTX(output, mtx1, rows, cols) << '\n';
   output << "Var-2 ";
   petrov::writeMTX(output, mtx2, rows, cols) << '\n';
-  delete[] mtx1;
+  delete[] mtx2;
   if (var == 2) {
     delete[] mtx1;
   }
