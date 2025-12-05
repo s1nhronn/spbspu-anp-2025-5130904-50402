@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <limits>
 #include <cstring>
-#include <memory>
 namespace islamov
 {
   int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
@@ -43,7 +42,7 @@ int main(int argc, char** argv)
     std::cerr << "Error: input file content is not a valid matrix\n";
     return 2;
   }
-  if (rows != 0 && cols > std::numeric_limits<size_t>::max() / rows)
+  if (rows != 0 && cols > std::numeric_limits <size_t>::max() / rows)
   {
     std::cerr << "Error: matrix too large\n";
     return 2;
@@ -69,13 +68,8 @@ int main(int argc, char** argv)
       }
       stackArr[i] = val;
     }
-    std::string remaining;
-    if (fin >> remaining)
-    {
-      std::cerr << "Error: input file content is not a valid matrix\n";
-      return 2;
-    }
-    if (!fin.eof() && fin.fail())
+    fin >> std::ws;
+    if (!fin.eof())
     {
       std::cerr << "Error: input file content is not a valid matrix\n";
       return 2;
@@ -105,14 +99,8 @@ int main(int argc, char** argv)
       }
       dynArr[i] = val;
     }
-    std::string remaining;
-    if (fin >> remaining)
-    {
-      delete[] dynArr;
-      std::cerr << "Error: input file content is not a valid matrix\n";
-      return 2;
-    }
-    if (!fin.eof() && fin.fail())
+    fin >> std::ws;
+    if (!fin.eof())
     {
       delete[] dynArr;
       std::cerr << "Error: input file content is not a valid matrix\n";
@@ -187,7 +175,6 @@ int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
       ++i;
       ++j;
     }
-    
     if (!zeroFound)
     {
       ++count;
@@ -221,7 +208,7 @@ bool islamov::matrixReader(std::istream& in, int* arr, size_t totalElements)
     }
     arr[i] = val;
   }
-    int dummy;
+  int dummy;
   if (in >> dummy)
   {
     return false;
