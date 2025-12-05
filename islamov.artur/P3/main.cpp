@@ -5,9 +5,9 @@
 #include <cstring>
 namespace islamov
 {
-  int colsdiffnumbers(const int* arr, int rows, int cols);
-  int zeroChecker(const int* arr, int rows, int cols);
-  bool intArg(const char* s, int &out);
+  int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
+  int zeroChecker(const int* arr, size_t rows, size_t cols);
+  bool intArg(const char* s, int& out);
 }
 int main(int argc, char** argv)
 {
@@ -46,36 +46,29 @@ int main(int argc, char** argv)
   }
   fin.clear();
   fin.seekg(0);
-  long long r64 = 0, c64 = 0;
-  if (!(fin >> r64 >> c64))
+  size_t rows = 0, cols = 0;
+  if (!(fin >> rows >> cols))
   {
     std::cerr << "Error: input file content is not a valid matrix\n";
     return 2;
   }
-  if (r64 < 0 || c64 < 0)
+  if (rows != 0 && cols > std::numeric_limits<size_t>::max() / rows)
   {
-    std::cerr << "Error: input file content is not a valid matrix\n";
+    std::cerr << "Error: matrix too large\n";
     return 2;
   }
-  long long tLL = r64 * c64;
-  if (r64 != 0 && tLL / r64 != c64)
-  {
-    std::cerr << "Error: input file content is not a valid matrix\n";
-    return 2;
-  }
-  int rows = static_cast <int> (r64);
-  int cols = static_cast <int> (c64);
-  long long t = tLL;
+  size_t totalElements = rows * cols;
   int res1 = 0, res2 = 0;
   if (m == 1)
   {
-    if (t > 10000)
+    const size_t max_size = 10000;
+    if (totalElements > max_size)
     {
       std::cerr << "Error: matrix too large\n";
       return 1;
     }
-    int stackArr[10000];
-    for (long long i = 0; i < t; ++i)
+    int stackArr[max_size];
+    for (size_t i = 0; i < totalElements; ++i)
     {
       long long val;
       if (!(fin >> val))
@@ -83,7 +76,12 @@ int main(int argc, char** argv)
         std::cerr << "Error: input file content is not a valid matrix\n";
         return 2;
       }
-        stackArr[i] = static_cast <int> (val);
+      if (val < std::numeric_limits<int>::min() || val > std::numeric_limits<int>::max())
+      {
+        std::cerr << "Error: value out of int range\n";
+        return 2;
+      }
+      stackArr[i] = static_cast <int> (val);
     }
     long long dummy;
     if (fin >> dummy)
@@ -102,10 +100,11 @@ int main(int argc, char** argv)
     }
     fout << res1 << '\n' << res2 << '\n';
     return 0;
-  }else
+  }
+  else
   {
-    int* dynArr=new int[static_cast <size_t> (t)];
-    for (long long i = 0; i < t; ++i)
+    int* dynArr = new int[totalElements];
+    for (size_t i = 0; i < totalElements; ++i)
     {
       long long val;
       if (!(fin >> val))
@@ -114,6 +113,13 @@ int main(int argc, char** argv)
         std::cerr << "Error: input file content is not a valid matrix\n";
         return 2;
       }
+      if (val < std::numeric_limits<int>::min() || val > std::numeric_limits<int>::max())
+      {
+        delete[] dynArr;
+        std::cerr << "Error: value out of int range\n";
+        return 2;
+      }
+      
       dynArr[i] = static_cast <int> (val);
     }
     long long dummy;
@@ -138,13 +144,13 @@ int main(int argc, char** argv)
     return 0;
   }
 }
-int islamov::colsdiffnumbers(const int* arr, int rows, int cols)
+int islamov::colsdiffnumbers(const int* arr, size_t rows, size_t cols)
 {
   int count = 0;
-  for (int j = 0; j < cols; ++j)
+  for (size_t j = 0; j < cols; ++j)
   {
     bool equal = false;
-    for (int i = 0; i + 1 < rows; ++i)
+    for (size_t i = 0; i + 1 < rows; ++i)
     {
       if (arr[i * cols + j] == arr[(i + 1) * cols + j])
       {
@@ -152,42 +158,56 @@ int islamov::colsdiffnumbers(const int* arr, int rows, int cols)
         break;
       }
     }
-      if (!equal)
-      {
-        ++count;
-      }
-  }
-  return count;
-}
-int islamov::zeroChecker(const int* arr, int rows, int cols)
-{
-  if (rows <= 0 || cols <= 0)
-  {
-     return 0;
-  }
-  int count = 0;
-  for (int d = -(rows-1); d <= (cols - 1); ++d)
-  {
-    int start = (d<0) ? -d : 0;
-    int end = std::min(rows - 1, cols - 1 - d);
-    bool Zero = false;
-    for (int i = start; i <= end; ++i)
+    if (!equal)
     {
-      int j = i + d;
-      if (arr[i * cols + j] == 0)
-      {
-        Zero = true;
-        break;
-      }
-      }
-      if (!Zero)
-      {
-        ++count;
+      ++count;
     }
   }
   return count;
 }
-bool islamov::intArg(const char* s, int &out)
+int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
+{
+  if (rows == 0 || cols == 0)
+  {
+    return 0;
+  }
+  int count = 0;
+  size_t totalDiagonals = rows + cols - 1;
+  for (size_t diagIndex = 0; diagIndex < totalDiagonals; ++diagIndex)
+  {
+    bool zeroFound = false;
+    size_t startRow = 0, startCol = 0;
+    if (diagIndex < rows)
+    {
+      startRow = rows - 1 - diagIndex;
+      startCol = 0;
+    }
+    else
+    {
+      startRow = 0;
+      startCol = diagIndex - rows + 1;
+    }
+    size_t i = startRow;
+    size_t j = startCol;
+    while (i < rows && j < cols)
+    {
+      if (arr[i * cols + j] == 0)
+      {
+        zeroFound = true;
+        break;
+      }
+      ++i;
+      ++j;
+    }
+    
+    if (!zeroFound)
+    {
+      ++count;
+    }
+  }
+  return count;
+}
+bool islamov::intArg(const char* s, int& out)
 {
   char* endptr = nullptr;
   long val = std::strtol(s, &endptr, 10);
