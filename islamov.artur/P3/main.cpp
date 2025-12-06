@@ -6,7 +6,7 @@ namespace islamov
 {
   int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
   int zeroChecker(const int* arr, size_t rows, size_t cols);
-  bool matrixReader(std::istream& in, int* arr, size_t totalElements);
+  std::istream& matrixReader(std::istream& in, int* arr, size_t totalElements);
 }
 int main(int argc, char** argv)
 {
@@ -52,16 +52,7 @@ int main(int argc, char** argv)
       return 1;
     }
     int stackArr[max_size];
-    for (size_t i = 0; i < totalElements; ++i)
-    {
-      int val;
-      if (!(fin >> val))
-      {
-        std::cerr << "Error: input file content is not a valid matrix\n";
-        return 2;
-      }
-      stackArr[i] = val;
-    }
+    islamov::matrixReader(fin, stackArr, totalElements);
     fin >> std::ws;
     if (!fin.eof())
     {
@@ -82,17 +73,7 @@ int main(int argc, char** argv)
   else
   {
     int* dynArr = new int[totalElements];
-    for (size_t i = 0; i < totalElements; ++i)
-    {
-      int val;
-      if (!(fin >> val))
-      {
-        delete[] dynArr;
-        std::cerr << "Error: input file content is not a valid matrix\n";
-        return 2;
-      }
-      dynArr[i] = val;
-    }
+    islamov::matrixReader(fin, dynArr, totalElements);
     fin >> std::ws;
     if (!fin.eof())
     {
@@ -176,21 +157,11 @@ int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
   }
   return count;
 }
-bool islamov::matrixReader(std::istream& in, int* arr, size_t totalElements)
+std::istream& islamov::matrixReader(std::istream& in, int* arr, size_t totalElements)
 {
   for (size_t i = 0; i < totalElements; ++i)
   {
-    int val;
-    if (!(in >> val))
-    {
-      return false;
-    }
-    arr[i] = val;
+    in >> arr[i];
   }
-  int dummy;
-  if (in >> dummy)
-  {
-    return false;
-  }
-  return true;
+  return in;
 }
