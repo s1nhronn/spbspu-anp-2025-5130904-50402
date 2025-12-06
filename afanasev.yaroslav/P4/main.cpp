@@ -57,7 +57,7 @@ namespace afanasev
       str[size] = '\0';
     }
 
-    if (!input || tmp[0] == '\0' || tmp[0] == '\n')
+    if (!input || size == 0)
     {
       delete[] str;
       if (isSkipWp)
