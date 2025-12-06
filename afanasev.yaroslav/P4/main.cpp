@@ -53,6 +53,11 @@ namespace afanasev
       throw std::logic_error("incorrect input");
     }
 
+    if (isSkipWp)
+      {
+        input >> std::skipws;
+      }
+
     return str;
   }
 
