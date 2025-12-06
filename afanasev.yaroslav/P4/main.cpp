@@ -54,9 +54,9 @@ namespace afanasev
     }
 
     if (isSkipWp)
-      {
-        input >> std::skipws;
-      }
+    {
+      input >> std::skipws;
+    }
 
     return str;
   }
