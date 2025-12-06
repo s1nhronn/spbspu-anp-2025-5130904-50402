@@ -14,21 +14,7 @@ namespace afanasev
 
     char * str = nullptr;
     char * tmp = nullptr;
-
-    try
-    {
-      tmp = new char[size + 1];
-    }
-    catch (const std::bad_alloc &)
-    {
-      if (isSkipWp)
-      {
-        input >> std::skipws;
-      }
-      throw;
-    }
-    tmp[0] = '\0';
-
+    size = 0;
     char n = 0;
     while (input >> n && n != '\n')
     {
@@ -118,7 +104,7 @@ int main()
   try
   {
     output1 = new char[str_lenght + 1];
-    output1[str_lenght + 1] = '\0';
+    output1[str_lenght] = '\0';
   }
   catch(const std::bad_alloc &)
   {
@@ -132,7 +118,7 @@ int main()
   try
   {
     output2 = new char[str_lenght + 1];
-    output2[str_lenght + 1] = '\0';
+    output2[str_lenght] = '\0';
   }
   catch(const std::bad_alloc &)
   {
