@@ -27,6 +27,7 @@ namespace afanasev
       }
       throw;
     }
+    tmp[0] = '\0';
 
     char n = 0;
     while (input >> n && n != '\n')
@@ -56,7 +57,7 @@ namespace afanasev
       str[size] = '\0';
     }
 
-    if (!input)
+    if (!input || tmp[0] == '\0' || tmp[0] == '\n')
     {
       delete[] str;
       if (isSkipWp)
