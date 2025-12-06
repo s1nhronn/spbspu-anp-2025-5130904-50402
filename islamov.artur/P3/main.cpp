@@ -2,11 +2,13 @@
 #include <fstream>
 #include <cstdlib>
 #include <limits>
+#include <new>
 namespace islamov
 {
   int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
   int zeroChecker(const int* arr, size_t rows, size_t cols);
   std::istream& matrixReader(std::istream& in, int* arr, size_t totalElements);
+  void cleanArr(int* arr, bool isDynamic);
 }
 int main(int argc, char** argv)
 {
@@ -42,67 +44,51 @@ int main(int argc, char** argv)
     std::cerr << "Error: matrix too large\n";
     return 2;
   }
-  size_t totalElements = rows * cols;
-  if (mode == 1)
+  const size_t totalElements = rows * cols;
+  const size_t max_size = 10000;
+  if (mode == 1 && totalElements > max_size)
   {
-    const size_t max_size = 10000;
-    if (totalElements > max_size)
-    {
-      std::cerr << "Error: matrix too large\n";
-      return 1;
-    }
-    int stackArr[max_size];
-    if (!islamov::matrixReader(fin, stackArr, totalElements))
-    {
-      std::cerr << "Error: input file content is not a valid matrix\n";
-      return 2;
-    }
-    fin >> std::ws;
-    if (!fin.eof())
-    {
-      std::cerr << "Error: input file content is not a valid matrix\n";
-      return 2;
-    }
-    int res1 = islamov::colsdiffnumbers(stackArr, rows, cols);
-    int res2 = islamov::zeroChecker(stackArr, rows, cols);
-    std::ofstream fout(outputName, std::ios::binary);
-    if (!fout)
-    {
-      std::cerr << "Error: cannot open output file: " << outputName << "\n";
-      return 2;
-    }
-    fout << res1 << '\n' << res2 << '\n';
-    return 0;
+    std::cerr << "Error: matrix too large for static mode\n";
+    return 1;
   }
-  else
+  const bool isDynamic = (mode == 2);
+  int* arr = nullptr;
+  int stackArr[max_size] = {0};
+  try
   {
-    int* dynArr = new int[totalElements];
-    if (!islamov::matrixReader(fin, dynArr, totalElements))
+    if (isDynamic)
     {
-      delete[] dynArr;
-      std::cerr << "Error: input file content is not a valid matrix\n";
-      return 2;
+      arr = new int[totalElements]();
     }
-    fin >> std::ws;
-    if (!fin.eof())
+    else
     {
-      delete[] dynArr;
-      std::cerr << "Error: input file content is not a valid matrix\n";
-      return 2;
+      arr = stackArr;
     }
-    int res1 = islamov::colsdiffnumbers(dynArr, rows, cols);
-    int res2 = islamov::zeroChecker(dynArr, rows, cols);
-    std::ofstream out(outputName, std::ios::binary);
-    if (!out)
-    {
-      delete[] dynArr;
-      std::cerr << "Error: cannot open output file: " << outputName << "\n";
-      return 2;
-    }
-    out << res1 << '\n' << res2 << '\n';
-    delete[] dynArr;
-    return 0;
   }
+  catch (const std::bad_alloc&)
+  {
+    std::cerr << "Error: cannot allocate memory for matrix\n";
+    return 2;
+  }
+  islamov::matrixReader(fin, arr, totalElements);
+  if (fin.fail())
+  {
+    std::cerr << "Error: input file content is not a valid matrix\n";
+    islamov::cleanArr(arr, isDynamic);
+    return 2;
+  }
+  const int res1 = islamov::colsdiffnumbers(arr, rows, cols);
+  const int res2 = islamov::zeroChecker(arr, rows, cols);
+  std::ofstream fout(outputName, std::ios::binary);
+  if (!fout)
+  {
+    std::cerr << "Error: cannot open output file: " << outputName << "\n";
+    islamov::cleanArr(arr, isDynamic);
+    return 2;
+  }
+  fout << res1 << '\n' << res2 << '\n';
+  islamov::cleanArr(arr, isDynamic);
+  return 0;
 }
 int islamov::colsdiffnumbers(const int* arr, size_t rows, size_t cols)
 {
@@ -132,7 +118,7 @@ int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
     return 0;
   }
   int count = 0;
-  size_t totalDiagonals = rows + cols - 1;
+  const size_t totalDiagonals = rows + cols - 1;
   for (size_t diagIndex = 0; diagIndex < totalDiagonals; ++diagIndex)
   {
     bool zeroFound = false;
@@ -177,4 +163,11 @@ std::istream& islamov::matrixReader(std::istream& in, int* arr, size_t totalElem
     }
   }
   return in;
+}
+void islamov::cleanArr(int* arr, bool isDynamic)
+{
+  if (isDynamic)
+  {
+    delete[] arr;
+  }
 }
