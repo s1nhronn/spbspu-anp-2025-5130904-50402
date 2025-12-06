@@ -30,7 +30,8 @@ int main(int argc, char** argv)
     std::cerr << "Error: cannot open input file: " << inputName << "\n";
     return 2;
   }
-  size_t rows = 0, cols = 0;
+  size_t rows = 0;
+  size_t cols = 0;
   if (!(fin >> rows >> cols))
   {
     std::cerr << "Error: input file content is not a valid matrix\n";
@@ -42,7 +43,8 @@ int main(int argc, char** argv)
     return 2;
   }
   size_t totalElements = rows * cols;
-  int res1 = 0, res2 = 0;
+  int res1 = 0;
+  int res2 = 0;
   if (mode == 1)
   {
     const size_t max_size = 10000;
@@ -52,7 +54,11 @@ int main(int argc, char** argv)
       return 1;
     }
     int stackArr[max_size];
-    islamov::matrixReader(fin, stackArr, totalElements);
+    if (!islamov::matrixReader(fin, stackArr, totalElements))
+    {
+      std::cerr << "Error: input file content is not a valid matrix\n";
+      return 2;
+    }
     fin >> std::ws;
     if (!fin.eof())
     {
@@ -73,7 +79,12 @@ int main(int argc, char** argv)
   else
   {
     int* dynArr = new int[totalElements];
-    islamov::matrixReader(fin, dynArr, totalElements);
+    if (!islamov::matrixReader(fin, dynArr, totalElements))
+    {
+      delete[] dynArr;
+      std::cerr << "Error: input file content is not a valid matrix\n";
+      return 2;
+    }
     fin >> std::ws;
     if (!fin.eof())
     {
@@ -127,7 +138,8 @@ int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
   for (size_t diagIndex = 0; diagIndex < totalDiagonals; ++diagIndex)
   {
     bool zeroFound = false;
-    size_t startRow = 0, startCol = 0;
+    size_t startRow = 0;
+    size_t startCol = 0;
     if (diagIndex < rows)
     {
       startRow = rows - 1 - diagIndex;
@@ -161,7 +173,10 @@ std::istream& islamov::matrixReader(std::istream& in, int* arr, size_t totalElem
 {
   for (size_t i = 0; i < totalElements; ++i)
   {
-    in >> arr[i];
+    if (!(in >> arr[i]))
+    {
+      return in;
+    }
   }
   return in;
 }
