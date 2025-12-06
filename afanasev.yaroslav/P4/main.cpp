@@ -14,14 +14,28 @@ namespace afanasev
 
     char * str = nullptr;
     char * tmp = nullptr;
+
+    try
+    {
+      tmp = new char[size + 1];
+    }
+    catch (const std::bad_alloc &)
+    {
+      if (isSkipWp)
+      {
+        input >> std::skipws;
+      }
+      throw;
+    }
+
     char n = 0;
     while (input >> n && n != '\n')
     {
       try
       {
-        tmp = new char[size + 1];
+        tmp = new char[size + 2];
       }
-      catch(...)
+      catch (const std::bad_alloc &)
       {
         delete[] str;
         if (isSkipWp)
@@ -39,10 +53,10 @@ namespace afanasev
       str = tmp;
       str[size] = n;
       size++;
+      str[size] = '\0';
     }
 
-    tmp = nullptr;
-    if (input.eof())
+    if (!input)
     {
       delete[] str;
       if (isSkipWp)
@@ -50,33 +64,6 @@ namespace afanasev
         input >> std::skipws;
       }
       throw std::logic_error("incorrect input");
-    }
-
-    try
-    {
-      tmp = new char[size + 1];
-    }
-    catch(...)
-    {
-      delete[] str;
-      if (isSkipWp)
-      {
-        input >> std::skipws;
-      }
-      throw;
-    }
-
-    for (size_t i = 0; i < size; ++i)
-    {
-      tmp[i] = str[i];
-    }
-    delete[] str;
-    str = tmp;
-    str[size] = '\0';
-
-    if (isSkipWp)
-    {
-      input >> std::skipws;
     }
 
     return str;
@@ -115,19 +102,14 @@ int main()
   {
     str = afanasev::getline(std::cin, str_lenght_link);
   }
-  catch (const std::bad_alloc&)
+  catch (const std::bad_alloc &)
   {
     std::cerr << "Get memory failed" << '\n';
     return 1;
   }
-  catch (const std::logic_error&)
+  catch (const std::logic_error &)
   {
     std::cerr << "Incorrect input" << '\n';
-    return 1;
-  }
-  catch (...)
-  {
-    std::cerr << "Undefinde error" << '\n';
     return 1;
   }
 
@@ -135,9 +117,9 @@ int main()
   try
   {
     output1 = new char[str_lenght + 1];
-    output1[0] = '\0';
+    output1[str_lenght + 1] = '\0';
   }
-  catch(...)
+  catch(const std::bad_alloc &)
   {
     delete[] str;
     std::cerr << "Get memory failed" << '\n';
@@ -149,9 +131,9 @@ int main()
   try
   {
     output2 = new char[str_lenght + 1];
-    output2[0] = '\0';
+    output2[str_lenght + 1] = '\0';
   }
-  catch(...)
+  catch(const std::bad_alloc &)
   {
     delete[] str;
     delete[] output1;
