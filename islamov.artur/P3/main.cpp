@@ -2,12 +2,10 @@
 #include <fstream>
 #include <cstdlib>
 #include <limits>
-#include <cstring>
 namespace islamov
 {
   int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
   int zeroChecker(const int* arr, size_t rows, size_t cols);
-  bool intArg(const char* s, int& out);
   bool matrixReader(std::istream& in, int* arr, size_t totalElements);
 }
 int main(int argc, char** argv)
@@ -17,15 +15,11 @@ int main(int argc, char** argv)
     std::cerr << "Error: Incorrect arguments\n";
     return 1;
   }
-  int m = 0;
-  if (!islamov::intArg(argv[1], m))
+  char* endptr = nullptr;
+  long mode = std::strtol(argv[1], std::addressof(endptr), 10);
+  if (endptr == argv[1] || *endptr != '\0' || mode < 1 || mode > 2)
   {
-    std::cerr << "Error: first parameter is not a number\n";
-    return 1;
-  }
-  if (m != 1 && m != 2)
-  {
-    std::cerr << "Error: first parameter is out of range\n";
+    std::cerr << "Error: first parameter is not a valid number (must be 1 or 2)\n";
     return 1;
   }
   const char* inputName = argv[2];
@@ -49,7 +43,7 @@ int main(int argc, char** argv)
   }
   size_t totalElements = rows * cols;
   int res1 = 0, res2 = 0;
-  if (m == 1)
+  if (mode == 1)
   {
     const size_t max_size = 10000;
     if (totalElements > max_size)
@@ -181,21 +175,6 @@ int islamov::zeroChecker(const int* arr, size_t rows, size_t cols)
     }
   }
   return count;
-}
-bool islamov::intArg(const char* s, int& out)
-{
-  char* endptr = nullptr;
-  long val = std::strtol(s, std::addressof(endptr), 10);
-  if (endptr == s || *endptr != '\0')
-  {
-    return false;
-  }
-  if (val < std::numeric_limits < int >::min() || val > std::numeric_limits < int >::max())
-  {
-    return false;
-  }
-  out = static_cast < int > (val);
-  return true;
 }
 bool islamov::matrixReader(std::istream& in, int* arr, size_t totalElements)
 {
