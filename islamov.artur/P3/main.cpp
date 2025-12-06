@@ -43,8 +43,6 @@ int main(int argc, char** argv)
     return 2;
   }
   size_t totalElements = rows * cols;
-  int res1 = 0;
-  int res2 = 0;
   if (mode == 1)
   {
     const size_t max_size = 10000;
@@ -65,8 +63,8 @@ int main(int argc, char** argv)
       std::cerr << "Error: input file content is not a valid matrix\n";
       return 2;
     }
-    res1 = islamov::colsdiffnumbers(stackArr, rows, cols);
-    res2 = islamov::zeroChecker(stackArr, rows, cols);
+    int res1 = islamov::colsdiffnumbers(stackArr, rows, cols);
+    int res2 = islamov::zeroChecker(stackArr, rows, cols);
     std::ofstream fout(outputName, std::ios::binary);
     if (!fout)
     {
@@ -92,8 +90,8 @@ int main(int argc, char** argv)
       std::cerr << "Error: input file content is not a valid matrix\n";
       return 2;
     }
-    res1 = islamov::colsdiffnumbers(dynArr, rows, cols);
-    res2 = islamov::zeroChecker(dynArr, rows, cols);
+    int res1 = islamov::colsdiffnumbers(dynArr, rows, cols);
+    int res2 = islamov::zeroChecker(dynArr, rows, cols);
     std::ofstream out(outputName, std::ios::binary);
     if (!out)
     {
