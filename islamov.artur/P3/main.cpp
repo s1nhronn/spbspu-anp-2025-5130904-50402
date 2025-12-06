@@ -42,7 +42,7 @@ int main(int argc, char** argv)
     std::cerr << "Error: input file content is not a valid matrix\n";
     return 2;
   }
-  if (rows != 0 && cols > std::numeric_limits <size_t>::max() / rows)
+  if (rows != 0 && cols > std::numeric_limits < size_t >::max() / rows)
   {
     std::cerr << "Error: matrix too large\n";
     return 2;
@@ -190,11 +190,11 @@ bool islamov::intArg(const char* s, int& out)
   {
     return false;
   }
-  if (val < std::numeric_limits <int>::min() || val > std::numeric_limits <int>::max())
+  if (val < std::numeric_limits < int >::min() || val > std::numeric_limits < int >::max())
   {
     return false;
   }
-  out = static_cast <int> (val);
+  out = static_cast < int > (val);
   return true;
 }
 bool islamov::matrixReader(std::istream& in, int* arr, size_t totalElements)
