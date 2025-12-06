@@ -29,8 +29,8 @@ int main()
     return 1;
   }
 
-  char *res1 = static_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH + 1) * sizeof(char)));
-  char *res2 = static_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s + 1) * sizeof(char)));
+  char *res1 = reinterpret_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH + 1) * sizeof(char)));
+  char *res2 = reinterpret_cast< char * >(malloc((std::strlen(shirokov::LITERAL) + s + 1) * sizeof(char)));
   if (res1 == nullptr || res2 == nullptr)
   {
     free(str);
@@ -41,7 +41,7 @@ int main()
   }
   res1[shirokov::LATIN_ALPHABET_LENGTH] = '\0';
   res2[std::strlen(shirokov::LITERAL) + s] = '\0';
-  char *buffer = static_cast< char * >(malloc(sizeof(char) * s));
+  char *buffer = reinterpret_cast< char * >(malloc(sizeof(char) * s));
   if (buffer == nullptr)
   {
     free(str);
@@ -153,7 +153,6 @@ char *shirokov::otherLatinLetters(const char *str, char *res, char *buffer)
 void shirokov::combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
 {
   size_t minn = s1 < s2 ? s1 : s2;
-  res[s1 + s2] = '\0';
   for (size_t i = 0; i < minn; ++i)
   {
     res[2 * i] = str1[i];
@@ -199,7 +198,7 @@ char *shirokov::uniq(char *res, const char *str, size_t &rsize)
 void shirokov::expand(char **str, size_t size, size_t &capacity)
 {
   char *temp_str = nullptr;
-  temp_str = static_cast< char * >(malloc(capacity * 2));
+  temp_str = reinterpret_cast< char * >(malloc(capacity * 2));
   if (temp_str == nullptr)
   {
     *str = nullptr;
