@@ -1,23 +1,20 @@
 #include <iostream>
 #include <cstring>
 #include <ios>
-#include <new>
 
 namespace lavrentev
 {
-  size_t difLat(char* s1);
-  void uniTwo(char* s1, char* s2, size_t ex, size_t ex2, char* result);
-  char* getline(std::istream& in, size_t& n);
+  size_t difLat(char* ans, char* s1);
+  void uniTwo(char* s1, const char s2[], size_t ex, size_t ex2, char* result);
+  char* getline(std::istream & in, size_t& n);
 }
 
 int main()
 {
   char* s1 = nullptr;
   size_t ex = 0;
-  try{
-    s1 = lavrentev::getline(std::cin, ex);
-  }
-  catch(const std::bad_alloc)
+  s1 = lavrentev::getline(std::cin, ex);
+  if (s1 == nullptr)
   {
     std::cerr << "Memory allocation fail" << '\n';
     return 1;
@@ -30,8 +27,21 @@ int main()
     return 1;
   }
 
-  char buf1[] = "";
-  char s2[] = "def ";
+  char* buf1 = nullptr;
+  try
+  {
+    buf1 = new char[ex + 1];
+  }
+  catch (std::bad_alloc&)
+  {
+    std::cerr << "Memory allocation fail" << '\n';
+    delete[] s1;
+    return 1;
+  }
+
+  buf1[ex] = '\0';
+  const char s2[] = {'d', 'e', 'f', ' '};
+
   size_t ex2 = 4;
 
   char* result = nullptr;
@@ -39,76 +49,75 @@ int main()
   {
     result = new char[ex + ex2 + 1];
   }
-  catch (const std::bad_alloc)
+  catch (std::bad_alloc&)
   {
     std::cerr << "Memory allocation fail" << '\n';
     delete[] s1;
+    delete[] buf1;
     return 1;
   }
+  result[ex + ex2] = '\0';
 
-  int ans_7 = lavrentev::difLat(s1);
+  int ans_7 = lavrentev::difLat(buf1, s1);
   std::cout << "Ans 7: " << ans_7 << '\n';
 
   lavrentev::uniTwo(s1, s2, ex, ex2, result);
   std::cout << "Ans 12: " << result << '\n';
 
   delete[] s1;
+  delete[] buf1;
   delete[] result;
 }
 
-size_t lavrentev::difLat(char* s1)
+size_t lavrentev::difLat(char* buf1, char* s1)
 {
   size_t answer = 0;
   size_t i = 0;
-  char buf1[std::strlen(s1)];
+
+  buf1[0] = '\0';
 
   while(s1[i] != '\0')
   {
     bool flag = false;
+    size_t j = 0;
 
-    for(size_t j = 0; j < answer; ++j)
+    while(j < answer)
     {
       if (buf1[j] == s1[i])
       {
         flag = true;
         break;
       }
+      ++j;
     }
 
-    if (!flag && std::isalpha(s1[i]))
+    if (!flag && isalpha(s1[i]))
     {
-      buf1[i] = s1[i];
-    }
-    ++i;
-  }
-
-  i = 0;
-  while(buf1[i] != '\0')
-  {
-    if (isalpha(buf1[i]))
-    {
+      buf1[answer] = s1[i];
       ++answer;
+      buf1[answer] = '\0';
     }
     ++i;
   }
-  buf1[answer] = '\0';
 
   return answer;
 }
 
-void lavrentev::uniTwo(char* s1, char* s2, size_t ex, size_t ex2, char* result)
+void lavrentev::uniTwo(char* s1, const char s2[], size_t ex, size_t ex2, char* result)
 {
   size_t min = 0;
+  char max_s1[ex];
+  char max_s2[ex2];
   char* max_s_ptr;
   if (ex < ex2)
   {
     min = ex;
-    max_s_ptr = s2;
+    max_s_ptr = max_s2;
   }
   else
   {
     min = ex2;
-    max_s_ptr = s1;
+    max_s_ptr = max_s1;
   }
 
   if (min == ex)
@@ -142,12 +151,13 @@ void lavrentev::uniTwo(char* s1, char* s2, size_t ex, size_t ex2, char* result)
     result[i] = max_s_ptr[t];
     ++t;
   }
-  result[ex + ex2] = '\0';
+  result += '\0';
 }
 
-char* lavrentev::getline(std::istream& in, size_t& n)
+char* lavrentev::getline(std::istream & in, size_t & n)
 {
   size_t cap = 10;
+  size_t size = 0;
 
   bool is_skipws = in.flags() & std::ios_base::skipws;
   if (is_skipws)
@@ -161,7 +171,7 @@ char* lavrentev::getline(std::istream& in, size_t& n)
   {
     s = new char[cap];
   }
-  catch (const std::bad_alloc)
+  catch (const std::bad_alloc&)
   {
     n = 0;
 
@@ -170,13 +180,13 @@ char* lavrentev::getline(std::istream& in, size_t& n)
       in >> std::skipws;
     }
 
-    throw std::bad_alloc();
+    return nullptr;
   }
 
   char st;
   while (in >> st && st != '\n')
   {
-    if (n == cap - 1)
+    if (size == cap - 1)
     {
       size_t new_cap = cap + cap / 2;
       char* new_s = nullptr;
@@ -185,7 +195,7 @@ char* lavrentev::getline(std::istream& in, size_t& n)
       {
         new_s = new char[new_cap];
       }
-      catch (const std::bad_alloc)
+      catch (const std::bad_alloc&)
       {
         delete[] s;
         n = 0;
@@ -195,10 +205,10 @@ char* lavrentev::getline(std::istream& in, size_t& n)
           in >> std::skipws;
         }
 
-        throw std::bad_alloc();
+        return nullptr;
       }
 
-      for (size_t j = 0; j < n; ++j)
+      for (size_t j = 0; j < size; ++j)
       {
         new_s[j] = s[j];
       }
@@ -208,11 +218,12 @@ char* lavrentev::getline(std::istream& in, size_t& n)
       cap = new_cap;
     }
 
-    s[n] = st;
-    ++n;
+    s[size] = st;
+    ++size;
   }
 
-  s[n] = '\0';
+  s[size] = '\0';
+  n = size;
 
   if (is_skipws)
   {
