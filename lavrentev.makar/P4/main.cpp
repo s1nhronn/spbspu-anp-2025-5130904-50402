@@ -31,9 +31,7 @@ int main()
   }
 
   char buf1[] = "";
-
   char s2[] = "def ";
-
   size_t ex2 = 4;
 
   char* result = nullptr;
