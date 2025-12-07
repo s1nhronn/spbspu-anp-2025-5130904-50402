@@ -7,7 +7,7 @@ namespace saldaev
 {
   const size_t block_size = 10;
 
-  char *getLine(std::istream &in, const size_t block_size)
+  char *getLine(std::istream &in, const size_t block_size = block_size)
   {
     char *data = reinterpret_cast< char * >(malloc((block_size + 1) * sizeof(char)));
     if (data == nullptr)
@@ -159,7 +159,7 @@ namespace saldaev
     char crnt_char = data[i];
     while (crnt_char != '\0')
     {
-      if (!isalpha(crnt_char))
+      if (!std::isalpha(crnt_char))
       {
         new_arr[crnt_digit] = crnt_char;
         crnt_digit++;
@@ -175,7 +175,7 @@ namespace saldaev
 int main()
 {
   char *line = nullptr;
-  line = saldaev::getLine(std::cin, saldaev::block_size);
+  line = saldaev::getLine(std::cin);
   if (line == nullptr)
   {
     std::cerr << "Could not read the string\n";
