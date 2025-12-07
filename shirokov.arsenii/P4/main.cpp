@@ -22,7 +22,7 @@ int main()
   size_t s = 0;
   char *str = shirokov::getline(std::cin, s);
 
-  if (str == nullptr)
+  if (str == nullptr || s == 0)
   {
     free(str);
     std::cerr << "Couldn't read the line\n";
@@ -39,8 +39,6 @@ int main()
     std::cerr << "Memory allocation error\n";
     return 1;
   }
-  res1[shirokov::LATIN_ALPHABET_LENGTH] = '\0';
-  res2[std::strlen(shirokov::LITERAL) + s] = '\0';
   char *buffer = reinterpret_cast< char * >(malloc(sizeof(char) * s));
   if (buffer == nullptr)
   {
@@ -50,6 +48,9 @@ int main()
     std::cerr << "Memory allocation error\n";
     return 1;
   }
+  res1[shirokov::LATIN_ALPHABET_LENGTH] = '\0';
+  res2[std::strlen(shirokov::LITERAL) + s] = '\0';
+  buffer[s] = '\0';
   shirokov::otherLatinLetters(str, res1, buffer);
   shirokov::combineLines(str, s, shirokov::LITERAL, std::strlen(shirokov::LITERAL), res2);
   if (res1 == nullptr || res2 == nullptr)
@@ -57,6 +58,7 @@ int main()
     free(str);
     free(res1);
     free(res2);
+    free(buffer);
     std::cerr << "Error during conversion\n";
     return 1;
   }
@@ -66,6 +68,7 @@ int main()
   free(str);
   free(res1);
   free(res2);
+  free(buffer);
 }
 
 char *shirokov::getline(std::istream &in, size_t &s)
@@ -107,15 +110,6 @@ char *shirokov::getline(std::istream &in, size_t &s)
     }
     s++;
   }
-  if (in.bad() || s == 0)
-  {
-    free(str);
-    if (is_skipws)
-    {
-      in >> std::skipws;
-    }
-    return nullptr;
-  }
   str[s] = '\0';
   if (is_skipws)
   {
@@ -127,14 +121,14 @@ char *shirokov::getline(std::istream &in, size_t &s)
 char *shirokov::otherLatinLetters(const char *str, char *res, char *buffer)
 {
   size_t rsize = 0;
-  char *ustr = uniq(buffer, str, rsize);
+  buffer = uniq(buffer, str, rsize);
   size_t pos = 0;
   for (char letter = 'a'; letter <= 'z'; ++letter)
   {
     bool in_str = false;
     for (size_t i = 0; i < rsize; ++i)
     {
-      if (ustr[i] == letter)
+      if (buffer[i] == letter)
       {
         in_str = true;
         break;
@@ -146,7 +140,6 @@ char *shirokov::otherLatinLetters(const char *str, char *res, char *buffer)
     }
   }
   res[pos] = '\0';
-  free(ustr);
   return res;
 }
 
@@ -158,9 +151,10 @@ void shirokov::combineLines(const char *str1, size_t s1, const char *str2, size_
     res[2 * i] = str1[i];
     res[2 * i + 1] = str2[i];
   }
+  bool condition = s1 > s2;
   for (size_t i = minn * 2; i < s1 + s2; ++i)
   {
-    res[i] = (s1 > s2 ? str1[i - minn] : str2[i - minn]);
+    res[i] = (condition ? str1[i - minn] : str2[i - minn]);
   }
 }
 
@@ -184,11 +178,6 @@ char *shirokov::uniq(char *res, const char *str, size_t &rsize)
     }
     if (!in_res)
     {
-      char temp = str[i];
-      if ('A' <= temp && temp <= 'Z')
-      {
-        temp += 32;
-      }
       res[rsize++] = temp;
     }
   }
@@ -201,6 +190,7 @@ void shirokov::expand(char **str, size_t size, size_t &capacity)
   temp_str = reinterpret_cast< char * >(malloc(capacity * 2));
   if (temp_str == nullptr)
   {
+    delete[] *str;
     *str = nullptr;
     return;
   }
