@@ -8,7 +8,7 @@
 namespace shirokov
 {
   size_t LATIN_ALPHABET_LENGTH = 26;
-  const int LETTER_DELTA = 32;
+  const int CASE_DELTA = 32;
   const char LITERAL[] = "def ";
   char *uniq(char *res, const char *str, size_t &rsize);
   void expand(char **str, size_t size, size_t &capacity);
@@ -39,7 +39,7 @@ int main()
     std::cerr << "Memory allocation error\n";
     return 1;
   }
-  char *buffer = reinterpret_cast< char * >(malloc(sizeof(char) * s));
+  char *buffer = reinterpret_cast< char * >(malloc(sizeof(char) * (s + 1)));
   if (buffer == nullptr)
   {
     free(str);
@@ -167,7 +167,7 @@ char *shirokov::uniq(char *res, const char *str, size_t &rsize)
     char temp = str[i];
     if ('A' <= temp && temp <= 'Z')
     {
-      temp += shirokov::LETTER_DELTA;
+      temp += shirokov::CASE_DELTA;
     }
     for (size_t j = 0; j < rsize; ++j)
     {
