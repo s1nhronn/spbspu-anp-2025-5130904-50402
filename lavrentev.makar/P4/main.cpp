@@ -60,15 +60,12 @@ size_t lavrentev::difLat(char* s1)
 {
   size_t answer = 0;
   size_t i = 0;
-  char buf1[std::strlen(s1)];
-
-  buf1[0] = '\0';
 
   while(s1[i] != '\0')
   {
     bool flag = false;
-
-    for(size_t j = 0; j < answer; ++j)
+    size_t j = 0;
+    while(buf1[j] != '\0')
     {
       if (buf1[j] == s1[i])
       {
@@ -79,7 +76,16 @@ size_t lavrentev::difLat(char* s1)
 
     if (!flag && std::isalpha(s1[i]))
     {
-      buf1[answer] = s1[i];
+      buf1[i] = s1[i];
+    }
+    ++i;
+  }
+
+  i = 0;
+  while(buf1[i] != '\0')
+  {
+    if (isalpha(buf1[i]))
+    {
       ++answer;
     }
     ++i;
