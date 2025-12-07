@@ -85,7 +85,7 @@ namespace petrov {
   }
 
   size_t doSeqSym(const char* str) {
-    if (str[0] == '\0' || str[0] == '\0') }
+    if (str[0] == '\0' || str[0] == '\0') {
       return 0;
     }
     for (size_t i = 1; str[i] != '\0'; ++i) {
