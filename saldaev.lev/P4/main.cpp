@@ -9,7 +9,7 @@ namespace saldaev
 
   char *getLine(std::istream &in, const size_t block_size)
   {
-    char *data = reinterpret_cast<char *>(malloc((block_size + 1) * sizeof(char)));
+    char *data = reinterpret_cast< char * >(malloc((block_size + 1) * sizeof(char)));
     if (data == nullptr)
     {
       return nullptr;
@@ -28,7 +28,7 @@ namespace saldaev
       size++;
       if (size > capacity)
       {
-        char *tmp = reinterpret_cast<char *>(malloc((capacity + block_size + 1) * sizeof(char)));
+        char *tmp = reinterpret_cast< char * >(malloc((capacity + block_size + 1) * sizeof(char)));
         if (tmp == nullptr)
         {
           free(data);
@@ -91,12 +91,11 @@ namespace saldaev
     {
       spaces--;
     }
-    char *new_array = reinterpret_cast<char *>(malloc((leters + spaces + 1) * sizeof(char)));
+    char *new_array = reinterpret_cast< char * >(malloc((leters + spaces + 1) * sizeof(char)));
     if (new_array == nullptr)
     {
       return nullptr;
     }
-    new_array[leters + spaces] = '\0';
     return new_array;
   }
 
@@ -114,7 +113,7 @@ namespace saldaev
       i++;
       crnt = data[i];
     }
-    char *new_array = reinterpret_cast<char *>(malloc(new_length * sizeof(char)));
+    char *new_array = reinterpret_cast< char * >(malloc(new_length * sizeof(char)));
     if (new_array == nullptr)
     {
       return nullptr;
@@ -122,9 +121,9 @@ namespace saldaev
     return new_array;
   }
 
-  char * spcRmv(const char *data)
+  char *spcRmv(const char *data)
   {
-    char * new_arr = createCompactArray1(data);
+    char *new_arr = createCompactArray1(data);
     if (new_arr == nullptr)
     {
       return 0;
@@ -144,11 +143,13 @@ namespace saldaev
       i++;
       crnt_char = data[i];
     }
+    new_arr[crnt_digit] = '\0';
     return new_arr;
   }
-  char * latRmv(char *data)
+
+  char *latRmv(char *data)
   {
-    char * new_arr = createCompactArray2(data);
+    char *new_arr = createCompactArray2(data);
     if (new_arr == 0)
     {
       return 0;
@@ -166,6 +167,7 @@ namespace saldaev
       i++;
       crnt_char = data[i];
     }
+    new_arr[crnt_digit] = '\0';
     return new_arr;
   }
 }
@@ -177,6 +179,12 @@ int main()
   if (line == nullptr)
   {
     std::cerr << "Could not read the string\n";
+    return 1;
+  }
+  if (line[0] == '\0')
+  {
+    std::cerr << "Empty line\n";
+    free(line);
     return 1;
   }
 
