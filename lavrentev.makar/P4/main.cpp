@@ -60,12 +60,13 @@ size_t lavrentev::difLat(char* s1)
 {
   size_t answer = 0;
   size_t i = 0;
+  char buf1[std::strlen(s1)];
 
   while(s1[i] != '\0')
   {
     bool flag = false;
-    size_t j = 0;
-    while(buf1[j] != '\0')
+
+    for(size_t j = 0; j < answer; ++j)
     {
       if (buf1[j] == s1[i])
       {
