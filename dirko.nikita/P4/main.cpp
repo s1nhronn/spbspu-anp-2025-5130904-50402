@@ -25,7 +25,10 @@ namespace dirko
       return nullptr;
     }
     std::strncpy(newStr, str, size);
-    newStr[size] = '\0';
+    for (size_t i = size; i < size * 2; ++i)
+    {
+      newStr[i] = '\0';
+    }
     return newStr;
   }
   std::istream &getLine(std::istream &in, char *&str, size_t &size, size_t &copasity)
