@@ -112,12 +112,13 @@ namespace pozdnyakov
 
   std::ostream& writeMatrix(std::ostream& out, const int* data, size_t rows, size_t cols)
   {
-    out << rows << ' ' << cols << ' ';
+    out << rows << ' ' << cols;
+
     size_t total = rows * cols;
 
     for (size_t i = 0; i < total; i++)
     {
-      out << data[i] << ' ';
+      out << ' ' << data[i];
     }
 
     return out;
@@ -210,7 +211,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-    dataPtr = reinterpret_cast<int*>(std::malloc(rows * cols * sizeof(int)));
+    dataPtr = reinterpret_cast< int* >(std::malloc(rows * cols * sizeof(int)));
     if (dataPtr == nullptr)
     {
       std::cerr << "Memory allocation failed\n";
@@ -243,7 +244,6 @@ int main(int argc, char* argv[])
   }
 
   out << diagCount << '\n';
-  out << rows << ' ' << cols << ' ';
   writeMatrix(out, dataPtr, rows, cols);
 
   if (mode == 2)
