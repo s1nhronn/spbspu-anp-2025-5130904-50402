@@ -5,7 +5,7 @@
 
 namespace lavrentev
 {
-  size_t difLat(char* s1, size_t ex);
+  size_t difLat(char* s1, char* buf1);
   void uniTwo(char* s1, char* s2, size_t ex, size_t ex2, char* result);
   char* getline(std::istream& in, size_t& n);
 }
@@ -30,6 +30,18 @@ int main()
     return 1;
   }
 
+  char* buf1 = nullptr;
+  try
+  {
+    buf1 = new char[ex + 1];
+  }
+  catch (const std::bad_alloc&)
+  {
+    std::cerr << "Memory allocation fail" << '\n';
+    delete[] s1;
+    return 1;
+  }
+
   char s2[] = "def ";
   size_t ex2 = 4;
 
@@ -41,25 +53,26 @@ int main()
   catch (const std::bad_alloc&)
   {
     std::cerr << "Memory allocation fail" << '\n';
+    delete[] buf1;
     delete[] s1;
     return 1;
   }
 
-  int ans_7 = lavrentev::difLat(s1, ex);
+  int ans_7 = lavrentev::difLat(s1, buf1);
   std::cout << "Ans 7: " << ans_7 << '\n';
 
   lavrentev::uniTwo(s1, s2, ex, ex2, result);
   std::cout << "Ans 12: " << result << '\n';
 
+  delete[] buf1;
   delete[] s1;
   delete[] result;
 }
 
-size_t lavrentev::difLat(char* s1, size_t ex)
+size_t lavrentev::difLat(char* s1, char* buf1)
 {
   size_t answer = 0;
   size_t i = 0;
-  char buf1[ex];
 
   while(s1[i] != '\0')
   {
