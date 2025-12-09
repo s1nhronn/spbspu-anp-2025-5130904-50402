@@ -31,6 +31,30 @@ namespace karpovich
       double width_, height_;
       point_t centr_;
   };
+  struct Rubber: Shape
+  {
+    Rubber(double radius1, double radius2, point_t centr1, point_t centr2);
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(double dx, double dy) override;
+    void move(point_t p) override;
+    void scale(double k) override;
+    private:
+      double radius1_, radius2_;
+      point_t centr1_, centr2_;
+  };
+  struct Elipse: Shape
+  {
+    Elipse(double semiax1_, double semiax2_, point_t centr);
+    double getArea() const override;
+    rectangle_t getFrameRect() const override;
+    void move(double dx, double dy) override;
+    void move(point_t p) override;
+    void scale(double k) override;
+    private:
+      double semiax1_, semiax2_;
+      point_t centr_;
+  };
 }
 
 int main()
