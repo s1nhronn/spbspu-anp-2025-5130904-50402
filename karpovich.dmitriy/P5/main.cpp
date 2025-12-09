@@ -70,6 +70,25 @@ int main()
   karp::Rubber rub(5.0, 2.0, {0.0, 0.0}, {1.0, 1.0});
   const size_t n = 3;
   karp::Shape* shapes[n] = {&rect, &ell, &rub};
+  karp::point_t pt;
+  double k;
+
+  if (!(std::cin >> pt.x >> pt.y >> k))
+  {
+    std::cerr << "err: bad arguments\n";
+    return 1;
+  }
+
+  if (k <= 0.0)
+  {
+    std::cerr << "err: k must be positive\n";
+    return 1;
+  }
+
+  karp::output(shapes, n);
+  karp::scalefrompt(shapes, n, k, pt);
+  karp::output(shapes, n);
+  return 0;
 }
 
 karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
