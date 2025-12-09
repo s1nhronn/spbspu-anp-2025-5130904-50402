@@ -8,7 +8,8 @@ namespace karpovich
   };
   struct rectangle_t
   {
-    double width, height, pos;
+    double width, height;
+    point_t pos;
   };
   struct Shape
   {
@@ -35,4 +36,36 @@ namespace karpovich
 int main()
 {
   namespace karp = karpovich;
+}
+
+karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
+  width_(width),
+  height_(height),
+  centr_(centr)
+{}
+double karpovich::Rectangle::getArea() const
+{
+  return height_ * width_;
+}
+karpovich::rectangle_t karpovich::Rectangle::getFrameRect() const
+{
+  rectangle_t frame;
+  frame.pos = centr_;
+  frame.height = height_;
+  frame.width = width_;
+  return frame;
+}
+void karpovich::Rectangle::move(point_t p)
+{
+  centr_ = p;
+}
+void karpovich::Rectangle::move(double dx, double dy)
+{
+  centr_.x += dx;
+  centr_.y += dy;
+}
+void karpovich::Rectangle::scale(double k)
+{
+  width_ *= k;
+  height_ *= k;
 }
