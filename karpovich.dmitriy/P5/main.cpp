@@ -58,6 +58,7 @@ namespace karpovich
       point_t centr_;
   };
   void scalefrompt(Shape* shapes[], size_t size, double k, point_t pt);
+  rectangle_t computeTotalFrame(Shape* shapes[], size_t size);
 }
 
 int main()
@@ -68,7 +69,6 @@ int main()
   karp::Rubber rub(5.0, 2.0, {0.0, 0.0}, {1.0, 1.0});
   const size_t n = 3;
   karp::Shape* shapes[n] = {&rect, &ell, &rub};
-  
 }
 
 karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
@@ -147,16 +147,16 @@ double karpovich::Rubber::getArea() const
 }
 karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
 {
-  double left   = std::min(centr1_.x - radius1_, centr2_.x - radius2_);
-  double right  = std::max(centr1_.x + radius1_, centr2_.x + radius2_);
+  double left = std::min(centr1_.x - radius1_, centr2_.x - radius2_);
+  double right = std::max(centr1_.x + radius1_, centr2_.x + radius2_);
   double bottom = std::min(centr1_.y - radius1_, centr2_.y - radius2_);
-  double top    = std::max(centr1_.y + radius1_, centr2_.y + radius2_);
+  double top = std::max(centr1_.y + radius1_, centr2_.y + radius2_);
 
   rectangle_t frame;
-  frame.width  = right - left;
+  frame.width = right - left;
   frame.height = top - bottom;
-  frame.pos.x  = (left + right) / 2.0;
-  frame.pos.y  = (bottom + top) / 2.0;
+  frame.pos.x = (left + right) / 2.0;
+  frame.pos.y = (bottom + top) / 2.0;
   return frame;
 }
 void karpovich::Rubber::move(point_t p)
@@ -184,4 +184,46 @@ void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
     shapes[i]->scale(k);
     shapes[i]->move(pt.x, pt.y);
   }
+}
+karpovich::rectangle_t computeTotalFrame(karpovich::Shape* shapes[], size_t size)
+{
+  if (size == 0)
+  {
+    return {0.0, 0.0, {0.0, 0.0}};
+  }
+
+  karpovich::rectangle_t first = shapes[0]->getFrameRect();
+  double left = first.pos.x - first.width / 2.0;
+  double right = first.pos.x + first.width / 2.0;
+  double bottom = first.pos.y - first.height / 2.0;
+  double top = first.pos.y + first.height / 2.0;
+
+  for (size_t i = 1; i < size; ++i)
+  {
+    karpovich::rectangle_t frame = shapes[i]->getFrameRect();
+    double l = frame.pos.x - frame.width / 2.0;
+    double r = frame.pos.x + frame.width / 2.0;
+    double b = frame.pos.y - frame.height / 2.0;
+    double t = frame.pos.y + frame.height / 2.0;
+
+    if (l < left) {
+      left = l;
+    }
+    if (r > right) {
+      right = r;
+    }
+    if (b < bottom) {
+      bottom = b;
+    }
+    if (t > top) {
+      top = t;
+    }
+  }
+
+  karpovich::rectangle_t total;
+  total.width = right - left;
+  total.height = top - bottom;
+  total.pos.x = (left + right) / 2.0;
+  total.pos.y = (bottom + top) / 2.0;
+  return total;
 }
