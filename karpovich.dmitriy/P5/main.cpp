@@ -141,9 +141,17 @@ double karpovich::Rubber::getArea() const
 }
 karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
 {
+  double left   = std::min(centr1_.x - radius1_, centr2_.x - radius2_);
+  double right  = std::max(centr1_.x + radius1_, centr2_.x + radius2_);
+  double bottom = std::min(centr1_.y - radius1_, centr2_.y - radius2_);
+  double top    = std::max(centr1_.y + radius1_, centr2_.y + radius2_);
+
   rectangle_t frame;
-  frame.pos = centr1_;
-  frame.width = frame.height = 2 * radius1_;
+  frame.width  = right - left;
+  frame.height = top - bottom;
+  frame.pos.x  = (left + right) / 2.0;
+  frame.pos.y  = (bottom + top) / 2.0;
+  return frame;
 }
 void karpovich::Rubber::move(point_t p)
 {
