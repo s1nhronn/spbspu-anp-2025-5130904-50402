@@ -2,6 +2,7 @@
 
 namespace karpovich
 {
+  constexpr double PI = 3.14;
   struct point_t
   {
     double x, y;
@@ -45,7 +46,7 @@ namespace karpovich
   };
   struct Elipse: Shape
   {
-    Elipse(double semiax1_, double semiax2_, point_t centr);
+    Elipse(double semiax1, double semiax2, point_t centr);
     double getArea() const override;
     rectangle_t getFrameRect() const override;
     void move(double dx, double dy) override;
@@ -63,6 +64,7 @@ int main()
 }
 
 karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
+  karpovich::Shape(),
   width_(width),
   height_(height),
   centr_(centr)
@@ -92,4 +94,35 @@ void karpovich::Rectangle::scale(double k)
 {
   width_ *= k;
   height_ *= k;
+}
+karpovich::Elipse::Elipse(double semiax1, double semiax2, point_t centr):
+  karpovich::Shape(),
+  semiax1_(semiax1),
+  semiax2_(semiax2),
+  centr_(centr)
+{}
+double karpovich::Elipse::getArea() const
+{
+  return PI * semiax1_ * semiax2_;
+}
+karpovich::rectangle_t karpovich::Elipse::getFrameRect() const
+{
+  rectangle_t frame;
+  frame.pos = centr_;
+  frame.height = 2 * semiax1_;
+  frame.width = 2 * semiax2_;
+}
+void karpovich::Elipse::move(point_t p)
+{
+  centr_ = p;
+}
+void karpovich::Elipse::move(double dx, double dy)
+{
+  centr_.x += dx;
+  centr_.y += dy;
+}
+void karpovich::Elipse::scale(double k)
+{
+  semiax1_ *= k;
+  semiax2_ *= k;
 }
