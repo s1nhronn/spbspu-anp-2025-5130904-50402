@@ -126,3 +126,38 @@ void karpovich::Elipse::scale(double k)
   semiax1_ *= k;
   semiax2_ *= k;
 }
+karpovich::Rubber::Rubber(double radius1, double radius2, point_t centr1, point_t centr2):
+  karpovich::Shape(),
+  radius1_(radius1),
+  radius2_(radius2),
+  centr1_(centr1),
+  centr2_(centr2)
+{}
+double karpovich::Rubber::getArea() const
+{
+  return PI * (radius1_ * radius1_ - radius2_ * radius2_);
+}
+karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
+{
+  rectangle_t frame;
+  frame.pos = centr1_;
+  frame.width = frame.height = 2 * radius1_;
+}
+void karpovich::Rubber::move(point_t p)
+{
+  centr1_.x -= p.x - centr2_.x;
+  centr1_.y -= p.y - centr2_.y;
+  centr2_ = p;
+}
+void karpovich::Rubber::move(double dx, double dy)
+{
+  centr1_.x += dx;
+  centr1_.y += dy;
+  centr2_.x += dx;
+  centr2_.y += dy;
+}
+void karpovich::Rubber::scale(double k)
+{
+  radius1_ *= k;
+  radius2_ *= k;
+}
