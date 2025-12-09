@@ -14,6 +14,7 @@ namespace karpovich
   };
   struct Shape
   {
+    virtual ~Shape() = default;
     virtual double getArea() const = 0;
     virtual rectangle_t getFrameRect() const = 0;
     virtual void move(point_t p) = 0;
@@ -44,9 +45,9 @@ namespace karpovich
       double radius1_, radius2_;
       point_t centr1_, centr2_;
   };
-  struct Elipse: Shape
+  struct Ellipse: Shape
   {
-    Elipse(double semiax1, double semiax2, point_t centr);
+    Ellipse(double semiax1, double semiax2, point_t centr);
     double getArea() const override;
     rectangle_t getFrameRect() const override;
     void move(double dx, double dy) override;
@@ -56,6 +57,7 @@ namespace karpovich
       double semiax1_, semiax2_;
       point_t centr_;
   };
+  void scalefrompt(Shape* shapes[], size_t size, double k, point_t pt);
 }
 
 int main()
@@ -95,33 +97,33 @@ void karpovich::Rectangle::scale(double k)
   width_ *= k;
   height_ *= k;
 }
-karpovich::Elipse::Elipse(double semiax1, double semiax2, point_t centr):
+karpovich::Ellipse::Ellipse(double semiax1, double semiax2, point_t centr):
   karpovich::Shape(),
   semiax1_(semiax1),
   semiax2_(semiax2),
   centr_(centr)
 {}
-double karpovich::Elipse::getArea() const
+double karpovich::Ellipse::getArea() const
 {
   return PI * semiax1_ * semiax2_;
 }
-karpovich::rectangle_t karpovich::Elipse::getFrameRect() const
+karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const
 {
   rectangle_t frame;
   frame.pos = centr_;
   frame.height = 2 * semiax1_;
   frame.width = 2 * semiax2_;
 }
-void karpovich::Elipse::move(point_t p)
+void karpovich::Ellipse::move(point_t p)
 {
   centr_ = p;
 }
-void karpovich::Elipse::move(double dx, double dy)
+void karpovich::Ellipse::move(double dx, double dy)
 {
   centr_.x += dx;
   centr_.y += dy;
 }
-void karpovich::Elipse::scale(double k)
+void karpovich::Ellipse::scale(double k)
 {
   semiax1_ *= k;
   semiax2_ *= k;
@@ -160,4 +162,15 @@ void karpovich::Rubber::scale(double k)
 {
   radius1_ *= k;
   radius2_ *= k;
+}
+void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
+{
+  if (k <= 0) {
+    throw std::invalid_argument("k must be positive");
+  }
+  for (size_t i = 0; i < size; ++i) {
+    shapes[i]->move(-pt.x, -pt.y);
+    shapes[i]->scale(k);
+    shapes[i]->move(pt.x, pt.y);
+  }
 }
