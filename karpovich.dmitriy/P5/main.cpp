@@ -59,6 +59,7 @@ namespace karpovich
   };
   void scalefrompt(Shape* shapes[], size_t size, double k, point_t pt);
   rectangle_t computeTotalFrame(Shape* shapes[], size_t size);
+  void output(Shape* shapes[], size_t size);
 }
 
 int main()
@@ -191,13 +192,11 @@ karpovich::rectangle_t computeTotalFrame(karpovich::Shape* shapes[], size_t size
   {
     return {0.0, 0.0, {0.0, 0.0}};
   }
-
   karpovich::rectangle_t first = shapes[0]->getFrameRect();
   double left = first.pos.x - first.width / 2.0;
   double right = first.pos.x + first.width / 2.0;
   double bottom = first.pos.y - first.height / 2.0;
   double top = first.pos.y + first.height / 2.0;
-
   for (size_t i = 1; i < size; ++i)
   {
     karpovich::rectangle_t frame = shapes[i]->getFrameRect();
@@ -205,7 +204,6 @@ karpovich::rectangle_t computeTotalFrame(karpovich::Shape* shapes[], size_t size
     double r = frame.pos.x + frame.width / 2.0;
     double b = frame.pos.y - frame.height / 2.0;
     double t = frame.pos.y + frame.height / 2.0;
-
     if (l < left) {
       left = l;
     }
@@ -219,11 +217,31 @@ karpovich::rectangle_t computeTotalFrame(karpovich::Shape* shapes[], size_t size
       top = t;
     }
   }
-
   karpovich::rectangle_t total;
   total.width = right - left;
   total.height = top - bottom;
   total.pos.x = (left + right) / 2.0;
   total.pos.y = (bottom + top) / 2.0;
   return total;
+}
+void karpovich::output(Shape* shapes[], size_t size)
+{
+  double total_area = 0.0;
+  for (size_t i = 0; i < size; ++i)
+  {
+    double area = shapes[i]->getArea();
+    total_area += area;
+    std::cout << area << "\n";
+    rectangle_t frame = shapes[i]->getFrameRect();
+    std::cout << frame.pos.x << "\n";
+    std::cout << frame.pos.y << "\n";
+    std::cout << frame.width << "\n";
+    std::cout << frame.height << "\n";
+  }
+  rectangle_t total_frame = computeTotalFrame(shapes, size);
+  std::cout << total_area << "\n";
+  std::cout << total_frame.pos.x << "\n";
+  std::cout << total_frame.pos.y << "\n";
+  std::cout << total_frame.width << "\n";
+  std::cout << total_frame.height << "\n";
 }
