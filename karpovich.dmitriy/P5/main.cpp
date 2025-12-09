@@ -63,6 +63,12 @@ namespace karpovich
 int main()
 {
   namespace karp = karpovich;
+  karp::Rectangle rect(4.0, 2.0, {1.0, 1.0});
+  karp::Ellipse ell(3.0, 2.0, {-2.0, 0.0});
+  karp::Rubber rub(5.0, 2.0, {0.0, 0.0}, {1.0, 1.0});
+  const size_t n = 3;
+  karp::Shape* shapes[n] = {&rect, &ell, &rub};
+  
 }
 
 karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
@@ -173,9 +179,6 @@ void karpovich::Rubber::scale(double k)
 }
 void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
 {
-  if (k <= 0) {
-    throw std::invalid_argument("k must be positive");
-  }
   for (size_t i = 0; i < size; ++i) {
     shapes[i]->move(-pt.x, -pt.y);
     shapes[i]->scale(k);
