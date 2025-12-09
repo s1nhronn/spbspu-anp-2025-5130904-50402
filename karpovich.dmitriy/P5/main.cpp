@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 namespace karpovich
 {
@@ -139,6 +140,7 @@ karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const
   frame.pos = centr_;
   frame.height = 2 * semiax1_;
   frame.width = 2 * semiax2_;
+  return frame;
 }
 void karpovich::Ellipse::move(point_t p)
 {
@@ -181,8 +183,10 @@ karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
 }
 void karpovich::Rubber::move(point_t p)
 {
-  centr1_.x -= p.x - centr2_.x;
-  centr1_.y -= p.y - centr2_.y;
+  double dx = p.x - centr2_.x;
+  double dy = p.y - centr2_.y;
+  centr1_.x += dx;
+  centr1_.y += dy;
   centr2_ = p;
 }
 void karpovich::Rubber::move(double dx, double dy)
@@ -205,7 +209,7 @@ void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
     shapes[i]->move(pt.x, pt.y);
   }
 }
-karpovich::rectangle_t computeTotalFrame(karpovich::Shape* shapes[], size_t size)
+karpovich::rectangle_t karpovich::computeTotalFrame(karpovich::Shape* shapes[], size_t size)
 {
   if (size == 0)
   {
