@@ -75,13 +75,11 @@ int main()
 
   karp::point_t pt;
   double k;
-  if (!(std::cin >> pt.x >> pt.y >> k))
-  {
+  if (!(std::cin >> pt.x >> pt.y >> k)) {
     std::cerr << "err: bad arguments\n";
     return 1;
   }
-  if (k <= 0.0)
-  {
+  if (k <= 0.0) {
     std::cerr << "err: k must be positive\n";
     return 1;
   }
@@ -210,8 +208,7 @@ void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
 }
 karpovich::rectangle_t karpovich::computeTotalFrame(karpovich::Shape* shapes[], size_t size)
 {
-  if (size == 0)
-  {
+  if (size == 0) {
     return {0.0, 0.0, {0.0, 0.0}};
   }
   karpovich::rectangle_t first = shapes[0]->getFrameRect();
@@ -219,8 +216,7 @@ karpovich::rectangle_t karpovich::computeTotalFrame(karpovich::Shape* shapes[], 
   double right = first.pos.x + first.width / 2.0;
   double bottom = first.pos.y - first.height / 2.0;
   double top = first.pos.y + first.height / 2.0;
-  for (size_t i = 1; i < size; ++i)
-  {
+  for (size_t i = 1; i < size; ++i) {
     karpovich::rectangle_t frame = shapes[i]->getFrameRect();
     double l = frame.pos.x - frame.width / 2.0;
     double r = frame.pos.x + frame.width / 2.0;
@@ -249,8 +245,7 @@ karpovich::rectangle_t karpovich::computeTotalFrame(karpovich::Shape* shapes[], 
 void karpovich::output(Shape* shapes[], size_t size)
 {
   double total_area = 0.0;
-  for (size_t i = 0; i < size; ++i)
-  {
+  for (size_t i = 0; i < size; ++i) {
     double area = shapes[i]->getArea();
     total_area += area;
     std::cout << area << "\n";
