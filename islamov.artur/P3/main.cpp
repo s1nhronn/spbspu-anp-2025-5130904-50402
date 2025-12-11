@@ -8,7 +8,6 @@ namespace islamov
   int colsdiffnumbers(const int* arr, size_t rows, size_t cols);
   int zeroChecker(const int* arr, size_t rows, size_t cols);
   std::istream& matrixReader(std::istream& in, int* arr, size_t totalElements);
-  void cleanArr(int* arr, bool isDynamic);
 }
 int main(int argc, char** argv)
 {
@@ -39,7 +38,7 @@ int main(int argc, char** argv)
     std::cerr << "Error: input file content is not a valid matrix\n";
     return 2;
   }
-  if (rows != 0 && cols > std::numeric_limits < size_t >::max() / rows)
+  if (rows != 0 && cols > std::numeric_limits< size_t >::max() / rows)
   {
     std::cerr << "Error: matrix too large\n";
     return 2;
@@ -74,7 +73,10 @@ int main(int argc, char** argv)
   if (fin.fail())
   {
     std::cerr << "Error: input file content is not a valid matrix\n";
-    islamov::cleanArr(arr, isDynamic);
+    if (isDynamic)
+    {
+      delete[] arr;
+    }
     return 2;
   }
   const int res1 = islamov::colsdiffnumbers(arr, rows, cols);
@@ -83,11 +85,17 @@ int main(int argc, char** argv)
   if (!fout)
   {
     std::cerr << "Error: cannot open output file: " << outputName << "\n";
-    islamov::cleanArr(arr, isDynamic);
+    if (isDynamic)
+    {
+      delete[] arr;
+    }
     return 2;
   }
   fout << res1 << '\n' << res2 << '\n';
-  islamov::cleanArr(arr, isDynamic);
+  if (isDynamic)
+  {
+    delete[] arr;
+  }
   return 0;
 }
 int islamov::colsdiffnumbers(const int* arr, size_t rows, size_t cols)
@@ -163,11 +171,4 @@ std::istream& islamov::matrixReader(std::istream& in, int* arr, size_t totalElem
     }
   }
   return in;
-}
-void islamov::cleanArr(int* arr, bool isDynamic)
-{
-  if (isDynamic)
-  {
-    delete[] arr;
-  }
 }
