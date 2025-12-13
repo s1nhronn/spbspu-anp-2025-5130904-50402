@@ -100,7 +100,7 @@ int main() {
   size_t s = 0;
   char* str = karp::getline(std::cin, s);
   if (!str) {
-    std::cerr << "Failed to alloc memory";
+    std::cerr << "Failed to alloc memory" << '\n';
     return 1;
   }
   if (s == 0 && std::cin.eof()) {
@@ -112,14 +112,14 @@ int main() {
   char* data = reinterpret_cast< char* >(malloc(s + 1));
   if (!data) {
     free(str);
-    std::cerr << "Failed to alloc memory";
+    std::cerr << "Failed to alloc memory" << '\n';
     return 1;
   }
   data[s] = '\0';
   if (!karp::repsym(str, data)) {
     free(data);
     free(str);
-    std::cerr << "repsym failed";
+    std::cerr << "repsym failed" << '\n';
     return 1;
   }
 
@@ -130,7 +130,7 @@ int main() {
   if (!data2) {
     std::free(data);
     std::free(str);
-    std::cerr << "Failed to alloc memory";
+    std::cerr << "Failed to alloc memory" << '\n';
     return 1;
   }
   data2[s + s2] = '\0';
@@ -139,7 +139,7 @@ int main() {
     free(data2);
     free(data);
     free(str);
-    std::cerr << "unitwo failed";
+    std::cerr << "unitwo failed" << '\n';
     return 1;
   }
 
