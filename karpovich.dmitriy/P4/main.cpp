@@ -4,9 +4,8 @@ namespace karpovich
 {
   char* extend(char* old_str, size_t old_size)
   {
-    char* new_str = reinterpret_cast<char*>(malloc(old_size + 1));
+    char* new_str = reinterpret_cast< char* >(malloc(old_size + 1));
     if (new_str == nullptr) {
-      free(old_str);
       return nullptr;
     }
     for (size_t i = 0; i < old_size; ++i) {
@@ -23,7 +22,7 @@ namespace karpovich
     }
     char* str = nullptr;
     char ch = '\0';
-    while(in >> ch && ch != '\n') {
+    while (in >> ch && ch != '\n') {
       char* temp = extend(str, s);
       if (temp == nullptr) {
         if (is_skipws) {
@@ -106,7 +105,7 @@ int main() {
   }
   if (s == 0 && std::cin.eof()) {
     free(str);
-    std::cerr << "No input";
+    std::cerr << "No input" << '\n';
     return 1;
   }
 
