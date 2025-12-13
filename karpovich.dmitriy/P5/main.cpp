@@ -1,9 +1,10 @@
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 namespace karpovich
 {
-  constexpr double PI = 3.14;
+  const double PI = acos(-1.0);
   struct point_t
   {
     double x, y;
@@ -135,8 +136,8 @@ karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const
 {
   rectangle_t frame;
   frame.pos = centr_;
-  frame.height = 2 * semiax1_;
-  frame.width = 2 * semiax2_;
+  frame.height = 2 * semiax2_;
+  frame.width = 2 * semiax1_;
   return frame;
 }
 void karpovich::Ellipse::move(point_t p)
