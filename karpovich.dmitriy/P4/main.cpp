@@ -25,6 +25,9 @@ namespace karpovich
     while (in >> ch && ch != '\n') {
       char* temp = extend(str, s);
       if (temp == nullptr) {
+        if (str != nullptr) {
+          free(str);
+        }
         if (is_skipws) {
           in >> std::skipws;
         }
@@ -36,6 +39,9 @@ namespace karpovich
     }
     char* temp = extend(str, s);
     if (temp == nullptr) {
+      if (str != nullptr) {
+        free(str);
+      }
       if (is_skipws) {
         in >> std::skipws;
       }
