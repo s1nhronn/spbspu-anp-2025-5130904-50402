@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     return 1;
   }
   int* arr = nullptr;
-  int* dynDelete = nullptr; 
+  int* dynDelete = nullptr;
   int stackArr[max_size] = {0};
   try
   {
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
   if (fin.fail())
   {
     std::cerr << "Error: input file content is not a valid matrix\n";
-    delete[] dynDelete; 
+    delete[] dynDelete;
     return 2;
   }
   const int res1 = islamov::colsdiffnumbers(arr, rows, cols);
@@ -87,7 +87,7 @@ int main(int argc, char** argv)
     return 2;
   }
   fout << res1 << '\n' << res2 << '\n';
-  delete[] dynDelete; 
+  delete[] dynDelete;
   return 0;
 }
 int islamov::colsdiffnumbers(const int* arr, size_t rows, size_t cols)
