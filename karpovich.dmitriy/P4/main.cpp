@@ -30,6 +30,7 @@ namespace karpovich
         }
         return nullptr;
       }
+      free(str);
       str = temp;
       str[s] = ch;
       ++s;
