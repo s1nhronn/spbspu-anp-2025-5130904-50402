@@ -25,10 +25,7 @@ namespace dirko
       return nullptr;
     }
     std::strncpy(newStr, str, size);
-    for (size_t i = size; i < size * 2; ++i)
-    {
-      newStr[i] = '\0';
-    }
+    newStr[size] = '\0';
     return newStr;
   }
   char *getLine(std::istream &in, size_t &size)
@@ -136,13 +133,13 @@ int main()
   }
   size_t result1 = dirko::doDifLat(str);
   char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * (size + 1)));
-  result2[size] = '\0';
   if (result2 == nullptr)
   {
     free(str);
     std::cerr << "Cant alloc\n";
     return 1;
   }
+  result2[size] = '\0';
   dirko::doUppLow(str, result2);
   std::cout << result1 << '\n';
   std::cout << result2 << '\n';
