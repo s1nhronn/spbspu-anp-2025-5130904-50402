@@ -11,7 +11,6 @@ namespace karpovich
     for (size_t i = 0; i < old_size; ++i) {
       new_str[i] = old_str[i];
     }
-    free(old_str);
     return new_str;
   }
   char* getline(std::istream& in, size_t& s)
@@ -25,9 +24,7 @@ namespace karpovich
     while (in >> ch && ch != '\n') {
       char* temp = extend(str, s);
       if (temp == nullptr) {
-        if (str != nullptr) {
-          free(str);
-        }
+        free(str);
         if (is_skipws) {
           in >> std::skipws;
         }
@@ -39,14 +36,13 @@ namespace karpovich
     }
     char* temp = extend(str, s);
     if (temp == nullptr) {
-      if (str != nullptr) {
-        free(str);
-      }
+      free(str);
       if (is_skipws) {
         in >> std::skipws;
       }
       return nullptr;
     }
+    free(str);
     str = temp;
     str[s] = '\0';
     if (is_skipws) {
