@@ -50,14 +50,15 @@ int main(int argc, char** argv)
     std::cerr << "Error: matrix too large for static mode\n";
     return 1;
   }
-  const bool isDynamic = (mode == 2);
   int* arr = nullptr;
+  int* dynDelete = nullptr; 
   int stackArr[max_size] = {0};
   try
   {
-    if (isDynamic)
+    if (mode == 2)
     {
       arr = new int[totalElements]();
+      dynDelete = arr;
     }
     else
     {
@@ -73,10 +74,7 @@ int main(int argc, char** argv)
   if (fin.fail())
   {
     std::cerr << "Error: input file content is not a valid matrix\n";
-    if (isDynamic)
-    {
-      delete[] arr;
-    }
+    delete[] dynDelete; 
     return 2;
   }
   const int res1 = islamov::colsdiffnumbers(arr, rows, cols);
@@ -85,17 +83,11 @@ int main(int argc, char** argv)
   if (!fout)
   {
     std::cerr << "Error: cannot open output file: " << outputName << "\n";
-    if (isDynamic)
-    {
-      delete[] arr;
-    }
+    delete[] dynDelete;
     return 2;
   }
   fout << res1 << '\n' << res2 << '\n';
-  if (isDynamic)
-  {
-    delete[] arr;
-  }
+  delete[] dynDelete; 
   return 0;
 }
 int islamov::colsdiffnumbers(const int* arr, size_t rows, size_t cols)
