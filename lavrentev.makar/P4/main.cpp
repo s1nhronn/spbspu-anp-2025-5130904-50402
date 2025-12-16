@@ -35,7 +35,7 @@ int main()
   try
   {
     buf1 = new char[ex + 1];
-    buf1[ex + 1] = '\0';
+    buf1[ex] = '\0';
   }
   catch (const std::bad_alloc&)
   {
