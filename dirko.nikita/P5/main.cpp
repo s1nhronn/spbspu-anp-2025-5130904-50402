@@ -80,23 +80,31 @@ int main()
       {3, 7},
       {3, 2},
   };
-  dirko::Polygon pol(pol_n, pts);
-  dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
-  dirko::output(std::cout, shps, n);
-  dirko::p_t point = {};
-  double coef = 0;
-  if (!(std::cin >> point.x >> point.y >> coef))
+  try
   {
-    std::cerr << "Cant read\n";
-    return 1;
+    dirko::Polygon pol(pol_n, pts);
+    dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
+    dirko::output(std::cout, shps, n);
+    dirko::p_t point = {};
+    double coef = 0;
+    if (!(std::cin >> point.x >> point.y >> coef))
+    {
+      std::cerr << "Cant read\n";
+      return 1;
+    }
+    if (coef <= 0)
+    {
+      std::cerr << "Negative coef\n";
+      return 1;
+    }
+    dirko::scaleFromPoint(shps, n, point, coef);
+    dirko::output(std::cout, shps, n);
   }
-  if (coef <= 0)
+  catch (std::bad_alloc &e)
   {
-    std::cerr << "Negative coef\n";
-    return 1;
+    std::cerr << "Cant alloc\n";
+    return 2;
   }
-  dirko::scaleFromPoint(shps, n, point, coef);
-  dirko::output(std::cout, shps, n);
 }
 dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(),
                                                            w_(w),
