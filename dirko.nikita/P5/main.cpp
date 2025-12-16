@@ -69,7 +69,7 @@ namespace dirko
 
 int main()
 {
-  const size_t n = 2;
+  const size_t n = 3;
   dirko::Rectangle rec(5, 7, {3, 3});
   dirko::Bubble bub(5, {2, 0});
   dirko::p_t pts[] = {
@@ -80,7 +80,7 @@ int main()
       {3, 4},
   };
   dirko::Polygon pol(5, pts);
-  dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub)};
+  dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
   dirko::output(std::cout, shps, n);
   dirko::p_t point = {};
   double coef = 0;
@@ -197,6 +197,18 @@ void dirko::Polygon::move(p_t point)
   double dx = point.x - mid_.x;
   double dy = point.y - mid_.y;
   this->move(dx, dy);
+}
+void dirko::Polygon::scale(double coef)
+{
+  --coef;
+  double dx = 0, dy = 0;
+  for (size_t i = 0; i < size_; ++i)
+  {
+    dx = pts_[i].x - mid_.x;
+    dy = pts_[i].y - mid_.y;
+    pts_[i].x += dx * coef;
+    pts_[i].y += dy * coef;
+  }
 }
 dirko::Bubble::Bubble(double r, p_t dot) : IShape(),
                                            r_(r),
