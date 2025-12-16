@@ -54,6 +54,7 @@ namespace dirko
   };
   void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(IShape **shps, size_t size);
+  void output(IShape **shps, size_t size)
 }
 
 int main()
@@ -163,4 +164,25 @@ dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
   total.pos.x = (left + right) / 2.0;
   total.pos.y = (bottom + top) / 2.0;
   return total;
+}
+void dirko::output(IShape **shps, size_t size)
+{
+  double totalArea = 0.0;
+  for (size_t i = 0; i < size; ++i)
+  {
+    double area = shps[i]->getArea();
+    totalArea += area;
+    std::cout << area << "\n";
+    rec_t frame = shps[i]->getFrameRect();
+    std::cout << frame.pos.x << "\n";
+    std::cout << frame.pos.y << "\n";
+    std::cout << frame.w << "\n";
+    std::cout << frame.h << "\n";
+  }
+  rec_t totalFrame = getTotalFrame(shps, size);
+  std::cout << totalArea << "\n";
+  std::cout << totalFrame.pos.x << "\n";
+  std::cout << totalFrame.pos.y << "\n";
+  std::cout << totalFrame.w << "\n";
+  std::cout << totalFrame.h << "\n";
 }
