@@ -51,6 +51,7 @@ namespace dirko
     double r_;
     p_t dot_;
   };
+  void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
 }
 
 int main()
@@ -109,4 +110,13 @@ void dirko::Bubble::move(double dx, double dy)
 void dirko::Bubble::scale(double coef)
 {
   r_ *= coef;
+}
+void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
+{
+  for (size_t i = 0; i < size; ++i)
+  {
+    shps[i]->move(-point.x, -point.y);
+    shps[i]->scale(coef);
+    shps[i]->move(point.x, point.y);
+  }
 }
