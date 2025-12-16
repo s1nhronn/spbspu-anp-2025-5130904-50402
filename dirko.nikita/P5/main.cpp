@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 namespace dirko
 {
   const double PI = acos(-1.0);
@@ -52,6 +53,7 @@ namespace dirko
     p_t dot_;
   };
   void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
+  rec_t getTotalFrame(IShape **shps, size_t size);
 }
 
 int main()
@@ -119,4 +121,46 @@ void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
     shps[i]->scale(coef);
     shps[i]->move(point.x, point.y);
   }
+}
+dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
+{
+  if (size == 0)
+  {
+    return {0.0, 0.0, {0.0, 0.0}};
+  }
+  rec_t frame = shps[0]->getFrameRect();
+  double left = frame.pos.x - frame.w / 2.0;
+  double right = frame.pos.x + frame.w / 2.0;
+  double bottom = frame.pos.y - frame.h / 2.0;
+  double top = frame.pos.y + frame.h / 2.0;
+  for (size_t i = 1; i < size; ++i)
+  {
+    frame = shps[i]->getFrameRect();
+    double l = frame.pos.x - frame.w / 2.0;
+    double r = frame.pos.x + frame.w / 2.0;
+    double b = frame.pos.y - frame.h / 2.0;
+    double t = frame.pos.y + frame.h / 2.0;
+    if (l < left)
+    {
+      left = l;
+    }
+    if (r > right)
+    {
+      right = r;
+    }
+    if (b < bottom)
+    {
+      bottom = b;
+    }
+    if (t > top)
+    {
+      top = t;
+    }
+  }
+  rec_t total;
+  total.w = right - left;
+  total.h = top - bottom;
+  total.pos.x = (left + right) / 2.0;
+  total.pos.y = (bottom + top) / 2.0;
+  return total;
 }
