@@ -54,11 +54,31 @@ namespace dirko
   };
   void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(IShape **shps, size_t size);
-  void output(IShape **shps, size_t size)
+  std::ostream &output(std::ostream &os, IShape **shps, size_t size);
 }
 
 int main()
 {
+  const size_t n = 2;
+  dirko::Rectangle rec(5, 7, {3, 3});
+  dirko::Bubble bub(5, {2, 0});
+  // dirko::Poligon pol();
+  dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub)};
+  dirko::output(std::cout, shps, n);
+  dirko::p_t point = {};
+  double coef = 0;
+  if (!(std::cin >> point.x >> point.y >> coef))
+  {
+    std::cerr << "Cant read\n";
+    return 1;
+  }
+  if (coef <= 0)
+  {
+    std::cerr << "Negative coef\n";
+    return 1;
+  }
+  dirko::scaleFromPoint(shps, n, point, coef);
+  dirko::output(std::cout, shps, n);
 }
 
 dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(),
@@ -165,24 +185,25 @@ dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
   total.pos.y = (bottom + top) / 2.0;
   return total;
 }
-void dirko::output(IShape **shps, size_t size)
+std::ostream &dirko::output(std::ostream &os, IShape **shps, size_t size)
 {
   double totalArea = 0.0;
   for (size_t i = 0; i < size; ++i)
   {
     double area = shps[i]->getArea();
     totalArea += area;
-    std::cout << area << "\n";
+    os << area << "\n";
     rec_t frame = shps[i]->getFrameRect();
-    std::cout << frame.pos.x << "\n";
-    std::cout << frame.pos.y << "\n";
-    std::cout << frame.w << "\n";
-    std::cout << frame.h << "\n";
+    os << frame.pos.x << "\n";
+    os << frame.pos.y << "\n";
+    os << frame.w << "\n";
+    os << frame.h << "\n";
   }
   rec_t totalFrame = getTotalFrame(shps, size);
-  std::cout << totalArea << "\n";
-  std::cout << totalFrame.pos.x << "\n";
-  std::cout << totalFrame.pos.y << "\n";
-  std::cout << totalFrame.w << "\n";
-  std::cout << totalFrame.h << "\n";
+  os << totalArea << "\n";
+  os << totalFrame.pos.x << "\n";
+  os << totalFrame.pos.y << "\n";
+  os << totalFrame.w << "\n";
+  os << totalFrame.h << "\n";
+  return os;
 }
