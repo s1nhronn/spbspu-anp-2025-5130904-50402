@@ -72,7 +72,14 @@ int main()
   const size_t n = 2;
   dirko::Rectangle rec(5, 7, {3, 3});
   dirko::Bubble bub(5, {2, 0});
-  // dirko::Poligon pol();
+  dirko::p_t pts[] = {
+      {2, 2},
+      {2, 7},
+      {3, 6},
+      {4, 5},
+      {3, 4},
+  };
+  dirko::Polygon pol(5, pts);
   dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub)};
   dirko::output(std::cout, shps, n);
   dirko::p_t point = {};
@@ -136,21 +143,49 @@ dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
   for (size_t i = 0; i < size; ++i)
   {
     pts_[i] = pts[i];
-    int j = (i + 1) % size;
+    size_t j = (i + 1) % size;
     area += pts_[i].x * pts_[j].y;
     area -= pts_[j].x * pts_[i].y;
   }
   area = std::abs(area) / 2;
   double factor = 0.0;
-  for (int i = 0; i < size; ++i)
+  for (size_t i = 0; i < size; ++i)
   {
-    int j = (i + 1) % size;
+    size_t j = (i + 1) % size;
     factor = (pts_[i].x * pts_[j].y - pts_[j].x * pts_[i].y);
     mid_.x += (pts_[i].x + pts_[j].x) * factor;
     mid_.y += (pts_[i].y + pts_[j].y) * factor;
   }
   mid_.x /= (6.0 * area);
   mid_.y /= (6.0 * area);
+}
+
+double dirko::Polygon::getArea() const
+{
+  double area = 0;
+  for (size_t i = 0; i < size_; ++i)
+  {
+    size_t j = (i + 1) % size_;
+    area += pts_[i].x * pts_[j].y;
+    area -= pts_[j].x * pts_[i].y;
+  }
+  return std::abs(area) / 2;
+}
+
+dirko::rec_t dirko::Polygon::getFrameRect() const
+{
+  double maxx = pts_[0].x, minx = pts_[0].x;
+  double maxy = pts_[0].y, miny = pts_[0].y;
+  for (size_t i = 1; i < size_; ++i)
+  {
+    maxx = std::max(maxx, pts_[i].x);
+    minx = std::min(minx, pts_[i].x);
+    maxy = std::max(maxy, pts_[i].y);
+    miny = std::max(miny, pts_[i].y);
+  }
+  double w = maxx - minx;
+  double h = maxy - miny;
+  return {w, h, {maxx - w / 2, maxy - h / 2}};
 }
 
 dirko::Bubble::Bubble(double r, p_t dot) : IShape(),
