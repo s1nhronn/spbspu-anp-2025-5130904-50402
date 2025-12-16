@@ -19,7 +19,7 @@ namespace dirko
   }
   char *extendSize(char *str, size_t size)
   {
-    char *newStr = reinterpret_cast<char *>(malloc(size * 2 * sizeof(char)));
+    char *newStr = reinterpret_cast< char * >(malloc(size * 2 * sizeof(char)));
     if (newStr == nullptr)
     {
       return nullptr;
@@ -36,7 +36,7 @@ namespace dirko
     {
       in >> std::noskipws;
     }
-    char *str = reinterpret_cast<char *>(malloc(sizeof(char) * copasity));
+    char *str = reinterpret_cast< char * >(malloc(sizeof(char) * copasity));
     if (str == nullptr)
     {
       if (isSkipWp)
@@ -82,6 +82,7 @@ namespace dirko
       str = tmp;
       copasity *= 2;
     }
+    str[size] = '\0';
     return str;
   }
   size_t doDifLat(const char *str)
@@ -94,8 +95,7 @@ namespace dirko
       {
         if (dirko::find(seen, seen + count, std::tolower(*ch)) == seen + count)
         {
-          seen[count] = std::tolower(*ch);
-          ++count;
+          seen[count++] = std::tolower(*ch);
         }
       }
     }
@@ -132,7 +132,7 @@ int main()
     return 1;
   }
   size_t result1 = dirko::doDifLat(str);
-  char *result2 = reinterpret_cast<char *>(malloc(sizeof(char) * (size + 1)));
+  char *result2 = reinterpret_cast< char * >(malloc(sizeof(char) * (size + 1)));
   if (result2 == nullptr)
   {
     free(str);
