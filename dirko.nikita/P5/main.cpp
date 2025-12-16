@@ -36,8 +36,18 @@ namespace dirko
   };
   struct Polygon : IShape
   {
+    ~Polygon();
+    Polygon(size_t size, p_t *pts);
+    double getArea() const override;
+    rec_t getFrameRect() const override;
+    void move(double dx, double dy) override;
+    void move(p_t point) override;
+    void scale(double coef) override;
 
   private:
+    size_t size_;
+    p_t *pts_;
+    p_t mid_;
   };
   struct Bubble : IShape
   {
@@ -109,9 +119,45 @@ void dirko::Rectangle::scale(double coef)
   h_ *= coef;
 }
 
+dirko::Polygon::~Polygon()
+{
+  delete[] pts_;
+}
+
+dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
+                                                 size_(size),
+                                                 pts_(size < 3 ? nullptr : new p_t[size])
+{
+  if (size < 3)
+  {
+    throw std::logic_error("Cant create polygon");
+  }
+  double area = 0;
+  for (size_t i = 0; i < size; ++i)
+  {
+    pts_[i] = pts[i];
+    int j = (i + 1) % size;
+    area += pts_[i].x * pts_[j].y;
+    area -= pts_[j].x * pts_[i].y;
+  }
+  area = std::abs(area) / 2;
+  double factor = 0.0;
+  for (int i = 0; i < size; ++i)
+  {
+    int j = (i + 1) % size;
+    factor = (pts_[i].x * pts_[j].y - pts_[j].x * pts_[i].y);
+    mid_.x += (pts_[i].x + pts_[j].x) * factor;
+    mid_.y += (pts_[i].y + pts_[j].y) * factor;
+  }
+  mid_.x /= (6.0 * area);
+  mid_.y /= (6.0 * area);
+}
+
 dirko::Bubble::Bubble(double r, p_t dot) : IShape(),
                                            r_(r),
-                                           dot_(dot) {}
+                                           dot_(dot)
+{
+}
 double dirko::Bubble::getArea() const
 {
   return PI * r_ * r_;
