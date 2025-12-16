@@ -97,7 +97,6 @@ int main()
   dirko::scaleFromPoint(shps, n, point, coef);
   dirko::output(std::cout, shps, n);
 }
-
 dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(),
                                                            w_(w),
                                                            h_(h),
@@ -125,12 +124,10 @@ void dirko::Rectangle::scale(double coef)
   w_ *= coef;
   h_ *= coef;
 }
-
 dirko::Polygon::~Polygon()
 {
   delete[] pts_;
 }
-
 dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
                                                  size_(size),
                                                  pts_(size < 3 ? nullptr : new p_t[size])
@@ -159,7 +156,6 @@ dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
   mid_.x /= (6.0 * area);
   mid_.y /= (6.0 * area);
 }
-
 double dirko::Polygon::getArea() const
 {
   double area = 0;
@@ -171,7 +167,6 @@ double dirko::Polygon::getArea() const
   }
   return std::abs(area) / 2;
 }
-
 dirko::rec_t dirko::Polygon::getFrameRect() const
 {
   double maxx = pts_[0].x, minx = pts_[0].x;
@@ -187,7 +182,22 @@ dirko::rec_t dirko::Polygon::getFrameRect() const
   double h = maxy - miny;
   return {w, h, {maxx - w / 2, maxy - h / 2}};
 }
-
+void dirko::Polygon::move(double dx, double dy)
+{
+  for (size_t i = 0; i < size_; ++i)
+  {
+    pts_[i].x += dx;
+    pts_[i].y += dy;
+  }
+  mid_.x += dx;
+  mid_.y += dy;
+}
+void dirko::Polygon::move(p_t point)
+{
+  double dx = point.x - mid_.x;
+  double dy = point.y - mid_.y;
+  this->move(dx, dy);
+}
 dirko::Bubble::Bubble(double r, p_t dot) : IShape(),
                                            r_(r),
                                            dot_(dot)
