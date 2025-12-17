@@ -3,6 +3,7 @@
 #include <limits>
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 #include <cstdlib>
 
 namespace muhamadiarov
@@ -32,7 +33,7 @@ int main(int argc, char* argv[])
   {
     mode = 1;
   }
-  else if (str::strcmp(argv[1], "2") == 0)
+  else if (std::strcmp(argv[1], "2") == 0)
   {
     mode = 2;
   }
