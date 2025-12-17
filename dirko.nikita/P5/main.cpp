@@ -65,7 +65,7 @@ namespace dirko
   void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(IShape **shps, size_t size);
   std::ostream &output(std::ostream &os, IShape **shps, size_t size);
-}
+} // namespace dirko
 
 int main()
 {
@@ -74,42 +74,31 @@ int main()
   dirko::Rectangle rec(5, 7, {3, 3});
   dirko::Bubble bub(5, {2, 0});
   dirko::p_t pts[pol_n] = {
-      {2, 2},
-      {2, 7},
-      {2.5, 8},
-      {3, 7},
-      {3, 2},
+      {2, 2}, {2, 7}, {2.5, 8}, {3, 7}, {3, 2},
   };
-  try
-  {
+  try {
     dirko::Polygon pol(pol_n, pts);
     dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
     dirko::output(std::cout, shps, n);
     dirko::p_t point = {};
     double coef = 0;
-    if (!(std::cin >> point.x >> point.y >> coef))
-    {
+    if (!(std::cin >> point.x >> point.y >> coef)) {
       std::cerr << "Cant read\n";
       return 1;
     }
-    if (coef <= 0)
-    {
+    if (coef <= 0) {
       std::cerr << "Negative coef\n";
       return 1;
     }
     dirko::scaleFromPoint(shps, n, point, coef);
     dirko::output(std::cout, shps, n);
-  }
-  catch (std::bad_alloc &e)
-  {
+  } catch (std::bad_alloc &e) {
     std::cerr << "Cant alloc\n";
     return 2;
   }
 }
-dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(),
-                                                           w_(w),
-                                                           h_(h),
-                                                           mid_(mid) {}
+dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(), w_(w), h_(h), mid_(mid)
+{}
 
 double dirko::Rectangle::getArea() const
 {
@@ -137,18 +126,14 @@ dirko::Polygon::~Polygon()
 {
   delete[] pts_;
 }
-dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
-                                                 size_(size),
-                                                 pts_(size < 3 ? nullptr : new p_t[size]),
-                                                 mid_{0, 0}
+dirko::Polygon::Polygon(size_t size, p_t *pts) :
+  IShape(), size_(size), pts_(size < 3 ? nullptr : new p_t[size]), mid_{0, 0}
 {
-  if (size < 3)
-  {
+  if (size < 3) {
     throw std::logic_error("Cant create polygon");
   }
   double area = 0;
-  for (size_t i = 0; i < size; ++i)
-  {
+  for (size_t i = 0; i < size; ++i) {
     pts_[i] = pts[i];
     size_t j = (i + 1) % size;
     area += pts[i].x * pts[j].y;
@@ -156,8 +141,7 @@ dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
   }
   area = std::abs(area) / 2;
   double factor = 0.0;
-  for (size_t i = 0; i < size; ++i)
-  {
+  for (size_t i = 0; i < size; ++i) {
     size_t j = (i + 1) % size;
     factor = (pts_[i].x * pts_[j].y - pts_[j].x * pts_[i].y);
     mid_.x += (pts_[i].x + pts_[j].x) * factor;
@@ -169,8 +153,7 @@ dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(),
 double dirko::Polygon::getArea() const
 {
   double area = 0;
-  for (size_t i = 0; i < size_; ++i)
-  {
+  for (size_t i = 0; i < size_; ++i) {
     size_t j = (i + 1) % size_;
     area += pts_[i].x * pts_[j].y;
     area -= pts_[j].x * pts_[i].y;
@@ -182,8 +165,7 @@ dirko::rec_t dirko::Polygon::getFrameRect() const
 {
   double maxx = pts_[0].x, minx = pts_[0].x;
   double maxy = pts_[0].y, miny = pts_[0].y;
-  for (size_t i = 1; i < size_; ++i)
-  {
+  for (size_t i = 1; i < size_; ++i) {
     maxx = std::max(maxx, pts_[i].x);
     minx = std::min(minx, pts_[i].x);
     maxy = std::max(maxy, pts_[i].y);
@@ -195,8 +177,7 @@ dirko::rec_t dirko::Polygon::getFrameRect() const
 }
 void dirko::Polygon::move(double dx, double dy)
 {
-  for (size_t i = 0; i < size_; ++i)
-  {
+  for (size_t i = 0; i < size_; ++i) {
     pts_[i].x += dx;
     pts_[i].y += dy;
   }
@@ -213,19 +194,15 @@ void dirko::Polygon::scale(double coef)
 {
   --coef;
   double dx = 0, dy = 0;
-  for (size_t i = 0; i < size_; ++i)
-  {
+  for (size_t i = 0; i < size_; ++i) {
     dx = pts_[i].x - mid_.x;
     dy = pts_[i].y - mid_.y;
     pts_[i].x += dx * coef;
     pts_[i].y += dy * coef;
   }
 }
-dirko::Bubble::Bubble(double r, p_t dot) : IShape(),
-                                           r_(r),
-                                           dot_(dot)
-{
-}
+dirko::Bubble::Bubble(double r, p_t dot) : IShape(), r_(r), dot_(dot)
+{}
 double dirko::Bubble::getArea() const
 {
   return PI * r_ * r_;
@@ -250,8 +227,7 @@ void dirko::Bubble::scale(double coef)
 }
 void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
 {
-  for (size_t i = 0; i < size; ++i)
-  {
+  for (size_t i = 0; i < size; ++i) {
     shps[i]->move(-point.x, -point.y);
     shps[i]->scale(coef);
     shps[i]->move(point.x, point.y);
@@ -259,8 +235,7 @@ void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
 }
 dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
 {
-  if (size == 0)
-  {
+  if (size == 0) {
     return {0.0, 0.0, {0.0, 0.0}};
   }
   rec_t frame = shps[0]->getFrameRect();
@@ -268,27 +243,22 @@ dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
   double right = frame.pos.x + frame.w / 2.0;
   double bottom = frame.pos.y - frame.h / 2.0;
   double top = frame.pos.y + frame.h / 2.0;
-  for (size_t i = 1; i < size; ++i)
-  {
+  for (size_t i = 1; i < size; ++i) {
     frame = shps[i]->getFrameRect();
     double l = frame.pos.x - frame.w / 2.0;
     double r = frame.pos.x + frame.w / 2.0;
     double b = frame.pos.y - frame.h / 2.0;
     double t = frame.pos.y + frame.h / 2.0;
-    if (l < left)
-    {
+    if (l < left) {
       left = l;
     }
-    if (r > right)
-    {
+    if (r > right) {
       right = r;
     }
-    if (b < bottom)
-    {
+    if (b < bottom) {
       bottom = b;
     }
-    if (t > top)
-    {
+    if (t > top) {
       top = t;
     }
   }
@@ -302,8 +272,7 @@ dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
 std::ostream &dirko::output(std::ostream &os, IShape **shps, size_t size)
 {
   double totalArea = 0.0;
-  for (size_t i = 0; i < size; ++i)
-  {
+  for (size_t i = 0; i < size; ++i) {
     double area = shps[i]->getArea();
     totalArea += area;
     os << area << "\n";
