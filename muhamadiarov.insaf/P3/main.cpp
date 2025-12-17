@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   int mode = 0;
   try
   {
-    mode = std::stoi(argv[1]);
+    mode = std::atoi(argv[1]);
   }
   catch (std::out_of_range& e)
   {
