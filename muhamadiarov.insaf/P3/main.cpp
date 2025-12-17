@@ -7,7 +7,6 @@
 
 namespace muhamadiarov
 {
-  size_t maxSize();
   int* fllIncWav(int* ptr, size_t rows, size_t colons);
   void outMatric(std::ofstream &output, size_t r, size_t c, int* res1);
   long long toFindMaxRight(int* ptr, size_t order);
@@ -34,7 +33,7 @@ int main(int argc, char* argv[])
   {
     mode = std::stoi(argv[1]);
   }
-  catch (std::out_of_range &e)
+  catch (std::out_of_range& e)
   {
     std::cerr << "First parameter  is not a number\n";
     return 1;
@@ -58,8 +57,9 @@ int main(int argc, char* argv[])
     std::cerr << "Error is openning file\n";
     return 2;
   }
-  bool isSizeWrong = muh::checkSizeMatric(rows, colons);
-  if (isSizeWrong)
+  bool c1 = (rows != 0 && colons == 0) || (rows == 0 && colons != 0);
+  bool c2 = rows * colons > 10000;
+  if (c1 || c2)
   {
     std::cerr << "Wrong size of matric\n";
     return 2;
@@ -68,10 +68,11 @@ int main(int argc, char* argv[])
   {
     std::ofstream output(argv[3], std::ios::app);
     output << 0 << ' ' << 0 << '\n';
-    output << 0;
+    output << 0 << '\n';
     return 0;
   }
-  int arr[10000];
+  const int sizeMatric = 10000;
+  int arr[sizeMatric];
   int* ptr = nullptr;
   if (mode == 1)
   {
@@ -111,7 +112,7 @@ int main(int argc, char* argv[])
   input.close();
   size_t order = std::min(rows, colons);
   long long int res2 = muh::maxSumMdg(ptr, order);
-  int* res1 = muh::fllIncWav(ptr, rows, colons);
+  ptr = muh::fllIncWav(ptr, rows, colons);
   std::ofstream output(argv[3], std::ios::app);
   if (!output)
   {
@@ -122,11 +123,9 @@ int main(int argc, char* argv[])
     }
     return 2;
   }
-  muh::outMatric(output, rows, colons, res1);
-  output << '\n';
+  muh::outMatric(output, rows, colons, ptr);
   output << res2;
   output << '\n';
-  output.close();
   if (mode == 2)
   {
     free(ptr);
@@ -204,25 +203,12 @@ long long muhamadiarov::toFindMaxRight(int* ptr, size_t order)
   return max_r;
 }
 
-void muhamadiarov::outMatric(std::ofstream &output, size_t r, size_t c, int* res1)
+void muhamadiarov::outMatric(std::ofstream& output, size_t r, size_t c, int* res1)
 {
-  for (size_t i = 0; i < r * c; ++i)
+  output << res1[0];
+  for (size_t i = 1; i < r * c; ++i)
   {
-    output << res1[i] << ' ';
+    output << ' ' << res1[i];
   }
+  output << '\n';
 }
-
-size_t muhamadiarov::maxSize()
-{
-  using namespace std;
-  return numeric_limits< size_t >::max();
-}
-
-bool muhamadiarov::checkSizeMatric(size_t r, size_t c)
-{
-  namespace muh = muhamadiarov;
-  bool c1 = (r != 0 && c == 0) || (r == 0 && c != 0);
-  bool c2 = r > muh::maxSize() || c > muh::maxSize();
-  return c1 || c2;
-}
-
