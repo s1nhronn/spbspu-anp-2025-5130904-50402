@@ -12,7 +12,6 @@ namespace muhamadiarov
   long long toFindMaxRight(int* ptr, size_t order);
   long long toFindMaxinLeft(int* ptr, size_t order);
   long long maxSumMdg(int* ptr, size_t order);
-  bool checkSizeMatric(size_t r, size_t c);
 }
 
 int main(int argc, char* argv[])
