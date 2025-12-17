@@ -65,7 +65,7 @@ namespace dirko
   void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(IShape **shps, size_t size);
   std::ostream &output(std::ostream &os, IShape **shps, size_t size);
-} // namespace dirko
+}
 
 int main()
 {
