@@ -43,7 +43,7 @@ namespace afanasev
       str[size] = '\0';
     }
 
-    if (!input || size == 0)
+    if (!input)
     {
       delete[] str;
       if (isSkipWp)
@@ -88,11 +88,17 @@ namespace afanasev
 int main()
 {
   size_t str_lenght = 0;
-  size_t & str_lenght_link = str_lenght;
   char * str = nullptr;
   try
   {
-    str = afanasev::getline(std::cin, str_lenght_link);
+    str = afanasev::getline(std::cin, str_lenght);
+
+    if (str_lenght == 0)
+    {
+      delete[] str;
+      std::cerr << "Incorrect input" << '\n';
+      return 1;
+    }
   }
   catch (const std::bad_alloc &)
   {
