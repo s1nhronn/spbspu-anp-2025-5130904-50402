@@ -28,18 +28,17 @@ int main(int argc, char* argv[])
     return 1;
   }
   int mode = 0;
-  try
+  if (std::strcmp(argv[1], "1") == 0)
   {
-    mode = std::atoi(argv[1]);
+    mode = 1;
   }
-  catch (std::out_of_range& e)
+  else if (str::strcmp(argv[1], "2") == 0)
   {
-    std::cerr << "First parameter  is not a number\n";
-    return 1;
+    mode = 2;
   }
-  if (mode < 1 || mode > 2)
+  else
   {
-    std::cerr << "First parameter is out of range\n";
+    std::cerr << "First parameter is not a number\n";
     return 1;
   }
   std::ifstream input(argv[2]);
