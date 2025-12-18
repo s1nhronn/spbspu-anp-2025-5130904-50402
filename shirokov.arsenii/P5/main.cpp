@@ -11,7 +11,8 @@ namespace shirokov
 
   struct rectangle_t
   {
-    double width, height, pos;
+    double width, height;
+    point_t pos;
   };
 
   struct Shape
@@ -29,7 +30,7 @@ namespace shirokov
     point_t center_, bottomLeft_, topRight_;
 
   public:
-    Rectangle(point_t center, double side);
+    Rectangle(point_t center, double width, double height);
     Rectangle(point_t bottomLeft, point_t topRight);
     double getArea() const override;
     rectangle_t getFrameRect() const override;
@@ -96,7 +97,7 @@ int main()
   figures[3] = nullptr;
   try
   {
-    figures[0] = new shirokov::Rectangle({0, 0}, 0);
+    figures[0] = new shirokov::Rectangle({0, 0}, 0, 0);
     figures[1] = new shirokov::Rectangle({0, 0}, {0, 0});
     figures[2] = new shirokov::Polygon({}, 0);
     figures[3] = new shirokov::Xquare({0, 0}, 0);
@@ -126,6 +127,44 @@ int main()
   delete figures[3];
 }
 
+shirokov::Rectangle::Rectangle(point_t center, double width, double height)
+    : Shape(), center_(center), bottomLeft_({center.x - width / 2, center.y - height / 2}),
+      topRight_({center.x + width / 2, center.y + height / 2})
+{
+}
+
+shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight)
+    : center_({(topRight.x - bottomLeft.x) / 2, (topRight.y - bottomLeft.y) / 2}), bottomLeft_(bottomLeft),
+      topRight_(topRight)
+{
+}
+
+double shirokov::Rectangle::getArea() const
+{
+  return (topRight_.x - bottomLeft_.x) * (topRight_.y - bottomLeft_.y);
+}
+
+shirokov::rectangle_t shirokov::Rectangle::getFrameRect() const
+{
+  return {topRight_.x - bottomLeft_.x, topRight_.y - bottomLeft_.y, center_};
+}
+
+void shirokov::Rectangle::move(point_t target)
+{
+  point_t delta = {center_.x - target.x, center_.y - target.y};
+  center_ = target;
+  topRight_ = {topRight_.x - delta.x, topRight_.y - delta.y};
+  bottomLeft_ = {bottomLeft_.x - delta.x, bottomLeft_.y - delta.y};
+}
+
+void shirokov::Rectangle::scale(double coefficient)
+{
+  bottomLeft_ = {center_.x + coefficient * (bottomLeft_.x - center_.x),
+                 center_.y + coefficient * (bottomLeft_.y - center_.y)};
+  topRight_ = {center_.x + coefficient * (topRight_.x - center_.x),
+               center_.y + coefficient * (topRight_.y - center_.y)};
+}
+
 void shirokov::printInfo(const Shape *const *figures, size_t s)
 {
   std::cout << "Areas of figures:\n";
@@ -141,11 +180,15 @@ void shirokov::printInfo(const Shape *const *figures, size_t s)
     std::cout << "\tFigure " << i + 1 << ": \n";
     std::cout << "\t\tWidth: " << frameRect.width << '\n';
     std::cout << "\t\tHeight: " << frameRect.height << '\n';
-    std::cout << "\t\tCenter: " << frameRect.pos << '\n';
+    std::cout << "\t\tCenter: \n";
+    std::cout << "\t\t\tx: " << frameRect.pos.x << '\n';
+    std::cout << "\t\t\ty: " << frameRect.pos.y << '\n';
   }
   shirokov::rectangle_t frameRect = shirokov::getTotalFrameRect(figures, s);
   std::cout << "Total frame rect: \n";
   std::cout << "\t\tWidth: " << frameRect.width << '\n';
   std::cout << "\t\tHeight: " << frameRect.height << '\n';
-  std::cout << "\t\tCenter: " << frameRect.pos << '\n';
+  std::cout << "\t\tCenter: \n";
+  std::cout << "\t\t\tx: " << frameRect.pos.x << '\n';
+  std::cout << "\t\t\ty: " << frameRect.pos.y << '\n';
 }
