@@ -76,13 +76,13 @@ namespace shirokov
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
-  const size_t s = 5;
+  const size_t size = 5;
 }
 
 int main()
 {
-  shirokov::Shape *figures[shirokov::s];
-  for (size_t i = 0; i < shirokov::s; ++i)
+  shirokov::Shape *figures[shirokov::size];
+  for (size_t i = 0; i < shirokov::size; ++i)
   {
     figures[i] = nullptr;
   }
@@ -97,7 +97,7 @@ int main()
   }
   catch (const std::bad_alloc &)
   {
-    for (size_t i = 0; i < shirokov::s; ++i)
+    for (size_t i = 0; i < shirokov::size; ++i)
     {
       delete figures[i];
     }
@@ -106,7 +106,7 @@ int main()
   }
 
   std::cout << "Before scaling:\n";
-  shirokov::printInfo(figures, shirokov::s);
+  shirokov::printInfo(figures, shirokov::size);
 
   shirokov::point_t target = {0, 0};
   double coefficient = 0;
@@ -114,22 +114,30 @@ int main()
   if (std::cin.fail())
   {
     std::cerr << "Input error\n";
+    for (size_t i = 0; i < shirokov::size; ++i)
+    {
+      delete figures[i];
+    }
     return 1;
   }
   if (coefficient < 0)
   {
     std::cerr << "The coefficient cannot be negative\n";
+    for (size_t i = 0; i < shirokov::size; ++i)
+    {
+      delete figures[i];
+    }
     return 1;
   }
 
-  for (size_t i = 0; i < shirokov::s; ++i)
+  for (size_t i = 0; i < shirokov::size; ++i)
   {
     shirokov::scaleAboutPoint(target, figures[i]);
   }
   std::cout << "After scaling:\n";
-  shirokov::printInfo(figures, shirokov::s);
+  shirokov::printInfo(figures, shirokov::size);
 
-  for (size_t i = 0; i < shirokov::s; ++i)
+  for (size_t i = 0; i < shirokov::size; ++i)
   {
     delete figures[i];
   }
@@ -187,7 +195,7 @@ shirokov::Polygon::Polygon(const point_t *vertices, size_t s)
   {
     double xi = vertices_[i].x;
     double yi = vertices_[i].y;
-    size_t j = (i + 1) % s;
+    size_t j = (i + 1) % s_;
     double xj = vertices_[j].x;
     double yj = vertices_[j].y;
     double cross = xi * yj - xj * yi;
@@ -205,11 +213,11 @@ shirokov::Polygon::Polygon(const point_t *vertices, size_t s)
 double shirokov::Polygon::getArea() const
 {
   double A = 0;
-  for (size_t i = 0; i < s; ++i)
+  for (size_t i = 0; i < s_; ++i)
   {
     double xi = vertices_[i].x;
     double yi = vertices_[i].y;
-    size_t j = (i + 1) % s;
+    size_t j = (i + 1) % s_;
     double xj = vertices_[j].x;
     double yj = vertices_[j].y;
     double cross = xi * yj - xj * yi;
