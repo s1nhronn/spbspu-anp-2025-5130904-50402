@@ -72,7 +72,7 @@ namespace shirokov
     ~Xquare() = default;
   };
 
-  void scaleAboutPoint(point_t target, Shape *figure);
+  void scaleAboutPoint(point_t target, double coefficient, Shape *figure);
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
@@ -132,7 +132,7 @@ int main()
 
   for (size_t i = 0; i < shirokov::size; ++i)
   {
-    shirokov::scaleAboutPoint(target, figures[i]);
+    shirokov::scaleAboutPoint(target, coefficient, figures[i]);
   }
   std::cout << "After scaling:\n";
   shirokov::printInfo(figures, shirokov::size);
@@ -150,7 +150,7 @@ shirokov::Rectangle::Rectangle(point_t center, double width, double height)
 }
 
 shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight)
-    : Shape(), center_({(topRight.x - bottomLeft.x) / 2, (topRight.y - bottomLeft.y) / 2}), bottomLeft_(bottomLeft),
+    : Shape(), center_({(topRight.x + bottomLeft.x) / 2, (topRight.y + bottomLeft.y) / 2}), bottomLeft_(bottomLeft),
       topRight_(topRight)
 {
 }
@@ -233,9 +233,9 @@ shirokov::rectangle_t shirokov::Polygon::getFrameRect() const
   for (size_t i = 0; i < s_; ++i)
   {
     maxx = std::max(maxx, vertices_[i].x);
-    minx = std::min(maxx, vertices_[i].x);
-    maxy = std::max(maxx, vertices_[i].x);
-    miny = std::min(maxx, vertices_[i].x);
+    minx = std::min(minx, vertices_[i].x);
+    maxy = std::max(maxy, vertices_[i].y);
+    miny = std::min(miny, vertices_[i].y);
   }
   double width = maxx - minx;
   double height = maxy - miny;
@@ -307,10 +307,11 @@ void shirokov::Xquare::scale(double coefficient)
   top_.y = center_.y + coefficient * (top_.y - center_.y);
 }
 
-void shirokov::scaleAboutPoint(shirokov::point_t target, shirokov::Shape *figure)
+void shirokov::scaleAboutPoint(shirokov::point_t target, double coefficient, shirokov::Shape *figure)
 {
   (void) target;
   (void) figure;
+  (void) coefficient;
 }
 
 double shirokov::getTotalArea(const shirokov::Shape *const *figures, size_t s)
