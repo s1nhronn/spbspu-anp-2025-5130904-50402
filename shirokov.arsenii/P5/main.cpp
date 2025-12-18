@@ -19,10 +19,10 @@ namespace shirokov
 
   struct Shape
   {
-    virtual double getArea() const;
-    virtual rectangle_t getFrameRect() const;
-    virtual void move(point_t target);
-    virtual void scale(double coefficient);
+    virtual double getArea() const = 0;
+    virtual rectangle_t getFrameRect() const = 0;
+    virtual void move(point_t target) = 0;
+    virtual void scale(double coefficient) = 0;
     virtual ~Shape() = default;
   };
 
@@ -72,7 +72,7 @@ namespace shirokov
     ~Xquare() = default;
   };
 
-  void scaleAboutPoint(point_t target, Shape figure);
+  void scaleAboutPoint(point_t target, Shape *figure);
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
@@ -94,7 +94,7 @@ int main()
     std::cerr << "The coefficient cannot be negative\n";
     return 1;
   }
-  const shirokov::Shape *figures[shirokov::s];
+  shirokov::Shape *figures[shirokov::s];
   for (size_t i = 0; i < shirokov::s; ++i)
   {
     figures[i] = nullptr;
@@ -121,7 +121,7 @@ int main()
   shirokov::printInfo(figures, shirokov::s);
   for (size_t i = 0; i < shirokov::s; ++i)
   {
-    shirokov::scaleAboutPoint(target, *figures[i]);
+    shirokov::scaleAboutPoint(target, figures[i]);
   }
   std::cout << "After scaling:\n";
   shirokov::printInfo(figures, shirokov::s);
@@ -294,6 +294,49 @@ void shirokov::Xquare::scale(double coefficient)
 {
   bottom_.y = center_.y + coefficient * (bottom_.y - center_.y);
   top_.y = center_.y + coefficient * (top_.y - center_.y);
+}
+
+void shirokov::scaleAboutPoint(shirokov::point_t target, shirokov::Shape *figure)
+{
+  (void) target;
+  (void) figure;
+}
+
+double shirokov::getTotalArea(const shirokov::Shape *const *figures, size_t s)
+{
+  double res = 0;
+  for (size_t i = 0; i < s; ++i)
+  {
+    res += figures[i]->getArea();
+  }
+  return res;
+}
+
+shirokov::rectangle_t shirokov::getTotalFrameRect(const shirokov::Shape *const *figures, size_t s)
+{
+  rectangle_t frameRect = figures[0]->getFrameRect();
+  double minX = frameRect.pos.x - frameRect.width / 2;
+  double maxX = frameRect.pos.x + frameRect.width / 2;
+  double minY = frameRect.pos.y - frameRect.height / 2;
+  double maxY = frameRect.pos.y + frameRect.height / 2;
+  for (size_t i = 1; i < s; ++i)
+  {
+    frameRect = figures[i]->getFrameRect();
+    double left = frameRect.pos.x - frameRect.width / 2;
+    double right = frameRect.pos.x + frameRect.width / 2;
+    double bottom = frameRect.pos.y - frameRect.height / 2;
+    double top = frameRect.pos.y + frameRect.height / 2;
+
+    minX = std::min(minX, left);
+    maxX = std::max(maxX, right);
+    minY = std::min(minY, bottom);
+    maxY = std::max(maxY, top);
+  }
+  double width = maxX - minX;
+  double height = maxY - minY;
+  point_t pos = {(maxX + minX) / 2, (maxY + minY) / 2};
+
+  return {width, height, pos};
 }
 
 void shirokov::printInfo(const Shape *const *figures, size_t s)
