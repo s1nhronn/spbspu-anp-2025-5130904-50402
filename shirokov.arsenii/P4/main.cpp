@@ -14,7 +14,7 @@ namespace shirokov
   void expand(char **str, size_t size, size_t &capacity);
   char *getline(std::istream &in, size_t &s);
   char *otherLatinLetters(const char *str, char *res, char *buffer);
-  void combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res);
+  char *combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res);
 }
 
 int main()
@@ -51,17 +51,8 @@ int main()
   res1[shirokov::LATIN_ALPHABET_LENGTH] = '\0';
   res2[std::strlen(shirokov::LITERAL) + s] = '\0';
   buffer[s] = '\0';
-  shirokov::otherLatinLetters(str, res1, buffer);
-  shirokov::combineLines(str, s, shirokov::LITERAL, std::strlen(shirokov::LITERAL), res2);
-  if (res1 == nullptr || res2 == nullptr)
-  {
-    free(str);
-    free(res1);
-    free(res2);
-    free(buffer);
-    std::cerr << "Error during conversion\n";
-    return 1;
-  }
+  res1 = shirokov::otherLatinLetters(str, res1, buffer);
+  res2 = shirokov::combineLines(str, s, shirokov::LITERAL, std::strlen(shirokov::LITERAL), res2);
 
   std::cout << "1. " << res1 << '\n';
   std::cout << "2. " << res2 << '\n';
@@ -143,7 +134,7 @@ char *shirokov::otherLatinLetters(const char *str, char *res, char *buffer)
   return res;
 }
 
-void shirokov::combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
+char *shirokov::combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res)
 {
   size_t minn = s1 < s2 ? s1 : s2;
   for (size_t i = 0; i < minn; ++i)
@@ -151,11 +142,12 @@ void shirokov::combineLines(const char *str1, size_t s1, const char *str2, size_
     res[2 * i] = str1[i];
     res[2 * i + 1] = str2[i];
   }
-  bool condition = s1 > s2;
+  const char *maxString = (s1 > s2 ? str1 : str2);
   for (size_t i = minn * 2; i < s1 + s2; ++i)
   {
-    res[i] = (condition ? str1[i - minn] : str2[i - minn]);
+    res[i] = maxString[i - minn];
   }
+  return res;
 }
 
 char *shirokov::uniq(char *res, const char *str, size_t &rsize)
@@ -186,19 +178,18 @@ char *shirokov::uniq(char *res, const char *str, size_t &rsize)
 
 void shirokov::expand(char **str, size_t size, size_t &capacity)
 {
-  char *temp_str = nullptr;
-  temp_str = reinterpret_cast< char * >(malloc(capacity * 2));
-  if (temp_str == nullptr)
+  char *tempString = reinterpret_cast< char * >(malloc(capacity * 2));
+  if (tempString == nullptr)
   {
-    delete[] *str;
+    free(*str);
     *str = nullptr;
     return;
   }
   for (size_t i = 0; i < size; ++i)
   {
-    temp_str[i] = (*str)[i];
+    tempString[i] = (*str)[i];
   }
   free(*str);
-  *str = temp_str;
+  *str = tempString;
   capacity *= 2;
 }
