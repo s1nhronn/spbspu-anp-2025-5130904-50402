@@ -229,8 +229,8 @@ void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
 {
   for (size_t i = 0; i < size; ++i) {
     rec_t fr = shps[i]->getFrameRect();
-    double dx = (fr.pos.x - point.x) * coef;
-    double dy = (fr.pos.y - point.y) * coef;
+    double dx = (fr.pos.x - point.x) * (coef - 1);
+    double dy = (fr.pos.y - point.y) * (coef - 1);
     shps[i]->move(dx, dy);
     shps[i]->scale(coef);
   }
