@@ -88,11 +88,12 @@ int main()
   }
   try
   {
-    figures[0] = new shirokov::Rectangle({0, 0}, 0, 0);
-    figures[1] = new shirokov::Rectangle({0, 0}, {0, 0});
-    figures[2] = new shirokov::Polygon({}, 0);
-    figures[3] = new shirokov::Xquare({0, 0}, 0);
-    figures[4] = new shirokov::Xquare({0, 0}, {0, 0});
+    figures[0] = new shirokov::Rectangle({5, 5}, 10, 10);
+    figures[1] = new shirokov::Rectangle({0, 0}, {10, 10});
+    const shirokov::point_t vertices[] = {{0, 0}, {4, 0}, {4, 3}, {0, 3}};
+    figures[2] = new shirokov::Polygon(vertices, 4);
+    figures[3] = new shirokov::Xquare({0, 0}, 5);
+    figures[4] = new shirokov::Xquare({0, 5}, {0, 0});
   }
   catch (const std::bad_alloc &)
   {
