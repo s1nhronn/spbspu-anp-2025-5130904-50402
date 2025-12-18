@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <cstdlib>
 #include <iostream>
 #include <new>
 
@@ -42,11 +43,12 @@ namespace shirokov
   struct Polygon final : Shape
   {
   private:
-    double center_;
+    point_t center_;
     point_t *vertices_;
+    size_t s_;
 
   public:
-    Polygon(point_t *vertices, size_t s);
+    Polygon(const point_t *vertices, size_t s);
     double getArea() const override;
     rectangle_t getFrameRect() const override;
     void move(point_t target) override;
@@ -134,7 +136,7 @@ shirokov::Rectangle::Rectangle(point_t center, double width, double height)
 }
 
 shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight)
-    : center_({(topRight.x - bottomLeft.x) / 2, (topRight.y - bottomLeft.y) / 2}), bottomLeft_(bottomLeft),
+    : Shape(), center_({(topRight.x - bottomLeft.x) / 2, (topRight.y - bottomLeft.y) / 2}), bottomLeft_(bottomLeft),
       topRight_(topRight)
 {
 }
@@ -163,6 +165,93 @@ void shirokov::Rectangle::scale(double coefficient)
                  center_.y + coefficient * (bottomLeft_.y - center_.y)};
   topRight_ = {center_.x + coefficient * (topRight_.x - center_.x),
                center_.y + coefficient * (topRight_.y - center_.y)};
+}
+
+shirokov::Polygon::Polygon(const point_t *vertices, size_t s)
+    : Shape(), center_({0, 0}), vertices_(new point_t[s]), s_(s)
+{
+  for (size_t i = 0; i < s; ++i)
+  {
+    vertices_[i] = vertices[i];
+  }
+
+  double A = 0;
+  double cx = 0, cy = 0;
+  for (size_t i = 0; i < s; ++i)
+  {
+    double xi = vertices_[i].x;
+    double yi = vertices_[i].y;
+    size_t j = (i + 1) % s;
+    double xj = vertices_[j].x;
+    double yj = vertices_[j].y;
+    double cross = xi * yj - xj * yi;
+    A += cross;
+    cx += (xi + xj) * cross;
+    cy += (yi + yj) * cross;
+  }
+  A *= 0.5;
+  cx /= 6 * A;
+  cy /= 6 * A;
+
+  center_ = {cx, cy};
+}
+
+double shirokov::Polygon::getArea() const
+{
+  double A = 0;
+  for (size_t i = 0; i < s; ++i)
+  {
+    double xi = vertices_[i].x;
+    double yi = vertices_[i].y;
+    size_t j = (i + 1) % s;
+    double xj = vertices_[j].x;
+    double yj = vertices_[j].y;
+    double cross = xi * yj - xj * yi;
+    A += cross;
+  }
+  A *= 0.5;
+  return std::abs(A);
+}
+
+shirokov::rectangle_t shirokov::Polygon::getFrameRect() const
+{
+  double maxx = vertices_[0].x, minx = vertices_[0].x, maxy = vertices_[0].y, miny = vertices_[0].y;
+  for (size_t i = 0; i < s_; ++i)
+  {
+    maxx = std::max(maxx, vertices_[i].x);
+    minx = std::min(maxx, vertices_[i].x);
+    maxy = std::max(maxx, vertices_[i].x);
+    miny = std::min(maxx, vertices_[i].x);
+  }
+  double width = maxx - minx;
+  double height = maxy - miny;
+  point_t pos = {(minx + maxx) / 2, (miny + maxy) / 2};
+  rectangle_t res = {width, height, pos};
+  return res;
+}
+
+void shirokov::Polygon::move(point_t target)
+{
+  point_t delta = {center_.x - target.x, center_.y - target.y};
+  center_ = target;
+  for (size_t i = 0; i < s_; ++i)
+  {
+    vertices_[i] = {vertices_[i].x - delta.x, vertices_[i].y - delta.y};
+  }
+}
+
+void shirokov::Polygon::scale(double coefficient)
+{
+  for (size_t i = 0; i < s_; ++i)
+  {
+    vertices_[i] = {center_.x + coefficient * (vertices_[i].x - center_.x),
+                    center_.y + coefficient * (vertices_[i].y - center_.y)};
+  }
+}
+
+shirokov::Polygon::~Polygon()
+{
+  delete[] vertices_;
 }
 
 void shirokov::printInfo(const Shape *const *figures, size_t s)
