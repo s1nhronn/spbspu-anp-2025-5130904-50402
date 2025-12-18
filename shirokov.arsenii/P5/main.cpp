@@ -81,19 +81,6 @@ namespace shirokov
 
 int main()
 {
-  shirokov::point_t target = {0, 0};
-  double coefficient = 0;
-  std::cin >> target.x >> target.y >> coefficient;
-  if (std::cin.fail())
-  {
-    std::cerr << "Input error\n";
-    return 1;
-  }
-  if (coefficient < 0)
-  {
-    std::cerr << "The coefficient cannot be negative\n";
-    return 1;
-  }
   shirokov::Shape *figures[shirokov::s];
   for (size_t i = 0; i < shirokov::s; ++i)
   {
@@ -119,6 +106,21 @@ int main()
 
   std::cout << "Before scaling:\n";
   shirokov::printInfo(figures, shirokov::s);
+
+  shirokov::point_t target = {0, 0};
+  double coefficient = 0;
+  std::cin >> target.x >> target.y >> coefficient;
+  if (std::cin.fail())
+  {
+    std::cerr << "Input error\n";
+    return 1;
+  }
+  if (coefficient < 0)
+  {
+    std::cerr << "The coefficient cannot be negative\n";
+    return 1;
+  }
+
   for (size_t i = 0; i < shirokov::s; ++i)
   {
     shirokov::scaleAboutPoint(target, figures[i]);
