@@ -228,9 +228,11 @@ void dirko::Bubble::scale(double coef)
 void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
 {
   for (size_t i = 0; i < size; ++i) {
-    shps[i]->move(-point.x, -point.y);
+    rec_t fr = shps[i]->getFrameRect();
+    double dx = (fr.pos.x - point.x) * coef;
+    double dy = (fr.pos.y - point.y) * coef;
+    shps[i]->move(dx, dy);
     shps[i]->scale(coef);
-    shps[i]->move(point.x, point.y);
   }
 }
 dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
