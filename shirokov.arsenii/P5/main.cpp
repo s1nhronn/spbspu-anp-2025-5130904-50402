@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
@@ -62,7 +63,8 @@ namespace shirokov
     point_t center_, top_, bottom_;
 
   public:
-    Xquare(point_t center, double size);
+    Xquare(point_t center, double side);
+    Xquare(point_t top, point_t bottom);
     double getArea() const override;
     rectangle_t getFrameRect() const override;
     void move(point_t target) override;
@@ -74,7 +76,7 @@ namespace shirokov
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
-  const size_t s = 4;
+  const size_t s = 5;
 }
 
 int main()
@@ -93,23 +95,24 @@ int main()
     return 1;
   }
   const shirokov::Shape *figures[shirokov::s];
-  figures[0] = nullptr;
-  figures[1] = nullptr;
-  figures[2] = nullptr;
-  figures[3] = nullptr;
+  for (size_t i = 0; i < shirokov::s; ++i)
+  {
+    figures[i] = nullptr;
+  }
   try
   {
     figures[0] = new shirokov::Rectangle({0, 0}, 0, 0);
     figures[1] = new shirokov::Rectangle({0, 0}, {0, 0});
     figures[2] = new shirokov::Polygon({}, 0);
     figures[3] = new shirokov::Xquare({0, 0}, 0);
+    figures[4] = new shirokov::Xquare({0, 0}, {0, 0});
   }
   catch (const std::bad_alloc &)
   {
-    delete figures[0];
-    delete figures[1];
-    delete figures[2];
-    delete figures[3];
+    for (size_t i = 0; i < shirokov::s; ++i)
+    {
+      delete figures[i];
+    }
     std::cerr << "Couldn't allocate memory\n";
     return 2;
   }
@@ -123,10 +126,10 @@ int main()
   std::cout << "After scaling:\n";
   shirokov::printInfo(figures, shirokov::s);
 
-  delete figures[0];
-  delete figures[1];
-  delete figures[2];
-  delete figures[3];
+  for (size_t i = 0; i < shirokov::s; ++i)
+  {
+    delete figures[i];
+  }
 }
 
 shirokov::Rectangle::Rectangle(point_t center, double width, double height)
@@ -252,6 +255,45 @@ void shirokov::Polygon::scale(double coefficient)
 shirokov::Polygon::~Polygon()
 {
   delete[] vertices_;
+}
+
+shirokov::Xquare::Xquare(point_t center, double side)
+    : Shape(), center_(center), top_({center.x, center.y + side / std::sqrt(2)}),
+      bottom_({center.x, center.y - side / std::sqrt(2)})
+{
+}
+
+shirokov::Xquare::Xquare(point_t top, point_t bottom)
+    : Shape(), center_({(top.x + bottom.x) / 2, (top.y + bottom.y) / 2}), top_(top), bottom_(bottom)
+{
+}
+
+double shirokov::Xquare::getArea() const
+{
+  double side = (top_.y - bottom_.y) / std::sqrt(2);
+  return side * side;
+}
+
+shirokov::rectangle_t shirokov::Xquare::getFrameRect() const
+{
+  double width = top_.y - bottom_.y;
+  double height = width;
+  point_t pos = center_;
+  return {width, height, pos};
+}
+
+void shirokov::Xquare::move(point_t target)
+{
+  point_t delta = {center_.x - target.x, center_.y - target.y};
+  center_ = target;
+  top_ = {top_.x - delta.x, top_.y - delta.y};
+  bottom_ = {bottom_.x - delta.x, bottom_.y - delta.y};
+}
+
+void shirokov::Xquare::scale(double coefficient)
+{
+  bottom_.y = center_.y + coefficient * (bottom_.y - center_.y);
+  top_.y = center_.y + coefficient * (top_.y - center_.y);
 }
 
 void shirokov::printInfo(const Shape *const *figures, size_t s)
