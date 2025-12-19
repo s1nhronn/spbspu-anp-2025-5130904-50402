@@ -86,6 +86,7 @@ std::istream& bukreev::inputString(std::istream& in, char** str)
       }
     }
 
+    buffer[i] = 0;
     in >> buffer[i];
     if (buffer[i] == '\n')
     {
@@ -126,7 +127,6 @@ char* bukreev::growString(char** oldStr, size_t& capacity)
     free(*oldStr);
     return nullptr;
   }
-  std::memset(newStr, 0, newCapacity * sizeof(char));
 
   capacity = newCapacity;
   std::strncpy(newStr, *oldStr, oldCapacity);
