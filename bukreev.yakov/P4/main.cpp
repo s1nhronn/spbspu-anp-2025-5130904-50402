@@ -86,11 +86,11 @@ std::istream& bukreev::inputString(std::istream& in, char** str)
       }
     }
 
-    buffer[i] = 0;
+    buffer[i] = '\0';
     in >> buffer[i];
     if (buffer[i] == '\n')
     {
-      buffer[i] = 0;
+      buffer[i] = '\0';
       break;
     }
 
@@ -100,13 +100,18 @@ std::istream& bukreev::inputString(std::istream& in, char** str)
   {
     if (in.eof())
     {
-      buffer[i - 1] = 0;
+      buffer[i - 1] = '\0';
     }
     else
     {
       free(buffer);
       return in;
     }
+  }
+  if (i == 0)
+  {
+    free(buffer);
+    return in;
   }
 
   in >> std::skipws;
@@ -141,12 +146,12 @@ char* bukreev::excsnd(const char* first, const char* second, char* resStr)
 {
   size_t resIndex = 0;
 
-  for (size_t i = 0; first[i] != 0; i++)
+  for (size_t i = 0; first[i] != '\0'; i++)
   {
     char c = first[i];
     bool exclude = false;
 
-    for (size_t j = 0; second[j] != 0; j++)
+    for (size_t j = 0; second[j] != '\0'; j++)
     {
       if (second[j] == c)
       {
@@ -171,7 +176,7 @@ char* bukreev::latrmv(const char* str, char* resStr)
 {
   size_t resIndex = 0;
 
-  for (size_t i = 0; str[i] != 0; i++)
+  for (size_t i = 0; str[i] != '\0'; i++)
   {
     if (!std::isalpha(str[i]))
     {
@@ -180,7 +185,7 @@ char* bukreev::latrmv(const char* str, char* resStr)
     }
   }
 
-  resStr[resIndex] = 0;
+  resStr[resIndex] = '\0';
 
   return resStr;
 }
