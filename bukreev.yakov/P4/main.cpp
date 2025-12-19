@@ -4,10 +4,9 @@
 
 namespace bukreev
 {
-  const size_t initialSize = 4;
+  constexpr size_t initialSize = 4;
 
-  char* inputString();
-  void deleteString(char* str);
+  std::istream& inputString(std::istream& in, char** str);
 
   char* growString(char** oldStr, size_t& capacity);
 
@@ -19,35 +18,32 @@ int main()
 {
   char* str = nullptr;
 
-  str = bukreev::inputString();
+  bukreev::inputString(std::cin, &str);
   if (!str)
   {
     std::cerr << "Not enough memory for string input.\n";
     return 1;
   }
 
-  if (std::strlen(str) == 0)
-  {
-    bukreev::deleteString(str);
-    std::cerr << "Error: no input.\n";
-    return 2;
-  }
-
   char* res1 = nullptr, *res2 = nullptr;
-  res1 = reinterpret_cast< char* >(malloc((std::strlen(str) + 1) * sizeof(char)));
+  size_t allocSize = (std::strlen(str) + 1) * sizeof(char);
+
+  res1 = reinterpret_cast< char* >(malloc(allocSize));
+  res1[allocSize - 1] = '\0';
   if (!res1)
   {
     std::cerr << "Not enough memory for EXC_SND.\n";
-    bukreev::deleteString(str);
+    free(str);
     return 1;
   }
 
-  res2 = reinterpret_cast< char* >(malloc((std::strlen(str) + 1) * sizeof(char)));
+  res2 = reinterpret_cast< char* >(malloc(allocSize));
+  res2[allocSize - 1] = '\0';
   if (!res2)
   {
     std::cerr << "Not enough memory for LAT_RMV.\n";
-    bukreev::deleteString(res1);
-    bukreev::deleteString(str);
+    free(str);
+    free(res1);
     return 1;
   }
 
@@ -56,64 +52,65 @@ int main()
   res1 = bukreev::excsnd(str, stringToExclude, res1);
   res2 = bukreev::latrmv(str, res2);
 
-  bukreev::deleteString(str);
+  free(str);
 
   std::cout << res1 << '\n';
   std::cout << res2 << '\n';
 
-  bukreev::deleteString(res1);
-  bukreev::deleteString(res2);
+  free(res1);
+  free(res2);
 }
 
-char* bukreev::inputString()
+std::istream& bukreev::inputString(std::istream& in, char** str)
 {
   size_t capacity = initialSize;
+  *str = nullptr;
 
   char* buffer = reinterpret_cast< char* >(malloc(initialSize * sizeof(char)));
   if (!buffer)
   {
-    return nullptr;
+    return in;
   }
 
-  std::cin >> std::noskipws;
+  in >> std::noskipws;
 
   size_t i = 0;
-  bool run = true;
-  while (run)
+  while (in)
   {
     if (i >= capacity)
     {
       buffer = growString(&buffer, capacity);
       if (!buffer)
       {
-        return nullptr;
+        return in;
       }
     }
 
-    std::cin >> buffer[i];
-    if (std::cin.eof())
+    in >> buffer[i];
+    if (buffer[i] == '\n')
     {
       buffer[i] = 0;
       break;
     }
 
-    if (buffer[i] == '\n')
-    {
-      buffer[i] = 0;
-      run = false;
-    }
-
     i++;
   }
+  if (!in)
+  {
+    if (in.eof())
+    {
+      buffer[i - 1] = 0;
+    }
+    else
+    {
+      free(buffer);
+      return in;
+    }
+  }
 
-  std::cin >> std::skipws;
-
-  return buffer;
-}
-
-void bukreev::deleteString(char* str)
-{
-  free(str);
+  in >> std::skipws;
+  *str = buffer;
+  return in;
 }
 
 char* bukreev::growString(char** oldStr, size_t& capacity)
@@ -126,14 +123,14 @@ char* bukreev::growString(char** oldStr, size_t& capacity)
   char* newStr = reinterpret_cast< char* >(malloc(newCapacity * sizeof(char)));
   if (!newStr)
   {
-    deleteString(*oldStr);
+    free(*oldStr);
     return nullptr;
   }
 
   capacity = newCapacity;
   std::strncpy(newStr, *oldStr, oldCapacity);
 
-  deleteString(*oldStr);
+  free(*oldStr);
   *oldStr = newStr;
 
   return newStr;
