@@ -108,7 +108,7 @@ std::istream& bukreev::inputString(std::istream& in, char** str)
       return in;
     }
   }
-  if (i == 0)
+  if (std::strlen(buffer) == 0)
   {
     free(buffer);
     return in;
