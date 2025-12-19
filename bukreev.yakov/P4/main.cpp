@@ -126,6 +126,7 @@ char* bukreev::growString(char** oldStr, size_t& capacity)
     free(*oldStr);
     return nullptr;
   }
+  std::memset(newStr, 0, newCapacity * sizeof(char));
 
   capacity = newCapacity;
   std::strncpy(newStr, *oldStr, oldCapacity);
