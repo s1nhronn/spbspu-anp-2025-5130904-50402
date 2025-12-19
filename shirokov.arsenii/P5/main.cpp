@@ -76,13 +76,13 @@ namespace shirokov
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
-  const size_t size = 5;
+  const size_t SIZE = 5;
 }
 
 int main()
 {
-  shirokov::Shape *figures[shirokov::size];
-  for (size_t i = 0; i < shirokov::size; ++i)
+  shirokov::Shape *figures[shirokov::SIZE];
+  for (size_t i = 0; i < shirokov::SIZE; ++i)
   {
     figures[i] = nullptr;
   }
@@ -97,7 +97,7 @@ int main()
   }
   catch (const std::bad_alloc &)
   {
-    for (size_t i = 0; i < shirokov::size; ++i)
+    for (size_t i = 0; i < shirokov::SIZE; ++i)
     {
       delete figures[i];
     }
@@ -106,7 +106,7 @@ int main()
   }
 
   std::cout << "Before scaling:\n";
-  shirokov::printInfo(figures, shirokov::size);
+  shirokov::printInfo(figures, shirokov::SIZE);
 
   shirokov::point_t target = {0, 0};
   double coefficient = 0;
@@ -114,7 +114,7 @@ int main()
   if (std::cin.fail())
   {
     std::cerr << "Input error\n";
-    for (size_t i = 0; i < shirokov::size; ++i)
+    for (size_t i = 0; i < shirokov::SIZE; ++i)
     {
       delete figures[i];
     }
@@ -123,21 +123,21 @@ int main()
   if (coefficient < 0)
   {
     std::cerr << "The coefficient cannot be negative\n";
-    for (size_t i = 0; i < shirokov::size; ++i)
+    for (size_t i = 0; i < shirokov::SIZE; ++i)
     {
       delete figures[i];
     }
     return 1;
   }
 
-  for (size_t i = 0; i < shirokov::size; ++i)
+  for (size_t i = 0; i < shirokov::SIZE; ++i)
   {
     shirokov::scaleAboutPoint(target, coefficient, figures[i]);
   }
   std::cout << "After scaling:\n";
-  shirokov::printInfo(figures, shirokov::size);
+  shirokov::printInfo(figures, shirokov::SIZE);
 
-  for (size_t i = 0; i < shirokov::size; ++i)
+  for (size_t i = 0; i < shirokov::SIZE; ++i)
   {
     delete figures[i];
   }
@@ -309,9 +309,12 @@ void shirokov::Xquare::scale(double coefficient)
 
 void shirokov::scaleAboutPoint(shirokov::point_t target, double coefficient, shirokov::Shape *figure)
 {
-  (void) target;
-  (void) figure;
-  (void) coefficient;
+  point_t point1 = figure->getFrameRect().pos;
+  figure->move(target);
+  point_t delta = {target.x - point1.x, target.y - point1.y};
+  figure->scale(coefficient);
+  point_t res = {target.x - delta.x * coefficient, target.y - delta.y * coefficient};
+  figure->move(res);
 }
 
 double shirokov::getTotalArea(const shirokov::Shape *const *figures, size_t s)
