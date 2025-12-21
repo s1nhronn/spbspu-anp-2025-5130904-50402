@@ -46,6 +46,7 @@ namespace petrov {
     if (skipWs) {
       input >> std::skipws;
     }
+    resStr[lenght] = '\0';
     return resStr;
   }
   void duplicateForUncSym(const char* str1, const char* str2, char* result, size_t& place)
@@ -93,7 +94,7 @@ namespace petrov {
 
 int main()
 {
-  char* str = nullptr;
+  char* str = nullptr;  
   size_t len = 0;
   try {
     str = petrov::getLine(std::cin, len);
