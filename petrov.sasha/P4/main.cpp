@@ -94,7 +94,7 @@ namespace petrov {
 
 int main()
 {
-  char* str = nullptr;  
+  char* str = nullptr;
   size_t len = 0;
   try {
     str = petrov::getLine(std::cin, len);
