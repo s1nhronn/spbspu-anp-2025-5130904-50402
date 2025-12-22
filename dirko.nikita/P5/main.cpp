@@ -36,7 +36,6 @@ namespace dirko
   };
   struct Polygon : IShape
   {
-    ~Polygon();
     Polygon(size_t size, p_t *pts);
     double getArea() const override;
     rec_t getFrameRect() const override;
@@ -76,26 +75,21 @@ int main()
   dirko::p_t pts[pol_n] = {
       {2, 2}, {2, 7}, {2.5, 8}, {3, 7}, {3, 2},
   };
-  try {
-    dirko::Polygon pol(pol_n, pts);
-    dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
-    dirko::output(std::cout, shps, n);
-    dirko::p_t point = {};
-    double coef = 0;
-    if (!(std::cin >> point.x >> point.y >> coef)) {
-      std::cerr << "Cant read\n";
-      return 1;
-    }
-    if (coef <= 0) {
-      std::cerr << "Negative coef\n";
-      return 1;
-    }
-    dirko::scaleFromPoint(shps, n, point, coef);
-    dirko::output(std::cout, shps, n);
-  } catch (std::bad_alloc &e) {
-    std::cerr << "Cant alloc\n";
-    return 2;
+  dirko::Polygon pol(pol_n, pts);
+  dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
+  dirko::output(std::cout, shps, n);
+  dirko::p_t point = {};
+  double coef = 0;
+  if (!(std::cin >> point.x >> point.y >> coef)) {
+    std::cerr << "Cant read\n";
+    return 1;
   }
+  if (coef <= 0) {
+    std::cerr << "Negative coef\n";
+    return 1;
+  }
+  dirko::scaleFromPoint(shps, n, point, coef);
+  dirko::output(std::cout, shps, n);
 }
 dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(), w_(w), h_(h), mid_(mid)
 {}
@@ -122,22 +116,16 @@ void dirko::Rectangle::scale(double coef)
   w_ *= coef;
   h_ *= coef;
 }
-dirko::Polygon::~Polygon()
-{
-  delete[] pts_;
-}
-dirko::Polygon::Polygon(size_t size, p_t *pts) :
-  IShape(), size_(size), pts_(size < 3 ? nullptr : new p_t[size]), mid_{0, 0}
+dirko::Polygon::Polygon(size_t size, p_t *pts) : IShape(), size_(size), pts_(pts), mid_{0, 0}
 {
   if (size < 3) {
     throw std::logic_error("Cant create polygon");
   }
   double area = 0;
   for (size_t i = 0; i < size; ++i) {
-    pts_[i] = pts[i];
     size_t j = (i + 1) % size;
-    area += pts[i].x * pts[j].y;
-    area -= pts[j].x * pts[i].y;
+    area += pts_[i].x * pts_[j].y;
+    area -= pts_[j].x * pts_[i].y;
   }
   area = std::abs(area) / 2;
   double factor = 0.0;
