@@ -77,6 +77,7 @@ int main()
   };
   dirko::Polygon pol(pol_n, pts);
   dirko::IShape *shps[n] = {std::addressof(rec), std::addressof(bub), std::addressof(pol)};
+  std::cout << "Before scale:\n\n";
   dirko::output(std::cout, shps, n);
   dirko::p_t point = {};
   double coef = 0;
@@ -89,6 +90,7 @@ int main()
     return 1;
   }
   dirko::scaleFromPoint(shps, n, point, coef);
+  std::cout << "\n\nAfter scale:\n\n";
   dirko::output(std::cout, shps, n);
 }
 dirko::Rectangle::Rectangle(double w, double h, p_t mid) : IShape(), w_(w), h_(h), mid_(mid)
@@ -265,18 +267,18 @@ std::ostream &dirko::output(std::ostream &os, IShape **shps, size_t size)
   for (size_t i = 0; i < size; ++i) {
     double area = shps[i]->getArea();
     totalArea += area;
-    os << area << "\n";
+    os << "shape " << i + 1 << " area: " << area << "\n";
     rec_t frame = shps[i]->getFrameRect();
-    os << frame.pos.x << "\n";
-    os << frame.pos.y << "\n";
-    os << frame.w << "\n";
-    os << frame.h << "\n";
+    os << "shape " << i + 1 << " frame x: " << frame.pos.x << "\n";
+    os << "shape " << i + 1 << " frame y: " << frame.pos.y << "\n";
+    os << "shape " << i + 1 << " frame width: " << frame.w << "\n";
+    os << "shape " << i + 1 << " frame height: " << frame.h << "\n";
   }
   rec_t totalFrame = getTotalFrame(shps, size);
-  os << totalArea << "\n";
-  os << totalFrame.pos.x << "\n";
-  os << totalFrame.pos.y << "\n";
-  os << totalFrame.w << "\n";
-  os << totalFrame.h << "\n";
+  os << "Total area: " << totalArea << "\n";
+  os << "Total frame x: " << totalFrame.pos.x << "\n";
+  os << "Total frame y: " << totalFrame.pos.y << "\n";
+  os << "Total frame width: " << totalFrame.w << "\n";
+  os << "Total frame height: " << totalFrame.h << "\n";
   return os;
 }
