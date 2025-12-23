@@ -6,7 +6,7 @@ namespace bukreev
 {
   constexpr size_t initialSize = 4;
 
-  std::istream& inputString(std::istream& in, char** str);
+  char* inputString(std::istream& in, size_t& len);
 
   char* growString(char** oldStr, size_t& capacity);
 
@@ -17,8 +17,9 @@ namespace bukreev
 int main()
 {
   char* str = nullptr;
+  size_t len = 0;
 
-  bukreev::inputString(std::cin, &str);
+  str = bukreev::inputString(std::cin, len);
   if (!str)
   {
     std::cerr << "Not enough memory for string input.\n";
@@ -26,19 +27,18 @@ int main()
   }
 
   char* res1 = nullptr, *res2 = nullptr;
-  size_t allocSize = (std::strlen(str) + 1) * sizeof(char);
+  size_t allocSize = (len + 1) * sizeof(char);
 
   res1 = reinterpret_cast< char* >(malloc(allocSize));
-  res1[allocSize - 1] = '\0';
   if (!res1)
   {
     std::cerr << "Not enough memory for EXC_SND.\n";
     free(str);
     return 1;
   }
+  res1[len] = '\0';
 
   res2 = reinterpret_cast< char* >(malloc(allocSize));
-  res2[allocSize - 1] = '\0';
   if (!res2)
   {
     std::cerr << "Not enough memory for LAT_RMV.\n";
@@ -46,6 +46,7 @@ int main()
     free(res1);
     return 1;
   }
+  res2[len] = '\0';
 
   const char* stringToExclude = "abc";
 
@@ -61,62 +62,61 @@ int main()
   free(res2);
 }
 
-std::istream& bukreev::inputString(std::istream& in, char** str)
+char* bukreev::inputString(std::istream& in, size_t& len)
 {
   size_t capacity = initialSize;
-  *str = nullptr;
 
   char* buffer = reinterpret_cast< char* >(malloc(initialSize * sizeof(char)));
   if (!buffer)
   {
-    return in;
+    return nullptr;
   }
 
   in >> std::noskipws;
 
-  size_t i = 0;
+  size_t size = 0;
   while (in)
   {
-    if (i >= capacity)
+    if (size >= capacity)
     {
       buffer = growString(&buffer, capacity);
       if (!buffer)
       {
-        return in;
+        return nullptr;
       }
     }
 
-    buffer[i] = '\0';
-    in >> buffer[i];
-    if (buffer[i] == '\n')
+    buffer[size] = '\0';
+    in >> buffer[size];
+    if (buffer[size] == '\n')
     {
-      buffer[i] = '\0';
+      buffer[size] = '\0';
       break;
     }
 
-    i++;
+    size++;
   }
   if (!in)
   {
     if (in.eof())
     {
-      buffer[i - 1] = '\0';
+      buffer[size - 1] = '\0';
     }
     else
     {
       free(buffer);
-      return in;
+      return nullptr;
     }
   }
-  if (std::strlen(buffer) == 0)
+  if (size == 0)
   {
     free(buffer);
-    return in;
+    return nullptr;
   }
 
   in >> std::skipws;
-  *str = buffer;
-  return in;
+  len = size - 1;
+  return buffer;
 }
 
 char* bukreev::growString(char** oldStr, size_t& capacity)
@@ -167,7 +167,7 @@ char* bukreev::excsnd(const char* first, const char* second, char* resStr)
     }
   }
 
-  resStr[resIndex] = 0;
+  resStr[resIndex] = '\0';
 
   return resStr;
 }
