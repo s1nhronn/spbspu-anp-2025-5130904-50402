@@ -7,11 +7,6 @@ namespace saldaev
 {
   const size_t block_size = 10;
 
-  void allocateCharBuffer(char **s, size_t l)
-  {
-    *s = reinterpret_cast< char * >(malloc((l) * sizeof(char)));
-  }
-
   char *getLine(std::istream &in, const size_t block_size = block_size)
   {
     char *data = reinterpret_cast< char * >(malloc((block_size + 1) * sizeof(char)));
@@ -64,60 +59,6 @@ namespace saldaev
     }
     free(data);
     return nullptr;
-  }
-
-  char *createArrayForSpcRmv(const char *data)
-  {
-    if (data == nullptr)
-    {
-      return nullptr;
-    }
-    char prev = ' ';
-    char crnt = ' ';
-    size_t leters = 0;
-    size_t spaces = 0;
-    size_t i = 0;
-    crnt = data[i];
-    while (crnt != '\0')
-    {
-      if (crnt != ' ')
-      {
-        leters++;
-      }
-      else if (prev != ' ' && crnt == ' ')
-      {
-        spaces++;
-      }
-      prev = crnt;
-      i++;
-      crnt = data[i];
-    }
-    if (leters && prev == ' ')
-    {
-      spaces--;
-    }
-    char *new_array = nullptr;
-    allocateCharBuffer(&new_array, leters + spaces + 1);
-    return new_array;
-  }
-
-  char *createArrayForLatRmv(const char *data)
-  {
-    size_t new_length = 1;
-    size_t i = 0;
-    char crnt = data[i];
-    while (crnt != '\0')
-    {
-      if (!std::isalpha(crnt))
-      {
-        new_length++;
-      }
-      i++;
-      crnt = data[i];
-    }
-    char *new_array = nullptr;
-    allocateCharBuffer(&new_array, new_length);
-    return new_array;
   }
 
   char *spcRmv(const char *data, char **new_arr)
@@ -184,7 +125,15 @@ int main()
     return 1;
   }
 
-  char *new_line = saldaev::createArrayForSpcRmv(line);
+  size_t len = 0;
+  char crnt = line[len++];
+  while (crnt != '\0')
+  {
+    char crnt = line[len++];
+  }
+  char *new_line = reinterpret_cast< char * >(malloc(len * sizeof(char)));
+  new_line[len - 1] = '\0';
+
   new_line = saldaev::spcRmv(line, &new_line);
   if (new_line == nullptr)
   {
@@ -195,7 +144,9 @@ int main()
   std::cout << new_line << "\n";
   free(new_line);
 
-  new_line = saldaev::createArrayForLatRmv(line);
+  new_line = reinterpret_cast< char * >(malloc(len * sizeof(char)));
+  new_line[len - 1] = '\0';
+
   new_line = saldaev::latRmv(line, &new_line);
   if (new_line == nullptr)
   {
