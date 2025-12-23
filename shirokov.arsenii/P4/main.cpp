@@ -142,7 +142,7 @@ char *shirokov::combineLines(const char *str1, size_t s1, const char *str2, size
     res[2 * i] = str1[i];
     res[2 * i + 1] = str2[i];
   }
-  const char *maxString = (s1 > s2 ? str1 : str2);
+  const char *maxString = s1 > s2 ? str1 : str2;
   for (size_t i = minn * 2; i < s1 + s2; ++i)
   {
     res[i] = maxString[i - minn];
