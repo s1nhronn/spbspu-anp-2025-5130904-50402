@@ -14,7 +14,7 @@ namespace dirko
     }
     return end;
   }
-  char *extendSize(char *str, size_t size)
+  char *extendSize(const char *str, size_t size)
   {
     char *newStr = reinterpret_cast< char * >(malloc(size * 2 * sizeof(char)));
     if (newStr == nullptr) {
