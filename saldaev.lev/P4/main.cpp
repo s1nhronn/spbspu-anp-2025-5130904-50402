@@ -129,7 +129,7 @@ int main()
   char crnt = line[len++];
   while (crnt != '\0')
   {
-    char crnt = line[len++];
+    crnt = line[len++];
   }
   char *new_line = reinterpret_cast< char * >(malloc(len * sizeof(char)));
   new_line[len - 1] = '\0';
