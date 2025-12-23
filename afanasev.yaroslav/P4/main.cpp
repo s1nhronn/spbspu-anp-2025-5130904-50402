@@ -131,7 +131,7 @@ int main()
     output2 = new char[str_lenght + 1];
     output2[str_lenght] = '\0';
   }
-  catch(const std::bad_alloc &)
+  catch (const std::bad_alloc &)
   {
     delete[] str;
     delete[] output1;
