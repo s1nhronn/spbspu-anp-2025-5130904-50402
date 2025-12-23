@@ -117,7 +117,7 @@ int main()
     output1 = new char[str_lenght + 1];
     output1[str_lenght] = '\0';
   }
-  catch(const std::bad_alloc &)
+  catch (const std::bad_alloc &)
   {
     delete[] str;
     std::cerr << "Get memory failed" << '\n';
