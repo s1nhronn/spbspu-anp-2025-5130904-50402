@@ -91,6 +91,7 @@ char* bukreev::inputString(std::istream& in, size_t& len)
     if (buffer[size] == '\n')
     {
       buffer[size] = '\0';
+      size++;
       break;
     }
 
@@ -108,6 +109,7 @@ char* bukreev::inputString(std::istream& in, size_t& len)
       return nullptr;
     }
   }
+  size--;
   if (size == 0)
   {
     free(buffer);
