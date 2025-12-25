@@ -66,7 +66,7 @@ namespace strelnikov {
         char* tmp = addSymb(res, size, str[i]);
         free(res);
         if (tmp == nullptr) {
-          return nullptr;
+          return nullptr; 
         }
         res = tmp;
       }
@@ -137,7 +137,6 @@ int main()
   int hasCommon = strelnikov::doHasSam(str1, strHas);
 
   char strDgt[] = "g1h2k";
-  size_t size = 0;
   char* str2 = strelnikov::doDgtSnd(strDgt, str1);
   if (!str2) {
     free(str1);
