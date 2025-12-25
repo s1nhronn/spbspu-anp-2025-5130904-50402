@@ -66,7 +66,7 @@ namespace strelnikov {
         char* tmp = addSymb(res, size, str[i]);
         free(res);
         if (tmp == nullptr) {
-          return nullptr; 
+          return nullptr;
         }
         res = tmp;
       }
@@ -143,7 +143,6 @@ int main()
     return 1;
   }
   std::cout << hasCommon << '\n' << str2 << '\n';
-
   std::free(str1);
   std::free(str2);
   return 0;
