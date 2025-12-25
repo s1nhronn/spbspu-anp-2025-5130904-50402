@@ -91,7 +91,7 @@ int main()
   char* str = nullptr;
   size_t len = 0;
   str = petrov::getLine(std::cin, len);
-  if (len == 0 || str == nullptr || str[0] == '\0') {
+  if (len == 0) {
     std::cerr << "Empty input\n";
     free(str);
     return 1;
