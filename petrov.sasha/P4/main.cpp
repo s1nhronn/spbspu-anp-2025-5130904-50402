@@ -28,15 +28,9 @@ namespace petrov {
       resStr = tmpStr;
       resStr[lenght] = tmp;
       lenght++;
+      resStr[lenght] = '\0';
     }
-    if (lenght == 0) {
-      free(resStr);
-      if (skipWs) {
-        input >> std::skipws;
-      }
-      return nullptr;
-    }
-    if (input.fail()) {
+    if (!input) {
       free(resStr);
       if (skipWs) {
         input >> std::skipws;
@@ -46,12 +40,11 @@ namespace petrov {
     if (skipWs) {
       input >> std::skipws;
     }
-    resStr[lenght] = '\0';
     return resStr;
   }
   void duplicateForUncSym(const char* str1, const char* str2, char* result, size_t& place)
   {
-    for(size_t i = 0; str1[i] != '\0'; ++i) {
+    for (size_t i = 0; str1[i] != '\0'; ++i) {
       bool flag1 = false;
       for (size_t j = 0; str2[j] != '\0'; ++j) {
         if (str1[i] == str2[j]) {
@@ -59,7 +52,7 @@ namespace petrov {
           break;
         }
       }
-      if(!flag1) {
+      if (!flag1) {
         bool flag2 = false;
         for (size_t k = 0; k < place; ++k) {
           if (result[k] == str1[i]) {
@@ -82,7 +75,8 @@ namespace petrov {
     result[place] = '\0';
   }
 
-  size_t doSeqSym(const char* str) {
+  size_t doSeqSym(const char* str)
+  {
     for (size_t i = 1; str[i] != '\0'; ++i) {
       if (str[i] == str[i - 1]) {
         return 1;
@@ -96,16 +90,8 @@ int main()
 {
   char* str = nullptr;
   size_t len = 0;
-  try {
-    str = petrov::getLine(std::cin, len);
-  } catch (const std::logic_error& e) {
-    std::cerr << e.what() << '\n';
-    return 1;
-  } catch (const std::bad_alloc& e) {
-    std::cerr << "Bad alloc error\n";
-    return 1;
-  }
-  if (str == nullptr || str[0] == '\0') {
+  str = petrov::getLine(std::cin, len);
+  if (len == 0 || str == nullptr || str[0] == '\0') {
     std::cerr << "Empty input\n";
     free(str);
     return 1;
