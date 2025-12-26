@@ -62,8 +62,8 @@ namespace dirko
     p_t dot_;
   };
   void scaleFromPoint(IShape **shps, size_t size, p_t point, double coef);
-  rec_t getTotalFrame(IShape **shps, size_t size);
-  std::ostream &output(std::ostream &os, IShape **shps, size_t size);
+  rec_t getTotalFrame(const IShape *const *shps, size_t size);
+  std::ostream &output(std::ostream &os, const IShape *const *shps, size_t size);
 }
 
 int main()
@@ -182,13 +182,12 @@ void dirko::Polygon::move(p_t point)
 }
 void dirko::Polygon::scale(double coef)
 {
-  --coef;
   double dx = 0, dy = 0;
   for (size_t i = 0; i < size_; ++i) {
     dx = pts_[i].x - mid_.x;
     dy = pts_[i].y - mid_.y;
-    pts_[i].x += dx * coef;
-    pts_[i].y += dy * coef;
+    pts_[i].x += dx * (coef - 1);
+    pts_[i].y += dy * (coef - 1);
   }
 }
 dirko::Bubble::Bubble(double r, p_t dot) : IShape(), r_(r), dot_(dot)
@@ -225,7 +224,7 @@ void dirko::scaleFromPoint(IShape **shps, size_t size, p_t point, double coef)
     shps[i]->scale(coef);
   }
 }
-dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
+dirko::rec_t dirko::getTotalFrame(const IShape *const *shps, size_t size)
 {
   if (size == 0) {
     return {0.0, 0.0, {0.0, 0.0}};
@@ -261,7 +260,7 @@ dirko::rec_t dirko::getTotalFrame(IShape **shps, size_t size)
   total.pos.y = (bottom + top) / 2.0;
   return total;
 }
-std::ostream &dirko::output(std::ostream &os, IShape **shps, size_t size)
+std::ostream &dirko::output(std::ostream &os, const IShape *const *shps, size_t size)
 {
   double totalArea = 0.0;
   for (size_t i = 0; i < size; ++i) {
