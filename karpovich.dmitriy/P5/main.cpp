@@ -4,7 +4,7 @@
 
 namespace karpovich
 {
-  const double PI = acos(-1.0);
+  const double PI = std::acos(-1.0);
   struct point_t
   {
     double x, y;
@@ -23,7 +23,7 @@ namespace karpovich
     virtual void move(double dx, double dy) = 0;
     virtual void scale(double k) = 0;
   };
-  struct Rectangle: Shape
+  struct Rectangle final: Shape
   {
     Rectangle(double width, double height, point_t centr);
     double getArea() const override;
@@ -35,7 +35,7 @@ namespace karpovich
       double width_, height_;
       point_t centr_;
   };
-  struct Rubber: Shape
+  struct Rubber final: Shape
   {
     Rubber(double radius1, double radius2, point_t centr1, point_t centr2);
     double getArea() const override;
@@ -47,7 +47,7 @@ namespace karpovich
       double radius1_, radius2_;
       point_t centr1_, centr2_;
   };
-  struct Ellipse: Shape
+  struct Ellipse final: Shape
   {
     Ellipse(double semiax1, double semiax2, point_t centr);
     double getArea() const override;
@@ -91,7 +91,6 @@ int main()
 }
 
 karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
-  karpovich::Shape(),
   width_(width),
   height_(height),
   centr_(centr)
@@ -123,7 +122,6 @@ void karpovich::Rectangle::scale(double k)
   height_ *= k;
 }
 karpovich::Ellipse::Ellipse(double semiax1, double semiax2, point_t centr):
-  karpovich::Shape(),
   semiax1_(semiax1),
   semiax2_(semiax2),
   centr_(centr)
@@ -155,7 +153,6 @@ void karpovich::Ellipse::scale(double k)
   semiax2_ *= k;
 }
 karpovich::Rubber::Rubber(double radius1, double radius2, point_t centr1, point_t centr2):
-  karpovich::Shape(),
   radius1_(radius1),
   radius2_(radius2),
   centr1_(centr1),
