@@ -174,7 +174,7 @@ karpovich::rectangle_t karpovich::Rubber::getFrameRect() const noexcept
   double bottom = std::min(centr1_.y - radius1_, centr2_.y - radius2_);
   double top = std::max(centr1_.y + radius1_, centr2_.y + radius2_);
 
-  return {(right - left), (top - bottom), {(left + right) / 2.0, (bottom + top) / 2.0}};
+  return {{right - left}, {top - bottom}, {(left + right) / 2.0, (bottom + top) / 2.0}};
 }
 void karpovich::Rubber::move(point_t p) noexcept
 {
@@ -225,12 +225,7 @@ karpovich::rectangle_t karpovich::computeTotalFrame(Shape* const shapes[], size_
     bottom = std::min(b, bottom);
     top = std::max(t, top);
   }
-  karpovich::rectangle_t total;
-  total.width = right - left;
-  total.height = top - bottom;
-  total.pos.x = (left + right) / 2.0;
-  total.pos.y = (bottom + top) / 2.0;
-  return total;
+  return {{right - left}, {top - bottom}, {(left + right) / 2.0, (bottom + top) / 2.0}};
 }
 void karpovich::output(Shape* const shapes[], size_t size)
 {
@@ -246,7 +241,7 @@ void karpovich::output(Shape* const shapes[], size_t size)
   outputRectangle(total_frame);
 }
 
-void karpovich::outputRectangle(const rectangle_t& rect) 
+void karpovich::outputRectangle(const rectangle_t& rect)
 {
   std::cout << rect.pos.x << "\n";
   std::cout << rect.pos.y << "\n";
