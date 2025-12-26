@@ -60,16 +60,17 @@ namespace karpovich
       point_t centr_;
   };
   void scalefrompt(Shape* shapes[], size_t size, double k, point_t pt);
-  rectangle_t computeTotalFrame(Shape* shapes[], size_t size);
-  void output(Shape* shapes[], size_t size);
+  rectangle_t computeTotalFrame(const Shape* shapes[], size_t size);
+  void output(const Shape* shapes[], size_t size);
+  void karpovich::outputRectangle(const rectangle_t& rect);
 }
 
 int main()
 {
   namespace karp = karpovich;
-  karp::Rectangle rect(4.0, 2.0, {1.0, 1.0});
-  karp::Ellipse ell(3.0, 2.0, {-2.0, 0.0});
-  karp::Rubber rub(5.0, 2.0, {0.0, 0.0}, {1.0, 1.0});
+  karp::Rectangle rect{4.0, 2.0, {1.0, 1.0}};
+  karp::Ellipse ell{3.0, 2.0, {-2.0, 0.0}};
+  karp::Rubber rub{5.0, 2.0, {0.0, 0.0}, {1.0, 1.0}};
   const size_t n = 3;
   karp::Shape* shapes[n] = {&rect, &ell, &rub};
   karp::output(shapes, n);
@@ -101,11 +102,7 @@ double karpovich::Rectangle::getArea() const
 }
 karpovich::rectangle_t karpovich::Rectangle::getFrameRect() const
 {
-  rectangle_t frame;
-  frame.pos = centr_;
-  frame.height = height_;
-  frame.width = width_;
-  return frame;
+  return {height_, width_, centr_};
 }
 void karpovich::Rectangle::move(point_t p)
 {
@@ -132,11 +129,7 @@ double karpovich::Ellipse::getArea() const
 }
 karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const
 {
-  rectangle_t frame;
-  frame.pos = centr_;
-  frame.height = 2 * semiax2_;
-  frame.width = 2 * semiax1_;
-  return frame;
+  return {2 * semiax2_, 2 * semiax1_, centr_};
 }
 void karpovich::Ellipse::move(point_t p)
 {
@@ -169,12 +162,7 @@ karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
   double bottom = std::min(centr1_.y - radius1_, centr2_.y - radius2_);
   double top = std::max(centr1_.y + radius1_, centr2_.y + radius2_);
 
-  rectangle_t frame;
-  frame.width = right - left;
-  frame.height = top - bottom;
-  frame.pos.x = (left + right) / 2.0;
-  frame.pos.y = (bottom + top) / 2.0;
-  return frame;
+  return {(right - left), (top - bottom), {(left + right) / 2.0, (bottom + top) / 2.0}};
 }
 void karpovich::Rubber::move(point_t p)
 {
@@ -204,7 +192,7 @@ void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
     shapes[i]->move(pt.x, pt.y);
   }
 }
-karpovich::rectangle_t karpovich::computeTotalFrame(karpovich::Shape* shapes[], size_t size)
+karpovich::rectangle_t karpovich::computeTotalFrame(Shape* shapes[], size_t size)
 {
   if (size == 0) {
     return {0.0, 0.0, {0.0, 0.0}};
@@ -247,16 +235,16 @@ void karpovich::output(Shape* shapes[], size_t size)
     double area = shapes[i]->getArea();
     total_area += area;
     std::cout << area << "\n";
-    rectangle_t frame = shapes[i]->getFrameRect();
-    std::cout << frame.pos.x << "\n";
-    std::cout << frame.pos.y << "\n";
-    std::cout << frame.width << "\n";
-    std::cout << frame.height << "\n";
+    outputRectangle(shapes[i]->getFrameRect());
   }
   rectangle_t total_frame = computeTotalFrame(shapes, size);
   std::cout << total_area << "\n";
-  std::cout << total_frame.pos.x << "\n";
-  std::cout << total_frame.pos.y << "\n";
-  std::cout << total_frame.width << "\n";
-  std::cout << total_frame.height << "\n";
+  outputRectangle(total_frame);
+}
+
+void karpovich::outputRectangle(const rectangle_t& rect) {
+  std::cout << rect.pos.x << "\n";
+  std::cout << rect.pos.y << "\n";
+  std::cout << rect.width << "\n";
+  std::cout << rect.height << "\n";
 }
