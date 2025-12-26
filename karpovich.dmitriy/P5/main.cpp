@@ -208,18 +208,10 @@ karpovich::rectangle_t karpovich::computeTotalFrame(Shape* shapes[], size_t size
     double r = frame.pos.x + frame.width / 2.0;
     double b = frame.pos.y - frame.height / 2.0;
     double t = frame.pos.y + frame.height / 2.0;
-    if (l < left) {
-      left = l;
-    }
-    if (r > right) {
-      right = r;
-    }
-    if (b < bottom) {
-      bottom = b;
-    }
-    if (t > top) {
-      top = t;
-    }
+    left = std::min(l, left);
+    right = std::max(r, right);
+    bottom = std::min(b, bottom);
+    top = std::max(t, top);
   }
   karpovich::rectangle_t total;
   total.width = right - left;
