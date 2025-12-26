@@ -123,6 +123,7 @@ int main()
     return 1;
   }
   char* resultBuffer = reinterpret_cast< char* >(std::malloc(s1 + dgt_size + 1));
+  resultBuffer[s1+dgt_size] = '\0';
   strelnikov::doDgtSnd(resultBuffer, str1, dgt);
   std::cout << hasCommon << '\n' << resultBuffer << '\n';
   std::free(str1);
