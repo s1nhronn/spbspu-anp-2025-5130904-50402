@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 
 namespace karpovich
 {
@@ -21,7 +22,9 @@ namespace karpovich
     virtual rectangle_t getFrameRect() const noexcept = 0;
     virtual void move(point_t p) noexcept = 0;
     virtual void move(double dx, double dy) noexcept = 0;
-    virtual void scale(double k) noexcept = 0;
+    void scale(double k);
+    protected:
+      virtual void doScale(double k) noexcept = 0;
   };
   struct Rectangle final: Shape
   {
@@ -30,10 +33,10 @@ namespace karpovich
     rectangle_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(point_t p) noexcept override;
-    void scale(double k) noexcept override;
     private:
       double width_, height_;
       point_t centr_;
+      void doScale(double k) noexcept override;
   };
   struct Rubber final: Shape
   {
@@ -42,10 +45,10 @@ namespace karpovich
     rectangle_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(point_t p) noexcept override;
-    void scale(double k) noexcept override;
     private:
       double radius1_, radius2_;
       point_t centr1_, centr2_;
+      void doScale(double k) noexcept override;
   };
   struct Ellipse final: Shape
   {
@@ -54,10 +57,10 @@ namespace karpovich
     rectangle_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(point_t p) noexcept override;
-    void scale(double k) noexcept override;
     private:
       double semiax1_, semiax2_;
       point_t centr_;
+      void doScale(double k) noexcept override;
   };
   void scalefrompt(Shape* shapes[], size_t size, double k, point_t pt);
   rectangle_t computeTotalFrame(Shape* const shapes[], size_t size);
@@ -76,21 +79,30 @@ int main()
   karp::output(shapes, n);
 
   karp::point_t pt;
-  double k = 0;
+  double k;
   if (!(std::cin >> pt.x >> pt.y >> k)) {
-    std::cerr << "err: bad arguments\n";
-    return 1;
-  }
-  if (k <= 0.0) {
-    std::cerr << "err: k must be positive\n";
+    std::cerr << "err: failed to read input\n";
     return 1;
   }
 
-  karp::scalefrompt(shapes, n, k, pt);
+  try {
+    scalefrompt(shapes, n, k, pt);
+  } catch (const std::invalid_argument& e) {
+    std::cerr << e.what();
+    return 1;
+  }
+
   karp::output(shapes, n);
   return 0;
 }
 
+void karpovich::Shape::scale(double k)
+{
+  if (k <= 0.0) {
+    throw std::invalid_argument("err: k must be positive\n");
+  }
+  doScale(k);
+}
 karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
   width_(width),
   height_(height),
@@ -102,7 +114,7 @@ double karpovich::Rectangle::getArea() const noexcept
 }
 karpovich::rectangle_t karpovich::Rectangle::getFrameRect() const noexcept
 {
-  return {height_, width_, centr_};
+  return {width_, height_, centr_};
 }
 void karpovich::Rectangle::move(point_t p) noexcept
 {
@@ -113,7 +125,7 @@ void karpovich::Rectangle::move(double dx, double dy) noexcept
   centr_.x += dx;
   centr_.y += dy;
 }
-void karpovich::Rectangle::scale(double k) noexcept
+void karpovich::Rectangle::doScale(double k) noexcept
 {
   width_ *= k;
   height_ *= k;
@@ -129,7 +141,7 @@ double karpovich::Ellipse::getArea() const noexcept
 }
 karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const noexcept
 {
-  return {2 * semiax2_, 2 * semiax1_, centr_};
+  return {2 * semiax1_, 2 * semiax2_, centr_};
 }
 void karpovich::Ellipse::move(point_t p) noexcept
 {
@@ -140,7 +152,7 @@ void karpovich::Ellipse::move(double dx, double dy) noexcept
   centr_.x += dx;
   centr_.y += dy;
 }
-void karpovich::Ellipse::scale(double k) noexcept
+void karpovich::Ellipse::doScale(double k) noexcept
 {
   semiax1_ *= k;
   semiax2_ *= k;
@@ -179,7 +191,7 @@ void karpovich::Rubber::move(double dx, double dy) noexcept
   centr2_.x += dx;
   centr2_.y += dy;
 }
-void karpovich::Rubber::scale(double k) noexcept
+void karpovich::Rubber::doScale(double k) noexcept
 {
   radius1_ *= k;
   radius2_ *= k;
