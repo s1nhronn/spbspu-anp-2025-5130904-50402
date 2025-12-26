@@ -17,20 +17,20 @@ namespace karpovich
   struct Shape
   {
     virtual ~Shape() = default;
-    virtual double getArea() const = 0;
-    virtual rectangle_t getFrameRect() const = 0;
-    virtual void move(point_t p) = 0;
-    virtual void move(double dx, double dy) = 0;
-    virtual void scale(double k) = 0;
+    virtual double getArea() const noexcept = 0;
+    virtual rectangle_t getFrameRect() const noexcept = 0;
+    virtual void move(point_t p) noexcept = 0;
+    virtual void move(double dx, double dy) noexcept = 0;
+    virtual void scale(double k) noexcept = 0;
   };
   struct Rectangle final: Shape
   {
     Rectangle(double width, double height, point_t centr);
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(double dx, double dy) override;
-    void move(point_t p) override;
-    void scale(double k) override;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(double dx, double dy) noexcept override;
+    void move(point_t p) noexcept override;
+    void scale(double k) noexcept override;
     private:
       double width_, height_;
       point_t centr_;
@@ -38,11 +38,11 @@ namespace karpovich
   struct Rubber final: Shape
   {
     Rubber(double radius1, double radius2, point_t centr1, point_t centr2);
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(double dx, double dy) override;
-    void move(point_t p) override;
-    void scale(double k) override;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(double dx, double dy) noexcept override;
+    void move(point_t p) noexcept override;
+    void scale(double k) noexcept override;
     private:
       double radius1_, radius2_;
       point_t centr1_, centr2_;
@@ -50,19 +50,19 @@ namespace karpovich
   struct Ellipse final: Shape
   {
     Ellipse(double semiax1, double semiax2, point_t centr);
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(double dx, double dy) override;
-    void move(point_t p) override;
-    void scale(double k) override;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(double dx, double dy) noexcept override;
+    void move(point_t p) noexcept override;
+    void scale(double k) noexcept override;
     private:
       double semiax1_, semiax2_;
       point_t centr_;
   };
   void scalefrompt(Shape* shapes[], size_t size, double k, point_t pt);
-  rectangle_t computeTotalFrame(const Shape* shapes[], size_t size);
-  void output(const Shape* shapes[], size_t size);
-  void karpovich::outputRectangle(const rectangle_t& rect);
+  rectangle_t computeTotalFrame(Shape* const shapes[], size_t size);
+  void output(Shape* const shapes[], size_t size);
+  void outputRectangle(const rectangle_t& rect);
 }
 
 int main()
@@ -76,7 +76,7 @@ int main()
   karp::output(shapes, n);
 
   karp::point_t pt;
-  double k;
+  double k = 0;
   if (!(std::cin >> pt.x >> pt.y >> k)) {
     std::cerr << "err: bad arguments\n";
     return 1;
@@ -96,24 +96,24 @@ karpovich::Rectangle::Rectangle(double width, double height, point_t centr):
   height_(height),
   centr_(centr)
 {}
-double karpovich::Rectangle::getArea() const
+double karpovich::Rectangle::getArea() const noexcept
 {
   return height_ * width_;
 }
-karpovich::rectangle_t karpovich::Rectangle::getFrameRect() const
+karpovich::rectangle_t karpovich::Rectangle::getFrameRect() const noexcept
 {
   return {height_, width_, centr_};
 }
-void karpovich::Rectangle::move(point_t p)
+void karpovich::Rectangle::move(point_t p) noexcept
 {
   centr_ = p;
 }
-void karpovich::Rectangle::move(double dx, double dy)
+void karpovich::Rectangle::move(double dx, double dy) noexcept
 {
   centr_.x += dx;
   centr_.y += dy;
 }
-void karpovich::Rectangle::scale(double k)
+void karpovich::Rectangle::scale(double k) noexcept
 {
   width_ *= k;
   height_ *= k;
@@ -123,24 +123,24 @@ karpovich::Ellipse::Ellipse(double semiax1, double semiax2, point_t centr):
   semiax2_(semiax2),
   centr_(centr)
 {}
-double karpovich::Ellipse::getArea() const
+double karpovich::Ellipse::getArea() const noexcept
 {
   return PI * semiax1_ * semiax2_;
 }
-karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const
+karpovich::rectangle_t karpovich::Ellipse::getFrameRect() const noexcept
 {
   return {2 * semiax2_, 2 * semiax1_, centr_};
 }
-void karpovich::Ellipse::move(point_t p)
+void karpovich::Ellipse::move(point_t p) noexcept
 {
   centr_ = p;
 }
-void karpovich::Ellipse::move(double dx, double dy)
+void karpovich::Ellipse::move(double dx, double dy) noexcept
 {
   centr_.x += dx;
   centr_.y += dy;
 }
-void karpovich::Ellipse::scale(double k)
+void karpovich::Ellipse::scale(double k) noexcept
 {
   semiax1_ *= k;
   semiax2_ *= k;
@@ -151,11 +151,11 @@ karpovich::Rubber::Rubber(double radius1, double radius2, point_t centr1, point_
   centr1_(centr1),
   centr2_(centr2)
 {}
-double karpovich::Rubber::getArea() const
+double karpovich::Rubber::getArea() const noexcept
 {
   return PI * (radius1_ * radius1_ - radius2_ * radius2_);
 }
-karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
+karpovich::rectangle_t karpovich::Rubber::getFrameRect() const noexcept
 {
   double left = std::min(centr1_.x - radius1_, centr2_.x - radius2_);
   double right = std::max(centr1_.x + radius1_, centr2_.x + radius2_);
@@ -164,7 +164,7 @@ karpovich::rectangle_t karpovich::Rubber::getFrameRect() const
 
   return {(right - left), (top - bottom), {(left + right) / 2.0, (bottom + top) / 2.0}};
 }
-void karpovich::Rubber::move(point_t p)
+void karpovich::Rubber::move(point_t p) noexcept
 {
   double dx = p.x - centr2_.x;
   double dy = p.y - centr2_.y;
@@ -172,14 +172,14 @@ void karpovich::Rubber::move(point_t p)
   centr1_.y += dy;
   centr2_ = p;
 }
-void karpovich::Rubber::move(double dx, double dy)
+void karpovich::Rubber::move(double dx, double dy) noexcept
 {
   centr1_.x += dx;
   centr1_.y += dy;
   centr2_.x += dx;
   centr2_.y += dy;
 }
-void karpovich::Rubber::scale(double k)
+void karpovich::Rubber::scale(double k) noexcept
 {
   radius1_ *= k;
   radius2_ *= k;
@@ -192,7 +192,7 @@ void karpovich::scalefrompt(Shape* shapes[], size_t size, double k, point_t pt)
     shapes[i]->move(pt.x, pt.y);
   }
 }
-karpovich::rectangle_t karpovich::computeTotalFrame(Shape* shapes[], size_t size)
+karpovich::rectangle_t karpovich::computeTotalFrame(Shape* const shapes[], size_t size)
 {
   if (size == 0) {
     return {0.0, 0.0, {0.0, 0.0}};
@@ -220,7 +220,7 @@ karpovich::rectangle_t karpovich::computeTotalFrame(Shape* shapes[], size_t size
   total.pos.y = (bottom + top) / 2.0;
   return total;
 }
-void karpovich::output(Shape* shapes[], size_t size)
+void karpovich::output(Shape* const shapes[], size_t size)
 {
   double total_area = 0.0;
   for (size_t i = 0; i < size; ++i) {
@@ -234,7 +234,8 @@ void karpovich::output(Shape* shapes[], size_t size)
   outputRectangle(total_frame);
 }
 
-void karpovich::outputRectangle(const rectangle_t& rect) {
+void karpovich::outputRectangle(const rectangle_t& rect) 
+{
   std::cout << rect.pos.x << "\n";
   std::cout << rect.pos.y << "\n";
   std::cout << rect.width << "\n";
