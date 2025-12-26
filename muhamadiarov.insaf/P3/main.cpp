@@ -1,18 +1,15 @@
 #include <iostream>
 #include <fstream>
-#include <limits>
 #include <algorithm>
-#include <cstddef>
 #include <cstring>
-#include <cstdlib>
 
 namespace muhamadiarov
 {
   int* fllIncWav(int* ptr, size_t rows, size_t colons);
-  void outMatric(std::ofstream &output, size_t r, size_t c, int* res1);
-  long long toFindMaxRight(int* ptr, size_t order);
-  long long toFindMaxinLeft(int* ptr, size_t order);
-  long long maxSumMdg(int* ptr, size_t order);
+  void outMatric(std::ofstream& output, size_t r, size_t c, const int* res1);
+  long long toFindMaxRight(const int* ptr, size_t order);
+  long long toFindMaxinLeft(const int* ptr, size_t order);
+  long long maxSumMdg(const int* ptr, size_t order);
 }
 
 int main(int argc, char* argv[])
@@ -123,6 +120,7 @@ int main(int argc, char* argv[])
     return 2;
   }
   muh::outMatric(output, rows, colons, ptr);
+  output << '\n';
   output << res2;
   output << '\n';
   if (mode == 2)
@@ -150,7 +148,7 @@ int* muhamadiarov::fllIncWav(int* ptr, size_t rows, size_t colons)
   return ptr;
 }
 
-long long muhamadiarov::maxSumMdg(int* ptr, size_t order)
+long long muhamadiarov::maxSumMdg(const int* ptr, size_t order)
 {
   namespace muh = muhamadiarov;
   long long max_result = 0;
@@ -160,7 +158,7 @@ long long muhamadiarov::maxSumMdg(int* ptr, size_t order)
   return max_result;
 }
 
-long long muhamadiarov::toFindMaxinLeft(int* ptr, size_t order)
+long long muhamadiarov::toFindMaxinLeft(const int* ptr, size_t order)
 {
   long long max_r = 0;
   long long result = 0;
@@ -184,7 +182,7 @@ long long muhamadiarov::toFindMaxinLeft(int* ptr, size_t order)
   return max_r;
 }
 
-long long muhamadiarov::toFindMaxRight(int* ptr, size_t order)
+long long muhamadiarov::toFindMaxRight(const int* ptr, size_t order)
 {
   long long int max_r = 0;
   long long int result = 0;
@@ -202,12 +200,11 @@ long long muhamadiarov::toFindMaxRight(int* ptr, size_t order)
   return max_r;
 }
 
-void muhamadiarov::outMatric(std::ofstream& output, size_t r, size_t c, int* res1)
+void muhamadiarov::outMatric(std::ofstream& output, size_t r, size_t c, const int* res1)
 {
-  output << res1[0];
-  for (size_t i = 1; i < r * c; ++i)
+  for (size_t i = 0; i < r * c - 1; ++i)
   {
-    output << ' ' << res1[i];
+    output << res1[i] << ' ';
   }
-  output << '\n';
+  output << res1[r * c - 1];
 }
