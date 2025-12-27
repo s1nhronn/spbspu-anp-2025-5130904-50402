@@ -74,7 +74,6 @@ namespace dirko
   double getPolArea(p_t *pts, size_t size);
   p_t getPolMid(p_t *pts, size_t size);
 }
-
 int main()
 {
   constexpr size_t pol_n = 5;
@@ -93,12 +92,12 @@ int main()
     return 1;
   }
   if (coef <= 0) {
-    std::cerr << "Negative coef\n";
+    std::cerr << "Non positive coef\n";
     return 1;
   }
   try {
     dirko::scaleFromPoint(shps, n, point, coef);
-  } catch (std::runtime_error &e) {
+  } catch (std::invalid_argument &e) {
     std::cerr << e.what() << '\n';
     return 1;
   }
@@ -112,7 +111,7 @@ void dirko::Shape::doScale(double coef) noexcept
 void dirko::Shape::doScaleSafe(double coef)
 {
   if (coef <= 0) {
-    throw std::runtime_error("Non positive coef");
+    throw std::invalid_argument("Non positive coef");
   }
   scale(coef);
 }
