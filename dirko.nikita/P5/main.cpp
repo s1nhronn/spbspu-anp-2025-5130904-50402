@@ -105,7 +105,12 @@ int main()
     std::cerr << "Negative coef\n";
     return 1;
   }
-  dirko::scaleFromPoint(shps, n, point, coef);
+  try {
+    dirko::scaleFromPoint(shps, n, point, coef);
+  } catch (std::runtime_error &e) {
+    std::cerr << e.what() << '\n';
+    return 1;
+  }
   std::cout << "\n\nAfter scale:\n\n";
   dirko::output(std::cout, shps, n);
 }
