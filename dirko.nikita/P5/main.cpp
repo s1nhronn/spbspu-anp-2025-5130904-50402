@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstddef>
 #include <iostream>
+#include <stdexcept>
 namespace dirko
 {
   const double PI = std::acos(-1.0);
@@ -21,6 +22,19 @@ namespace dirko
     virtual rec_t getFrameRect() const noexcept = 0;
     virtual void move(p_t point) noexcept = 0;
     virtual void move(double dx, double dy) noexcept = 0;
+    void doScale(double coef) noexcept
+    {
+      scale(coef);
+    }
+    void doScaleSafe(double coef)
+    {
+      if (coef <= 0) {
+        throw std::runtime_error("Non positive coef");
+      }
+      scale(coef);
+    }
+
+  private:
     virtual void scale(double coef) noexcept = 0;
   };
   struct Rectangle final: Shape
@@ -30,11 +44,11 @@ namespace dirko
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(p_t point) noexcept override;
-    void scale(double coef) noexcept override;
 
   private:
     double w_, h_;
     p_t mid_;
+    void scale(double coef) noexcept override;
   };
   struct Polygon final: Shape
   {
@@ -43,12 +57,12 @@ namespace dirko
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(p_t point) noexcept override;
-    void scale(double coef) noexcept override;
 
   private:
     size_t size_;
     p_t *pts_;
     p_t mid_;
+    void scale(double coef) noexcept override;
   };
   struct Bubble final: Shape
   {
@@ -57,11 +71,11 @@ namespace dirko
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
     void move(p_t point) noexcept override;
-    void scale(double coef) noexcept override;
 
   private:
     double r_;
     p_t dot_;
+    void scale(double coef) noexcept override;
   };
   void scaleFromPoint(Shape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(const Shape *const *shps, size_t size);
@@ -234,7 +248,7 @@ void dirko::scaleFromPoint(Shape **shps, size_t size, p_t point, double coef)
     double dx = (fr.pos.x - point.x) * (coef - 1);
     double dy = (fr.pos.y - point.y) * (coef - 1);
     shps[i]->move(dx, dy);
-    shps[i]->scale(coef);
+    shps[i]->doScaleSafe(coef);
   }
 }
 dirko::rec_t dirko::getTotalFrame(const Shape *const *shps, size_t size)
