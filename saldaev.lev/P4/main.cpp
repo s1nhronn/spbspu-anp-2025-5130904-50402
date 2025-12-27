@@ -7,7 +7,7 @@ namespace saldaev
 {
   const size_t block_size = 10;
 
-  char *getLine(std::istream &in, const size_t block_size = block_size)
+  char *getLine(std::istream &in, size_t &len,const size_t block_size = block_size)
   {
     char *data = reinterpret_cast< char * >(malloc((block_size + 1) * sizeof(char)));
     if (data == nullptr)
@@ -21,12 +21,12 @@ namespace saldaev
     }
 
     size_t capacity = block_size;
-    size_t size = 0;
+    len = 0;
     char crnt_char = ' ';
     while (in >> crnt_char && crnt_char != '\r' && crnt_char != '\n')
     {
-      size++;
-      if (size > capacity)
+      len++;
+      if (len > capacity)
       {
         char *tmp = reinterpret_cast< char * >(malloc((capacity + block_size + 1) * sizeof(char)));
         if (tmp == nullptr)
@@ -39,14 +39,14 @@ namespace saldaev
           return nullptr;
         }
         capacity += block_size;
-        for (size_t i = 0; i < size - 1; ++i)
+        for (size_t i = 0; i < len - 1; ++i)
         {
           tmp[i] = data[i];
         }
         free(data);
         data = tmp;
       }
-      data[size - 1] = crnt_char;
+      data[len - 1] = crnt_char;
     }
     if (skipws_on)
     {
@@ -54,16 +54,16 @@ namespace saldaev
     }
     if (crnt_char == '\r' || crnt_char == '\n' || in.eof())
     {
-      data[size] = '\0';
+      data[len] = '\0';
       return data;
     }
     free(data);
     return nullptr;
   }
 
-  char *spcRmv(const char *data, char **new_arr)
+  char *spcRmv(const char *data, char *new_arr)
   {
-    if (*new_arr == nullptr)
+    if (new_arr == nullptr)
     {
       return nullptr;
     }
@@ -75,20 +75,20 @@ namespace saldaev
     {
       if (crnt_char != ' ' || prev_char != ' ')
       {
-        (*new_arr)[crnt_digit] = crnt_char;
+        (new_arr)[crnt_digit] = crnt_char;
         crnt_digit++;
       }
       prev_char = crnt_char;
       i++;
       crnt_char = data[i];
     }
-    (*new_arr)[crnt_digit] = '\0';
-    return *new_arr;
+    new_arr[crnt_digit] = '\0';
+    return new_arr;
   }
 
-  char *latRmv(char *data, char **new_arr)
+  char *latRmv(char *data, char *new_arr)
   {
-    if (*new_arr == nullptr)
+    if (new_arr == nullptr)
     {
       return nullptr;
     }
@@ -99,20 +99,21 @@ namespace saldaev
     {
       if (!std::isalpha(crnt_char))
       {
-        (*new_arr)[crnt_digit] = crnt_char;
+        new_arr[crnt_digit] = crnt_char;
         crnt_digit++;
       }
       i++;
       crnt_char = data[i];
     }
-    (*new_arr)[crnt_digit] = '\0';
-    return *new_arr;
+    new_arr[crnt_digit] = '\0';
+    return new_arr;
   }
 }
 
 int main()
 {
-  char *line = saldaev::getLine(std::cin);
+  size_t len = 0;
+  char *line = saldaev::getLine(std::cin, len);
   if (line == nullptr)
   {
     std::cerr << "Could not read the string\n";
@@ -125,16 +126,21 @@ int main()
     return 1;
   }
 
-  size_t len = 0;
+  
   char crnt = line[len++];
   while (crnt != '\0')
   {
     crnt = line[len++];
   }
   char *new_line = reinterpret_cast< char * >(malloc(len * sizeof(char)));
+  if (new_line == nullptr)
+  {
+    std::cerr << "Failed to allocate memory\n";
+    return 1;
+  }
   new_line[len - 1] = '\0';
 
-  new_line = saldaev::spcRmv(line, &new_line);
+  new_line = saldaev::spcRmv(line, new_line);
   if (new_line == nullptr)
   {
     std::cerr << "Could not convert the string\n";
@@ -145,9 +151,14 @@ int main()
   free(new_line);
 
   new_line = reinterpret_cast< char * >(malloc(len * sizeof(char)));
+  if (new_line == nullptr)
+  {
+    std::cerr << "Failed to allocate memory\n";
+    return 1;
+  }
   new_line[len - 1] = '\0';
 
-  new_line = saldaev::latRmv(line, &new_line);
+  new_line = saldaev::latRmv(line, new_line);
   if (new_line == nullptr)
   {
     std::cerr << "Could not convert the string\n";
