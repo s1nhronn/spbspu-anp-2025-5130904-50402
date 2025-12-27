@@ -22,17 +22,8 @@ namespace dirko
     virtual rec_t getFrameRect() const noexcept = 0;
     virtual void move(p_t point) noexcept = 0;
     virtual void move(double dx, double dy) noexcept = 0;
-    void doScale(double coef) noexcept
-    {
-      scale(coef);
-    }
-    void doScaleSafe(double coef)
-    {
-      if (coef <= 0) {
-        throw std::runtime_error("Non positive coef");
-      }
-      scale(coef);
-    }
+    void doScale(double coef) noexcept;
+    void doScaleSafe(double coef);
 
   private:
     virtual void scale(double coef) noexcept = 0;
@@ -114,12 +105,22 @@ int main()
   std::cout << "\n\nAfter scale:\n\n";
   dirko::output(std::cout, shps, n);
 }
+void dirko::Shape::doScale(double coef) noexcept
+{
+  scale(coef);
+}
+void dirko::Shape::doScaleSafe(double coef)
+{
+  if (coef <= 0) {
+    throw std::runtime_error("Non positive coef");
+  }
+  scale(coef);
+}
 dirko::Rectangle::Rectangle(double w, double h, p_t mid) noexcept:
   w_(w),
   h_(h),
   mid_(mid)
 {}
-
 double dirko::Rectangle::getArea() const noexcept
 {
   return w_ * h_;
