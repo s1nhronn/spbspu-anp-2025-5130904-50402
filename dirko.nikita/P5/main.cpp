@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 namespace dirko
 {
@@ -65,6 +66,8 @@ namespace dirko
   void scaleFromPoint(Shape **shps, size_t size, p_t point, double coef);
   rec_t getTotalFrame(const Shape *const *shps, size_t size);
   std::ostream &output(std::ostream &os, const Shape *const *shps, size_t size);
+  double getPolArea(p_t *pts, size_t size);
+  p_t getPolMid(p_t *pts, size_t size);
 }
 
 int main()
@@ -120,41 +123,44 @@ void dirko::Rectangle::scale(double coef) noexcept
   w_ *= coef;
   h_ *= coef;
 }
+double dirko::getPolArea(p_t *pts, size_t size)
+{
+  double area = 0;
+  for (size_t i = 0; i < size; ++i) {
+    size_t j = (i + 1) % size;
+    area += pts[i].x * pts[j].y;
+    area -= pts[j].x * pts[i].y;
+  }
+  area = std::abs(area) / 2;
+  return area;
+}
+dirko::p_t dirko::getPolMid(p_t *pts, size_t size)
+{
+  double area = getPolArea(pts, size);
+  p_t mid{};
+  double factor = 0.0;
+  for (size_t i = 0; i < size; ++i) {
+    size_t j = (i + 1) % size;
+    factor = (pts[i].x * pts[j].y - pts[j].x * pts[i].y);
+    mid.x += (pts[i].x + pts[j].x) * factor;
+    mid.y += (pts[i].y + pts[j].y) * factor;
+  }
+  mid.x /= (6.0 * area);
+  mid.y /= (6.0 * area);
+  return mid;
+}
 dirko::Polygon::Polygon(size_t size, p_t *pts):
   size_(size),
   pts_(pts),
-  mid_{0, 0}
+  mid_(getPolMid(pts, size))
 {
   if (size < 3) {
     throw std::logic_error("Cant create polygon");
   }
-  double area = 0;
-  for (size_t i = 0; i < size; ++i) {
-    size_t j = (i + 1) % size;
-    area += pts_[i].x * pts_[j].y;
-    area -= pts_[j].x * pts_[i].y;
-  }
-  area = std::abs(area) / 2;
-  double factor = 0.0;
-  for (size_t i = 0; i < size; ++i) {
-    size_t j = (i + 1) % size;
-    factor = (pts_[i].x * pts_[j].y - pts_[j].x * pts_[i].y);
-    mid_.x += (pts_[i].x + pts_[j].x) * factor;
-    mid_.y += (pts_[i].y + pts_[j].y) * factor;
-  }
-  mid_.x /= (6.0 * area);
-  mid_.y /= (6.0 * area);
 }
 double dirko::Polygon::getArea() const noexcept
 {
-  double area = 0;
-  for (size_t i = 0; i < size_; ++i) {
-    size_t j = (i + 1) % size_;
-    area += pts_[i].x * pts_[j].y;
-    area -= pts_[j].x * pts_[i].y;
-  }
-  area = std::abs(area) / 2;
-  return area;
+  return getPolArea(pts_, size_);
 }
 dirko::rec_t dirko::Polygon::getFrameRect() const noexcept
 {
