@@ -203,7 +203,7 @@ long long muhamadiarov::toFindMaxRight(const int* ptr, const size_t order)
 
 void muhamadiarov::outMatric(std::ofstream& output, const size_t r, const size_t c, const int* res1)
 {
-  output << r << ' ' << c; 
+  output << r << ' ' << c;
   for (size_t i = 0; i < r * c; ++i)
   {
     output << ' ' << res1[i];
