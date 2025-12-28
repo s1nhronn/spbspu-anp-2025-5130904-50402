@@ -2,7 +2,9 @@
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <locale>
 #include <new>
+#include <stdexcept>
 
 namespace shirokov
 {
@@ -19,63 +21,73 @@ namespace shirokov
 
   struct Shape
   {
-    virtual double getArea() const = 0;
-    virtual rectangle_t getFrameRect() const = 0;
-    virtual void move(point_t target) = 0;
-    virtual void scale(double coefficient) = 0;
     virtual ~Shape() = default;
+    virtual double getArea() const noexcept = 0;
+    virtual rectangle_t getFrameRect() const noexcept = 0;
+    virtual void move(point_t target) noexcept = 0;
+    virtual void move(double x, double y) noexcept = 0;
+    void doScale(double coefficient);
+
+  private:
+    virtual void scale(double coefficient) noexcept = 0;
   };
 
-  struct Rectangle final : Shape
+  struct Rectangle final: Shape
   {
+    Rectangle(point_t center, double width, double height) noexcept;
+    Rectangle(point_t bottomLeft, point_t topRight) noexcept;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t target) noexcept override;
+    void move(double x, double y) noexcept override;
+
+  private:
+    void scale(double coefficient) noexcept override;
+
   private:
     point_t center_, bottomLeft_, topRight_;
-
-  public:
-    Rectangle(point_t center, double width, double height);
-    Rectangle(point_t bottomLeft, point_t topRight);
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(point_t target) override;
-    void scale(double coefficient) override;
-    ~Rectangle() = default;
   };
 
-  struct Polygon final : Shape
+  struct Polygon final: Shape
   {
+    ~Polygon() noexcept;
+    Polygon(const point_t *vertices, size_t s) noexcept;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t target) noexcept override;
+    void move(double x, double y) noexcept override;
+
+  private:
+    void scale(double coefficient) noexcept override;
+
   private:
     point_t center_;
     point_t *vertices_;
     size_t s_;
-
-  public:
-    Polygon(const point_t *vertices, size_t s);
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(point_t target) override;
-    void scale(double coefficient) override;
-    ~Polygon();
+    double signedDoubleArea;
   };
 
-  struct Xquare final : Shape
+  struct Xquare final: Shape
   {
+    Xquare(point_t center, double side) noexcept;
+    Xquare(point_t top, point_t bottom) noexcept;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t target) noexcept override;
+    void move(double x, double y) noexcept override;
+
+  private:
+    void scale(double coefficient) noexcept override;
+
   private:
     point_t center_, top_, bottom_;
-
-  public:
-    Xquare(point_t center, double side);
-    Xquare(point_t top, point_t bottom);
-    double getArea() const override;
-    rectangle_t getFrameRect() const override;
-    void move(point_t target) override;
-    void scale(double coefficient) override;
-    ~Xquare() = default;
   };
 
   void scaleAboutPoint(point_t target, double coefficient, Shape *figure);
   double getTotalArea(const Shape *const *figures, size_t s);
   rectangle_t getTotalFrameRect(const Shape *const *figures, size_t s);
   void printInfo(const Shape *const *figures, size_t s);
+  void printFrameInfo(const rectangle_t &frameRect, size_t indents);
   const size_t SIZE = 5;
 }
 
@@ -120,19 +132,18 @@ int main()
     }
     return 1;
   }
-  if (coefficient < 0)
-  {
-    std::cerr << "The coefficient cannot be negative\n";
-    for (size_t i = 0; i < shirokov::SIZE; ++i)
-    {
-      delete figures[i];
-    }
-    return 1;
-  }
 
   for (size_t i = 0; i < shirokov::SIZE; ++i)
   {
-    shirokov::scaleAboutPoint(target, coefficient, figures[i]);
+    try
+    {
+      shirokov::scaleAboutPoint(target, coefficient, figures[i]);
+    }
+    catch (const std::logic_error &e)
+    {
+      std::cerr << e.what() << '\n';
+      return 3;
+    }
   }
   std::cout << "After scaling:\n";
   shirokov::printInfo(figures, shirokov::SIZE);
@@ -143,29 +154,40 @@ int main()
   }
 }
 
-shirokov::Rectangle::Rectangle(point_t center, double width, double height)
-    : Shape(), center_(center), bottomLeft_({center.x - width / 2, center.y - height / 2}),
-      topRight_({center.x + width / 2, center.y + height / 2})
+void shirokov::Shape::doScale(double coefficient)
+{
+  if (coefficient <= 0)
+  {
+    throw std::logic_error("The coefficient cannot be negative");
+  }
+  scale(coefficient);
+}
+
+shirokov::Rectangle::Rectangle(point_t center, double width, double height) noexcept:
+  center_(center),
+  bottomLeft_({center.x - width / 2, center.y - height / 2}),
+  topRight_({center.x + width / 2, center.y + height / 2})
 {
 }
 
-shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight)
-    : Shape(), center_({(topRight.x + bottomLeft.x) / 2, (topRight.y + bottomLeft.y) / 2}), bottomLeft_(bottomLeft),
-      topRight_(topRight)
+shirokov::Rectangle::Rectangle(point_t bottomLeft, point_t topRight) noexcept:
+  center_({(topRight.x + bottomLeft.x) / 2, (topRight.y + bottomLeft.y) / 2}),
+  bottomLeft_(bottomLeft),
+  topRight_(topRight)
 {
 }
 
-double shirokov::Rectangle::getArea() const
+double shirokov::Rectangle::getArea() const noexcept
 {
   return (topRight_.x - bottomLeft_.x) * (topRight_.y - bottomLeft_.y);
 }
 
-shirokov::rectangle_t shirokov::Rectangle::getFrameRect() const
+shirokov::rectangle_t shirokov::Rectangle::getFrameRect() const noexcept
 {
   return {topRight_.x - bottomLeft_.x, topRight_.y - bottomLeft_.y, center_};
 }
 
-void shirokov::Rectangle::move(point_t target)
+void shirokov::Rectangle::move(point_t target) noexcept
 {
   point_t delta = {center_.x - target.x, center_.y - target.y};
   center_ = target;
@@ -173,7 +195,15 @@ void shirokov::Rectangle::move(point_t target)
   bottomLeft_ = {bottomLeft_.x - delta.x, bottomLeft_.y - delta.y};
 }
 
-void shirokov::Rectangle::scale(double coefficient)
+void shirokov::Rectangle::move(double x, double y) noexcept
+{
+  point_t delta = {center_.x - x, center_.y - y};
+  center_ = {x, y};
+  topRight_ = {topRight_.x - delta.x, topRight_.y - delta.y};
+  bottomLeft_ = {bottomLeft_.x - delta.x, bottomLeft_.y - delta.y};
+}
+
+void shirokov::Rectangle::scale(double coefficient) noexcept
 {
   bottomLeft_ = {center_.x + coefficient * (bottomLeft_.x - center_.x),
                  center_.y + coefficient * (bottomLeft_.y - center_.y)};
@@ -181,15 +211,17 @@ void shirokov::Rectangle::scale(double coefficient)
                center_.y + coefficient * (topRight_.y - center_.y)};
 }
 
-shirokov::Polygon::Polygon(const point_t *vertices, size_t s)
-    : Shape(), center_({0, 0}), vertices_(new point_t[s]), s_(s)
+shirokov::Polygon::Polygon(const point_t *vertices, size_t s) noexcept:
+  center_({0, 0}),
+  vertices_(new point_t[s]),
+  s_(s),
+  signedDoubleArea(0)
 {
   for (size_t i = 0; i < s; ++i)
   {
     vertices_[i] = vertices[i];
   }
 
-  double A = 0;
   double cx = 0, cy = 0;
   for (size_t i = 0; i < s; ++i)
   {
@@ -199,35 +231,23 @@ shirokov::Polygon::Polygon(const point_t *vertices, size_t s)
     double xj = vertices_[j].x;
     double yj = vertices_[j].y;
     double cross = xi * yj - xj * yi;
-    A += cross;
+    signedDoubleArea += cross;
     cx += (xi + xj) * cross;
     cy += (yi + yj) * cross;
   }
-  A *= 0.5;
-  cx /= 6 * A;
-  cy /= 6 * A;
+  signedDoubleArea *= 0.5;
+  cx /= 6 * signedDoubleArea;
+  cy /= 6 * signedDoubleArea;
 
   center_ = {cx, cy};
 }
 
-double shirokov::Polygon::getArea() const
+double shirokov::Polygon::getArea() const noexcept
 {
-  double A = 0;
-  for (size_t i = 0; i < s_; ++i)
-  {
-    double xi = vertices_[i].x;
-    double yi = vertices_[i].y;
-    size_t j = (i + 1) % s_;
-    double xj = vertices_[j].x;
-    double yj = vertices_[j].y;
-    double cross = xi * yj - xj * yi;
-    A += cross;
-  }
-  A *= 0.5;
-  return std::abs(A);
+  return std::abs(signedDoubleArea);
 }
 
-shirokov::rectangle_t shirokov::Polygon::getFrameRect() const
+shirokov::rectangle_t shirokov::Polygon::getFrameRect() const noexcept
 {
   double maxx = vertices_[0].x, minx = vertices_[0].x, maxy = vertices_[0].y, miny = vertices_[0].y;
   for (size_t i = 0; i < s_; ++i)
@@ -240,11 +260,10 @@ shirokov::rectangle_t shirokov::Polygon::getFrameRect() const
   double width = maxx - minx;
   double height = maxy - miny;
   point_t pos = {(minx + maxx) / 2, (miny + maxy) / 2};
-  rectangle_t res = {width, height, pos};
-  return res;
+  return {width, height, pos};
 }
 
-void shirokov::Polygon::move(point_t target)
+void shirokov::Polygon::move(point_t target) noexcept
 {
   point_t delta = {center_.x - target.x, center_.y - target.y};
   center_ = target;
@@ -254,7 +273,17 @@ void shirokov::Polygon::move(point_t target)
   }
 }
 
-void shirokov::Polygon::scale(double coefficient)
+void shirokov::Polygon::move(double x, double y) noexcept
+{
+  point_t delta = {center_.x - x, center_.y - y};
+  center_ = {x, y};
+  for (size_t i = 0; i < s_; ++i)
+  {
+    vertices_[i] = {vertices_[i].x - delta.x, vertices_[i].y - delta.y};
+  }
+}
+
+void shirokov::Polygon::scale(double coefficient) noexcept
 {
   for (size_t i = 0; i < s_; ++i)
   {
@@ -263,29 +292,32 @@ void shirokov::Polygon::scale(double coefficient)
   }
 }
 
-shirokov::Polygon::~Polygon()
+shirokov::Polygon::~Polygon() noexcept
 {
   delete[] vertices_;
 }
 
-shirokov::Xquare::Xquare(point_t center, double side)
-    : Shape(), center_(center), top_({center.x, center.y + side / std::sqrt(2)}),
-      bottom_({center.x, center.y - side / std::sqrt(2)})
+shirokov::Xquare::Xquare(point_t center, double side) noexcept:
+  center_(center),
+  top_({center.x, center.y + side / std::sqrt(2)}),
+  bottom_({center.x, center.y - side / std::sqrt(2)})
 {
 }
 
-shirokov::Xquare::Xquare(point_t top, point_t bottom)
-    : Shape(), center_({(top.x + bottom.x) / 2, (top.y + bottom.y) / 2}), top_(top), bottom_(bottom)
+shirokov::Xquare::Xquare(point_t top, point_t bottom) noexcept:
+  center_({(top.x + bottom.x) / 2, (top.y + bottom.y) / 2}),
+  top_(top),
+  bottom_(bottom)
 {
 }
 
-double shirokov::Xquare::getArea() const
+double shirokov::Xquare::getArea() const noexcept
 {
   double side = (top_.y - bottom_.y) / std::sqrt(2);
   return side * side;
 }
 
-shirokov::rectangle_t shirokov::Xquare::getFrameRect() const
+shirokov::rectangle_t shirokov::Xquare::getFrameRect() const noexcept
 {
   double width = top_.y - bottom_.y;
   double height = width;
@@ -293,7 +325,7 @@ shirokov::rectangle_t shirokov::Xquare::getFrameRect() const
   return {width, height, pos};
 }
 
-void shirokov::Xquare::move(point_t target)
+void shirokov::Xquare::move(point_t target) noexcept
 {
   point_t delta = {center_.x - target.x, center_.y - target.y};
   center_ = target;
@@ -301,7 +333,15 @@ void shirokov::Xquare::move(point_t target)
   bottom_ = {bottom_.x - delta.x, bottom_.y - delta.y};
 }
 
-void shirokov::Xquare::scale(double coefficient)
+void shirokov::Xquare::move(double x, double y) noexcept
+{
+  point_t delta = {center_.x - x, center_.y - y};
+  center_ = {x, y};
+  top_ = {top_.x - delta.x, top_.y - delta.y};
+  bottom_ = {bottom_.x - delta.x, bottom_.y - delta.y};
+}
+
+void shirokov::Xquare::scale(double coefficient) noexcept
 {
   bottom_.y = center_.y + coefficient * (bottom_.y - center_.y);
   top_.y = center_.y + coefficient * (top_.y - center_.y);
@@ -312,7 +352,7 @@ void shirokov::scaleAboutPoint(shirokov::point_t target, double coefficient, shi
   point_t point1 = figure->getFrameRect().pos;
   figure->move(target);
   point_t delta = {target.x - point1.x, target.y - point1.y};
-  figure->scale(coefficient);
+  figure->doScale(coefficient);
   point_t res = {target.x - delta.x * coefficient, target.y - delta.y * coefficient};
   figure->move(res);
 }
@@ -367,17 +407,37 @@ void shirokov::printInfo(const Shape *const *figures, size_t s)
   {
     shirokov::rectangle_t frameRect = figures[i]->getFrameRect();
     std::cout << "\tFigure " << i + 1 << ": \n";
-    std::cout << "\t\tWidth: " << frameRect.width << '\n';
-    std::cout << "\t\tHeight: " << frameRect.height << '\n';
-    std::cout << "\t\tCenter: \n";
-    std::cout << "\t\t\tx: " << frameRect.pos.x << '\n';
-    std::cout << "\t\t\ty: " << frameRect.pos.y << '\n';
+    printFrameInfo(frameRect, 2);
   }
   shirokov::rectangle_t frameRect = shirokov::getTotalFrameRect(figures, s);
   std::cout << "Total frame rect: \n";
-  std::cout << "\t\tWidth: " << frameRect.width << '\n';
-  std::cout << "\t\tHeight: " << frameRect.height << '\n';
-  std::cout << "\t\tCenter: \n";
-  std::cout << "\t\t\tx: " << frameRect.pos.x << '\n';
-  std::cout << "\t\t\ty: " << frameRect.pos.y << '\n';
+  printFrameInfo(frameRect, 1);
+}
+
+void shirokov::printFrameInfo(const rectangle_t &frameRect, size_t k)
+{
+  char *indents = new char[2];
+  size_t cap = 2;
+  size_t s = 0;
+  for (size_t i = 0; i < k; ++i)
+  {
+    if (s + 1 >= cap)
+    {
+      char *tmp = new char[cap * 2];
+      for (size_t j = 0; j < s; ++j)
+      {
+        tmp[j] = indents[j];
+      }
+      delete[] indents;
+      indents = tmp;
+      cap *= 2;
+    }
+    indents[s++] = '\t';
+  }
+  indents[s] = '\0';
+  std::cout << indents << "Width: " << frameRect.width << '\n';
+  std::cout << indents << "Height: " << frameRect.height << '\n';
+  std::cout << indents << "Center:\n";
+  std::cout << indents << "\tx: " << frameRect.pos.x << '\n';
+  std::cout << indents << "\ty: " << frameRect.pos.y << '\n';
 }
