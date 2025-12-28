@@ -142,6 +142,10 @@ int main()
     catch (const std::logic_error &e)
     {
       std::cerr << e.what() << '\n';
+      for (size_t i = 0; i < shirokov::SIZE; ++i)
+      {
+        delete figures[i];
+      }
       return 3;
     }
   }
@@ -440,4 +444,5 @@ void shirokov::printFrameInfo(const rectangle_t &frameRect, size_t k)
   std::cout << indents << "Center:\n";
   std::cout << indents << "\tx: " << frameRect.pos.x << '\n';
   std::cout << indents << "\ty: " << frameRect.pos.y << '\n';
+  delete[] indents;
 }
