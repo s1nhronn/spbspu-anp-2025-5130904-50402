@@ -5,11 +5,11 @@
 
 namespace muhamadiarov
 {
-  int* fllIncWav(int* ptr, size_t rows, size_t colons);
-  void outMatric(std::ofstream& output, size_t r, size_t c, const int* res1);
-  long long toFindMaxRight(const int* ptr, size_t order);
-  long long toFindMaxinLeft(const int* ptr, size_t order);
-  long long maxSumMdg(const int* ptr, size_t order);
+  int* fllIncWav(int* ptr, const size_t rows, const size_t colons);
+  void outMatric(std::ofstream& output, const size_t r, const size_t c, const int* res1);
+  long long toFindMaxRight(const int* ptr, const size_t order);
+  long long toFindMaxinLeft(const int* ptr, const size_t order);
+  long long maxSumMdg(const int* ptr, const size_t order);
 }
 
 int main(int argc, char* argv[])
@@ -60,16 +60,17 @@ int main(int argc, char* argv[])
     std::cerr << "Wrong size of matric\n";
     return 2;
   }
-  if (rows == 0 && colons == 0)
-  {
-    std::ofstream output(argv[3], std::ios::app);
-    output << 0 << ' ' << 0 << '\n';
-    output << 0 << '\n';
-    return 0;
-  }
   const int sizeMatric = 10000;
   int arr[sizeMatric];
   int* ptr = nullptr;
+  if (rows == 0 && colons == 0)
+  {
+    std::ofstream output(argv[3], std::ios::app);
+    muh::outMatric(output, rows, colons, ptr);
+    output << '\n';
+    output << 0 << '\n';
+    return 0;
+  }
   if (mode == 1)
   {
     ptr = arr;
@@ -130,7 +131,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-int* muhamadiarov::fllIncWav(int* ptr, size_t rows, size_t colons)
+int* muhamadiarov::fllIncWav(int* ptr, const size_t rows, const size_t colons)
 {
   for (size_t j = 0; j < rows; ++j)
   {
@@ -148,7 +149,7 @@ int* muhamadiarov::fllIncWav(int* ptr, size_t rows, size_t colons)
   return ptr;
 }
 
-long long muhamadiarov::maxSumMdg(const int* ptr, size_t order)
+long long muhamadiarov::maxSumMdg(const int* ptr, const size_t order)
 {
   namespace muh = muhamadiarov;
   long long max_result = 0;
@@ -158,7 +159,7 @@ long long muhamadiarov::maxSumMdg(const int* ptr, size_t order)
   return max_result;
 }
 
-long long muhamadiarov::toFindMaxinLeft(const int* ptr, size_t order)
+long long muhamadiarov::toFindMaxinLeft(const int* ptr, const size_t order)
 {
   long long max_r = 0;
   long long result = 0;
@@ -182,7 +183,7 @@ long long muhamadiarov::toFindMaxinLeft(const int* ptr, size_t order)
   return max_r;
 }
 
-long long muhamadiarov::toFindMaxRight(const int* ptr, size_t order)
+long long muhamadiarov::toFindMaxRight(const int* ptr, const size_t order)
 {
   long long int max_r = 0;
   long long int result = 0;
@@ -200,11 +201,11 @@ long long muhamadiarov::toFindMaxRight(const int* ptr, size_t order)
   return max_r;
 }
 
-void muhamadiarov::outMatric(std::ofstream& output, size_t r, size_t c, const int* res1)
+void muhamadiarov::outMatric(std::ofstream& output, const size_t r, const size_t c, const int* res1)
 {
-  for (size_t i = 0; i < r * c - 1; ++i)
+  output << r << ' ' << c; 
+  for (size_t i = 0; i < r * c; ++i)
   {
-    output << res1[i] << ' ';
+    output << ' ' << res1[i];
   }
-  output << res1[r * c - 1];
 }
