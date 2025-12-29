@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <ios>
@@ -15,6 +16,7 @@ namespace shirokov
   char *getline(std::istream &in, size_t &s);
   char *otherLatinLetters(const char *str, char *res, char *buffer);
   char *combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res);
+  double getCoefficient(size_t capacity);
 }
 
 int main()
@@ -178,7 +180,9 @@ char *shirokov::uniq(char *res, const char *str, size_t &rsize)
 
 void shirokov::expand(char **str, size_t size, size_t &capacity)
 {
-  char *tempString = reinterpret_cast< char * >(malloc(capacity * 2));
+  double coefficient = getCoefficient(capacity);
+  size_t newCapacity = static_cast< size_t >(capacity * coefficient);
+  char *tempString = reinterpret_cast< char * >(malloc(newCapacity));
   if (tempString == nullptr)
   {
     free(*str);
@@ -191,5 +195,18 @@ void shirokov::expand(char **str, size_t size, size_t &capacity)
   }
   free(*str);
   *str = tempString;
-  capacity *= 2;
+  capacity = newCapacity;
+}
+
+double shirokov::getCoefficient(size_t capacity)
+{
+  if (capacity < 10)
+  {
+    return 2;
+  }
+  if (capacity < 100)
+  {
+    return 1.5;
+  }
+  return 1.1 + 1 / std::pow(capacity + 1, 0.2);
 }
