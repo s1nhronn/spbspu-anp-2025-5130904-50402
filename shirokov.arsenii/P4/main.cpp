@@ -106,17 +106,23 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
   char **massive = reinterpret_cast< char ** >(malloc(sizeof(char *)));
   size_t capacity = 1;
   size = 0;
-  if (massive == nullptr)
+  char *str = reinterpret_cast< char * >(malloc(sizeof(char)));
+  size_t cap = 1;
+  size_t s = 0;
+  if (massive == nullptr || str == nullptr)
   {
+    for (size_t i = 0; i < size; ++i)
+    {
+      free(massive[i]);
+    }
+    free(massive);
+    free(str);
     if (is_skipws)
     {
       in >> std::skipws;
     }
     return nullptr;
   }
-  char *str = reinterpret_cast< char * >(malloc(sizeof(char)));
-  size_t cap = 1;
-  size_t s = 0;
   while (in)
   {
     // std::cout << "=== ИТЕРАЦИЯ ===\n";
@@ -132,8 +138,14 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
     }
     // std::cout << "После расширения и до ввода\n";
     // printMassive(massive, size, str);
-    if (massive == nullptr)
+    if (massive == nullptr || str == nullptr)
     {
+      for (size_t i = 0; i < size; ++i)
+      {
+        free(massive[i]);
+      }
+      free(massive);
+      free(str);
       if (is_skipws)
       {
         in >> std::skipws;
@@ -147,6 +159,10 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
       {
         massive[size++] = str;
       }
+      else
+      {
+        free(str);
+      }
       break;
     }
     bool flag = isDelimiter(str[s]);
@@ -156,6 +172,10 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
       {
         str[s] = '\0';
         massive[size++] = str;
+      }
+      else
+      {
+        free(str);
       }
       str = reinterpret_cast< char * >(malloc(sizeof(char)));
       cap = 1;
