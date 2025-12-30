@@ -314,13 +314,11 @@ void shirokov::expand(char ***str, size_t size, size_t &capacity)
   {
     size_t len = std::strlen((*str)[i]);
     char *tempString = static_cast< char * >(malloc(len + 1));
-    size_t cap = 1;
-    size_t j = 0;
-    for (; (*str)[i][j] != '\0'; ++j) // FIXME: InvalidRead
+    for (size_t j = 0; j < len; ++j) // FIXME: InvalidRead
     {
       tempString[j] = (*str)[i][j];
     }
-    tempString[j] = '\0'; // FIXME: InvalidWrite
+    tempString[len] = '\0'; // FIXME: InvalidWrite
     free((*str)[i]);
     tempMassive[i] = tempString;
   }
