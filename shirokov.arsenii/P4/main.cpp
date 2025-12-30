@@ -132,7 +132,7 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
     {
       expand(&massive, size, capacity);
     }
-    if (s == cap)
+    if (s - 1 >= cap)
     {
       expand(&str, s, cap);
     }
