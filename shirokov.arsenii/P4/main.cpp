@@ -21,17 +21,6 @@ namespace shirokov
   bool isSpace(char symbol);
 }
 
-void printMassive(const char *const *massive, size_t s, const char *str)
-{
-  std::cout << "Массив:\n";
-  for (size_t i = 0; i < s; ++i)
-  {
-    std::cout << massive[i] << '\n';
-  }
-  std::cout << "Строка:\n";
-  std::cout << str << "\n\n";
-}
-
 int main()
 {
   size_t s = 0;
@@ -39,6 +28,7 @@ int main()
 
   if (massive == nullptr || s == 0)
   {
+    free(massive);
     std::cerr << "Couldn't read the line\n";
     return 1;
   }
@@ -46,7 +36,7 @@ int main()
   for (size_t i = 0; i < s; ++i)
   {
     size_t length = 0;
-    for (; massive[i][length] != '\0'; ++length) // FIXME: InvalidRead
+    for (; massive[i][length] != '\0'; ++length)
     {
     }
     char *res1 = reinterpret_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH + 1) * sizeof(char)));
@@ -82,7 +72,7 @@ int main()
     res1 = shirokov::otherLatinLetters(massive[i], res1, buffer);
     res2 = shirokov::combineLines(massive[i], length, shirokov::LITERAL, std::strlen(shirokov::LITERAL), res2);
 
-    std::cout << "String: " << massive[i] << '\n'; // FIXME: InvalidRead
+    std::cout << "String: " << massive[i] << '\n';
     std::cout << "\t1. " << res1 << '\n';
     std::cout << "\t2. " << res2 << '\n';
     free(res1);
@@ -125,9 +115,6 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
   }
   while (in)
   {
-    // std::cout << "=== ИТЕРАЦИЯ ===\n";
-    // std::cout << "До расширения\n";
-    // printMassive(massive, size, str);
     if (size == capacity)
     {
       expand(&massive, size, capacity);
@@ -136,8 +123,6 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
     {
       expand(&str, s, cap);
     }
-    // std::cout << "После расширения и до ввода\n";
-    // printMassive(massive, size, str);
     if (massive == nullptr || str == nullptr)
     {
       for (size_t i = 0; i < size; ++i)
@@ -181,8 +166,6 @@ char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(cha
       cap = 1;
       s = 0;
     }
-    // std::cout << "После ввода\n";
-    // printMassive(massive, size, str);
     if (!flag)
     {
       s++;
@@ -239,7 +222,7 @@ char *shirokov::combineLines(const char *str1, size_t s1, const char *str2, size
 char *shirokov::uniq(char *res, const char *str, size_t &rsize)
 {
   rsize = 0;
-  for (size_t i = 0; str[i] != '\0'; ++i) // FIXME: InvalidRead
+  for (size_t i = 0; str[i] != '\0'; ++i)
   {
     bool in_res = false;
     char temp = str[i];
@@ -314,11 +297,11 @@ void shirokov::expand(char ***str, size_t size, size_t &capacity)
   {
     size_t len = std::strlen((*str)[i]);
     char *tempString = static_cast< char * >(malloc(len + 1));
-    for (size_t j = 0; j < len; ++j) // FIXME: InvalidRead
+    for (size_t j = 0; j < len; ++j)
     {
       tempString[j] = (*str)[i][j];
     }
-    tempString[len] = '\0'; // FIXME: InvalidWrite
+    tempString[len] = '\0';
     free((*str)[i]);
     tempMassive[i] = tempString;
   }
