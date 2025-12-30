@@ -26,6 +26,7 @@ int main()
   }
   if (len == 0)
   {
+    free(str);
     std::cerr << "The string is empty.\n";
     return 2;
   }
