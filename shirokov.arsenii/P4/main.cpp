@@ -35,7 +35,7 @@ void printMassive(const char *const *massive, size_t s, const char *str)
 int main()
 {
   size_t s = 0;
-  char **massive = shirokov::getline(std::cin, s, shirokov::isSpace);
+  char **massive = shirokov::getline(std::cin, s, shirokov::isSpace); // FIXME: Leak_DefinitelyLost
 
   if (massive == nullptr || s == 0)
   {
@@ -46,7 +46,7 @@ int main()
   for (size_t i = 0; i < s; ++i)
   {
     size_t length = 0;
-    for (; massive[i][length] != '\0'; ++length)
+    for (; massive[i][length] != '\0'; ++length) // FIXME: InvalidRead
     {
     }
     char *res1 = reinterpret_cast< char * >(malloc((shirokov::LATIN_ALPHABET_LENGTH + 1) * sizeof(char)));
@@ -82,7 +82,7 @@ int main()
     res1 = shirokov::otherLatinLetters(massive[i], res1, buffer);
     res2 = shirokov::combineLines(massive[i], length, shirokov::LITERAL, std::strlen(shirokov::LITERAL), res2);
 
-    std::cout << "String: " << massive[i] << '\n';
+    std::cout << "String: " << massive[i] << '\n'; // FIXME: InvalidRead
     std::cout << "\t1. " << res1 << '\n';
     std::cout << "\t2. " << res2 << '\n';
     free(res1);
@@ -239,7 +239,7 @@ char *shirokov::combineLines(const char *str1, size_t s1, const char *str2, size
 char *shirokov::uniq(char *res, const char *str, size_t &rsize)
 {
   rsize = 0;
-  for (size_t i = 0; str[i] != '\0'; ++i)
+  for (size_t i = 0; str[i] != '\0'; ++i) // FIXME: InvalidRead
   {
     bool in_res = false;
     char temp = str[i];
@@ -315,9 +315,9 @@ void shirokov::expand(char ***str, size_t size, size_t &capacity)
     char *tempString = reinterpret_cast< char * >(malloc(sizeof(char)));
     size_t cap = 1;
     size_t j = 0;
-    for (; (*str)[i][j] != '\0'; ++j)
+    for (; (*str)[i][j] != '\0'; ++j) // FIXME: InvalidRead
     {
-      if (j == cap)
+      if (j - 1 >= cap)
       {
         expand(&tempString, j, cap);
         if (tempString == nullptr)
@@ -338,7 +338,7 @@ void shirokov::expand(char ***str, size_t size, size_t &capacity)
       }
       tempString[j] = (*str)[i][j];
     }
-    tempString[j] = '\0';
+    tempString[j] = '\0'; // FIXME: InvalidWrite
     free((*str)[i]);
     tempMassive[i] = tempString;
   }
