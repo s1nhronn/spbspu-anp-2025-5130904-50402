@@ -1,5 +1,5 @@
-#ifndef MTXACTIONS
-#define MTXACTIONS
+#ifndef MTX_ACTIONS
+#define MTX_ACTIONS
 #include <iosfwd>
 namespace dirko
 {
