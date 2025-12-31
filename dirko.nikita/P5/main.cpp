@@ -2,7 +2,6 @@
 #include <iostream>
 #include <stdexcept>
 #include "shapes.hpp"
-#include "shapesUtil.hpp"
 
 int main()
 {
