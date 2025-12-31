@@ -24,7 +24,7 @@ namespace shirokov
 int main()
 {
   size_t s = 0;
-  char **massive = shirokov::getline(std::cin, s, shirokov::isSpace); // FIXME: Leak_DefinitelyLost
+  char **massive = shirokov::getline(std::cin, s, shirokov::isSpace);
 
   if (massive == nullptr || s == 0)
   {
