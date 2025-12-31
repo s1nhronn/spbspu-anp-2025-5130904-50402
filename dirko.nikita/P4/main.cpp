@@ -1,51 +1,8 @@
-#include <cctype>
 #include <cstring>
 #include <iostream>
 #include "getLine.hpp"
+#include "strActions.hpp"
 
-namespace dirko
-{
-  const size_t alphaSize = 26;
-  const char *find(const char *start, const char *end, char target)
-  {
-    for (const char *ch = start; ch < end; ++ch) {
-      if (*ch == target) {
-        return ch;
-      }
-    }
-    return end;
-  }
-  char *extendSize(const char *str, size_t size)
-  {
-    char *newStr = reinterpret_cast< char * >(malloc(size * 2 * sizeof(char)));
-    if (newStr == nullptr) {
-      return nullptr;
-    }
-    std::strncpy(newStr, str, size);
-    newStr[size] = '\0';
-    return newStr;
-  }
-  size_t doDifLat(const char *str)
-  {
-    size_t count = 0;
-    char seen[alphaSize] = {};
-    for (const char *ch = str; *ch != '\0'; ++ch) {
-      if (std::isalpha(*ch)) {
-        if (dirko::find(seen, seen + count, std::tolower(*ch)) == seen + count) {
-          seen[count++] = std::tolower(*ch);
-        }
-      }
-    }
-    return count;
-  }
-  char *doUppLow(const char *source, char *distention)
-  {
-    for (size_t i = 0; source[i] != '\0'; ++i) {
-      distention[i] = (std::isalpha(source[i])) ? std::tolower(source[i]) : source[i];
-    }
-    return distention;
-  }
-}
 int main()
 {
   size_t size = 0;
