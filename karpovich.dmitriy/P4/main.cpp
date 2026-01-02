@@ -4,15 +4,13 @@ namespace karpovich
 {
   char* extend(char* old_str, size_t old_size)
   {
-    char* new_str = reinterpret_cast<char*>(malloc(old_size + 1));
+    char* new_str = reinterpret_cast< char* >(malloc(old_size + 1));
     if (new_str == nullptr) {
-      free(old_str);
       return nullptr;
     }
     for (size_t i = 0; i < old_size; ++i) {
       new_str[i] = old_str[i];
     }
-    free(old_str);
     return new_str;
   }
   char* getline(std::istream& in, size_t& s)
@@ -23,25 +21,29 @@ namespace karpovich
     }
     char* str = nullptr;
     char ch = '\0';
-    while(in >> ch && ch != '\n') {
+    while (in >> ch && ch != '\n') {
       char* temp = extend(str, s);
       if (temp == nullptr) {
+        free(str);
         if (is_skipws) {
           in >> std::skipws;
         }
         return nullptr;
       }
+      free(str);
       str = temp;
       str[s] = ch;
       ++s;
     }
     char* temp = extend(str, s);
     if (temp == nullptr) {
+      free(str);
       if (is_skipws) {
         in >> std::skipws;
       }
       return nullptr;
     }
+    free(str);
     str = temp;
     str[s] = '\0';
     if (is_skipws) {
@@ -101,26 +103,26 @@ int main() {
   size_t s = 0;
   char* str = karp::getline(std::cin, s);
   if (!str) {
-    std::cerr << "Failed to alloc memory";
+    std::cerr << "Failed to alloc memory" << '\n';
     return 1;
   }
   if (s == 0 && std::cin.eof()) {
     free(str);
-    std::cerr << "No input";
+    std::cerr << "No input" << '\n';
     return 1;
   }
 
   char* data = reinterpret_cast< char* >(malloc(s + 1));
   if (!data) {
     free(str);
-    std::cerr << "Failed to alloc memory";
+    std::cerr << "Failed to alloc memory" << '\n';
     return 1;
   }
   data[s] = '\0';
   if (!karp::repsym(str, data)) {
     free(data);
     free(str);
-    std::cerr << "repsym failed";
+    std::cerr << "repsym failed" << '\n';
     return 1;
   }
 
@@ -131,7 +133,7 @@ int main() {
   if (!data2) {
     std::free(data);
     std::free(str);
-    std::cerr << "Failed to alloc memory";
+    std::cerr << "Failed to alloc memory" << '\n';
     return 1;
   }
   data2[s + s2] = '\0';
@@ -140,7 +142,7 @@ int main() {
     free(data2);
     free(data);
     free(str);
-    std::cerr << "unitwo failed";
+    std::cerr << "unitwo failed" << '\n';
     return 1;
   }
 
