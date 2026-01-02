@@ -1,4 +1,5 @@
 #include "shapes.hpp"
+#include <algorithm>
 
 karpovich::Rubber::Rubber(double radius1, double radius2, point_t centr1, point_t centr2) noexcept:
   radius1_(radius1),
