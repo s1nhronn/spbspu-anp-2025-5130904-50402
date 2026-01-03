@@ -1,7 +1,7 @@
 #ifndef SHAPES
 #define SHAPES
 #include <cmath>
-#include <shapesUtil.hpp>
+#include "../common/shapesUtil.hpp"
 namespace dirko
 {
   const double PI = std::acos(-1.0);
@@ -21,6 +21,7 @@ namespace dirko
   struct Polygon final: Shape
   {
     Polygon(size_t size, p_t *pts);
+    ~Polygon() noexcept override;
     double getArea() const noexcept override;
     rec_t getFrameRect() const noexcept override;
     void move(double dx, double dy) noexcept override;
