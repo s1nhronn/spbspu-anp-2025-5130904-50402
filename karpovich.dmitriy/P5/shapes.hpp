@@ -1,5 +1,5 @@
-#ifndef SHAPES
-#define SHAPES
+#ifndef SHAPES_HPP
+#define SHAPES_HPP
 #include <cmath>
 #include "podshape.hpp"
 namespace karpovich

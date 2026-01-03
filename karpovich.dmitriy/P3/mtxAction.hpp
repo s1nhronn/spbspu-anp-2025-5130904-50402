@@ -1,5 +1,5 @@
-#ifndef MTX_ACTION
-#define MTX_ACTION
+#ifndef MTX_ACTION_HPP
+#define MTX_ACTION_HPP
 #include <iosfwd>
 namespace karpovich
 {

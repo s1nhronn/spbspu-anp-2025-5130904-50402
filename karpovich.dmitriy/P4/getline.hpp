@@ -1,5 +1,5 @@
-#ifndef GET_LINE
-#define GET_LINE
+#ifndef GET_LINE_HPP
+#define GET_LINE_HPP
 #include <iosfwd>
 namespace karpovich
 {

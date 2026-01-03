@@ -1,5 +1,5 @@
-#ifndef PODSHAPE
-#define PODSHAPE
+#ifndef PODSHAPE_HPP
+#define PODSHAPE_HPP
 #include <iosfwd>
 namespace karpovich
 {

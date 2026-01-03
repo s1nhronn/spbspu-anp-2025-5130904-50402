@@ -1,5 +1,5 @@
-#ifndef STR_CHANGE
-#define STR_CHANGE
+#ifndef STR_CHANGE_HPP
+#define STR_CHANGE_HPP
 #include <iosfwd>
 namespace karpovich
 {
