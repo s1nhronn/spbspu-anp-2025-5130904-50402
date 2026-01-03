@@ -43,6 +43,42 @@ dirko::Polygon::~Polygon() noexcept
 {
   delete[] pts_;
 }
+dirko::Polygon::Polygon(const Polygon &other)
+{
+  size_ = other.size_;
+  mid_ = other.mid_;
+  pts_ = new p_t[size_];
+  for (size_t i = 0; i < size_; ++i) {
+    pts_[i] = other.pts_[i];
+  }
+}
+dirko::Polygon::Polygon(Polygon &&r) noexcept
+{
+  pts_ = r.pts_;
+  size_ = r.size_;
+  mid_ = r.mid_;
+  r.pts_ = nullptr;
+}
+dirko::Polygon &dirko::Polygon::operator=(const Polygon &other)
+{
+  delete[] pts_;
+  size_ = other.size_;
+  mid_ = other.mid_;
+  pts_ = new p_t[size_];
+  for (size_t i = 0; i < size_; ++i) {
+    pts_[i] = other.pts_[i];
+  }
+  return *this;
+}
+dirko::Polygon &dirko::Polygon::operator=(Polygon &&r) noexcept
+{
+  delete[] pts_;
+  pts_ = r.pts_;
+  size_ = r.size_;
+  mid_ = r.mid_;
+  r.pts_ = nullptr;
+  return *this;
+}
 double dirko::Polygon::getArea() const noexcept
 {
   return getPolArea(pts_, size_);
