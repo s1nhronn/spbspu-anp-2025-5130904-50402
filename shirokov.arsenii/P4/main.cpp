@@ -1,10 +1,8 @@
-#include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <ios>
 #include <iostream>
 #include <cstddef>
-#include <istream>
+#include "getline.hpp"
 
 namespace shirokov
 {
@@ -12,12 +10,8 @@ namespace shirokov
   constexpr int CASE_DELTA = 32;
   constexpr char LITERAL[] = "def ";
   char *uniq(char *res, const char *str, size_t &rsize);
-  void expand(char **str, size_t size, size_t &capacity);
-  void expand(char ***str, size_t size, size_t &capacity);
-  char **getline(std::istream &in, size_t &size, bool (*isDelimiter)(char symbol));
   char *otherLatinLetters(const char *str, char *res, char *buffer);
   char *combineLines(const char *str1, size_t s1, const char *str2, size_t s2, char *res);
-  double getCoefficient(size_t capacity);
   bool isSpace(char symbol);
 }
 
@@ -86,98 +80,6 @@ int main()
   free(massive);
 }
 
-char **shirokov::getline(std::istream &in, size_t &size, bool (*isDelimiter)(char symbol))
-{
-  bool is_skipws = in.flags() & std::ios_base::skipws;
-  if (is_skipws)
-  {
-    in >> std::noskipws;
-  }
-  char **massive = reinterpret_cast< char ** >(malloc(sizeof(char *)));
-  size_t capacity = 1;
-  size = 0;
-  char *str = reinterpret_cast< char * >(malloc(sizeof(char)));
-  size_t cap = 1;
-  size_t s = 0;
-  if (massive == nullptr || str == nullptr)
-  {
-    for (size_t i = 0; i < size; ++i)
-    {
-      free(massive[i]);
-    }
-    free(massive);
-    free(str);
-    if (is_skipws)
-    {
-      in >> std::skipws;
-    }
-    return nullptr;
-  }
-  while (in)
-  {
-    if (size == capacity)
-    {
-      expand(&massive, size, capacity);
-    }
-    if (s == cap)
-    {
-      expand(&str, s, cap);
-    }
-    if (massive == nullptr || str == nullptr)
-    {
-      for (size_t i = 0; i < size; ++i)
-      {
-        free(massive[i]);
-      }
-      free(massive);
-      free(str);
-      if (is_skipws)
-      {
-        in >> std::skipws;
-      }
-      return nullptr;
-    }
-    in >> str[s];
-    if (!in || str[s] == '\0')
-    {
-      if (s > 0)
-      {
-        massive[size++] = str;
-      }
-      else
-      {
-        free(str);
-      }
-      break;
-    }
-    bool flag = isDelimiter(str[s]);
-    if (flag)
-    {
-      if (s > 0)
-      {
-        str[s] = '\0';
-        massive[size++] = str;
-      }
-      else
-      {
-        free(str);
-      }
-      str = reinterpret_cast< char * >(malloc(sizeof(char)));
-      cap = 1;
-      s = 0;
-    }
-    if (!flag)
-    {
-      s++;
-    }
-  }
-  if (is_skipws)
-  {
-    in >> std::skipws;
-  }
-  return massive;
-}
-
 char *shirokov::otherLatinLetters(const char *str, char *res, char *buffer)
 {
   size_t rsize = 0;
@@ -243,71 +145,6 @@ char *shirokov::uniq(char *res, const char *str, size_t &rsize)
     }
   }
   return res;
-}
-
-void shirokov::expand(char **str, size_t size, size_t &capacity)
-{
-  double coefficient = getCoefficient(capacity);
-  size_t newCapacity = static_cast< size_t >(capacity * coefficient);
-  char *tempString = reinterpret_cast< char * >(malloc(newCapacity * sizeof(char)));
-  if (tempString == nullptr)
-  {
-    free(*str);
-    *str = nullptr;
-    return;
-  }
-  for (size_t i = 0; i < size; ++i)
-  {
-    tempString[i] = (*str)[i];
-  }
-  free(*str);
-  *str = tempString;
-  capacity = newCapacity;
-}
-
-double shirokov::getCoefficient(size_t capacity)
-{
-  if (capacity < 10)
-  {
-    return 2;
-  }
-  if (capacity < 100)
-  {
-    return 1.5;
-  }
-  return 1.1 + 1 / std::pow(capacity + 1, 0.2);
-}
-
-void shirokov::expand(char ***str, size_t size, size_t &capacity)
-{
-  double coefficient = getCoefficient(capacity);
-  size_t newCapacity = static_cast< size_t >(capacity * coefficient);
-  char **tempMassive = reinterpret_cast< char ** >(malloc(newCapacity * sizeof(char *)));
-  if (tempMassive == nullptr)
-  {
-    for (size_t i = 0; i < size; ++i)
-    {
-      free((*str)[i]);
-    }
-    free(*str);
-    *str = nullptr;
-    return;
-  }
-  for (size_t i = 0; i < size; ++i)
-  {
-    size_t len = std::strlen((*str)[i]);
-    char *tempString = static_cast< char * >(malloc(len + 1));
-    for (size_t j = 0; j < len; ++j)
-    {
-      tempString[j] = (*str)[i][j];
-    }
-    tempString[len] = '\0';
-    free((*str)[i]);
-    tempMassive[i] = tempString;
-  }
-  free(*str);
-  *str = tempMassive;
-  capacity = newCapacity;
 }
 
 bool shirokov::isSpace(char symbol)
