@@ -8,7 +8,7 @@ namespace bukreev
 
   char* inputString(std::istream& in, size_t& len);
 
-  char* growString(char* oldStr, size_t& capacity);
+  char* growString(const char* oldStr, size_t& capacity);
 
   char* excsnd(const char* first, const char* second, char* resStr);
   char* latrmv(const char* str, char* resStr);
@@ -120,7 +120,7 @@ char* bukreev::inputString(std::istream& in, size_t& len)
   return buffer;
 }
 
-char* bukreev::growString(char* oldStr, size_t& capacity)
+char* bukreev::growString(const char* oldStr, size_t& capacity)
 {
   constexpr double growRatio = 1.5;
   size_t newCapacity = capacity * growRatio;
