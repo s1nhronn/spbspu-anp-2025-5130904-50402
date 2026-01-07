@@ -30,7 +30,7 @@ namespace muhamadiarov
     {
       in >> std::noskipws;
     }
-    const size_t beginSize = 20; 
+    const size_t beginSize = 20;
     char *str = new char[beginSize];
     size_t comp = beginSize;
     char ch = ' ';
@@ -118,7 +118,7 @@ namespace muhamadiarov
     return res;
   }
   char *toAssociatStrings(const char *str1, char *res, size_t &size)
-  {   
+  {
     size_t i = 0;
     while (str1[i] != '\0')
     {
@@ -134,7 +134,7 @@ namespace muhamadiarov
   char *latTwo(const char *line1, const char *line2, char *res2, size_t& size)
   {
     res2 = toAssociatStrings(line1, res2, size);
-    res2 = toAssociatStrings(line2, res2, size); 
+    res2 = toAssociatStrings(line2, res2, size);
     char tch = ' ';
     for (size_t i = 0; i < size; ++i)
     {
