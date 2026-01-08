@@ -57,24 +57,6 @@ namespace strelnikov {
     return res;
   }
 
-  char* getStringForDgtSnd(const char* str, size_t& mod)
-  {
-    size_t size = 0;
-    char* res = nullptr;
-    for (size_t i = 0; str[i] != '\0'; ++i) {
-      if (std::isdigit(static_cast< unsigned char >(str[i]))) {
-        char* tmp = addSymb(res, size, str[i]);
-        free(res);
-        if (tmp == nullptr) {
-          return nullptr;
-        }
-        res = tmp;
-      }
-    }
-    mod = size;
-    return res;
-  }
-
   int doHasSam(char* str1, char* str2)
   {
     for (size_t i = 0; str1[i] != '\0'; ++i) {
@@ -89,18 +71,20 @@ namespace strelnikov {
 
   void doDgtSnd(char* resultBuffer, const char* str1, const char* digits)
   {
+
     size_t i = 0;
     while (str1[i] != '\0') {
       resultBuffer[i] = str1[i];
       ++i;
     }
-
-    size_t j = 0;
-    while (digits[j] != '\0') {
-      resultBuffer[i + j] = digits[j];
-      ++j;
+    for(size_t k = 0; digits[k] != '\0'; ++k){
+      if(std::isdigit(static_cast< unsigned char >(digits[k]))){
+        resultBuffer[i] = digits[k];
+        ++i;
+      }
     }
-    resultBuffer[i + j] = '\0';
+
+    resultBuffer[i] = '\0';
   }
 }
 
@@ -114,20 +98,17 @@ int main()
   char strHas[] = "abc";
   int hasCommon = strelnikov::doHasSam(str1, strHas);
 
-  char strDgt[] = "g1h2k";
-  size_t dgt_size = 0;
-  char* dgt = strelnikov::getStringForDgtSnd(strDgt, dgt_size);
-  if (!dgt) {
+  const size_t dgt_size = 5;
+  char strDgt[dgt_size + 1] = "g1h2k";
+
+  char* resultBuffer = reinterpret_cast< char* >(std::malloc(s1 + dgt_size + 1));
+  if(!resultBuffer){
     std::free(str1);
-    std::free(dgt);
     return 1;
   }
-  char* resultBuffer = reinterpret_cast< char* >(std::malloc(s1 + dgt_size + 1));
-  resultBuffer[s1+dgt_size] = '\0';
-  strelnikov::doDgtSnd(resultBuffer, str1, dgt);
+  strelnikov::doDgtSnd(resultBuffer, str1, strDgt);
   std::cout << hasCommon << '\n' << resultBuffer << '\n';
   std::free(str1);
-  std::free(dgt);
   std::free(resultBuffer);
   return 0;
 }
