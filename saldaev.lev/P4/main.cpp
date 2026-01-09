@@ -74,7 +74,7 @@ namespace saldaev
     return new_arr;
   }
 
-  char *latRmv(char *data, char *new_arr)
+  char *latRmv(const char *data, char *new_arr)
   {
     if (new_arr == nullptr) {
       return nullptr;
