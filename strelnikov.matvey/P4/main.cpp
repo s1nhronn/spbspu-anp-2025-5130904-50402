@@ -7,7 +7,7 @@ namespace strelnikov {
   char* addSymb(const char* str, size_t& s, char ch)
   {
     char* tmp = reinterpret_cast< char* >(malloc(s + 2));
-    if (tmp == nullptr) {
+    if (!tmp) {
       return nullptr;
     }
 
@@ -35,7 +35,7 @@ namespace strelnikov {
     while (in >> ch && ch != '\n') {
       char* tmp = addSymb(res, s, ch);
       free(res);
-      if (tmp == nullptr) {
+      if (!tmp) {
         if (isSkipWp) {
           in >> std::skipws;
         }
@@ -78,7 +78,7 @@ namespace strelnikov {
       ++i;
     }
     for(size_t k = 0; digits[k] != '\0'; ++k){
-      if(std::isdigit(static_cast< unsigned char >(digits[k]))){
+      if(std::isdigit(static_cast< unsigned char >(digits[k]))) {
         resultBuffer[i] = digits[k];
         ++i;
       }
@@ -92,7 +92,7 @@ int main()
 {
   size_t s1 = 0;
   char* str1 = strelnikov::getString(std::cin, s1);
-  if (str1 == nullptr || s1 == 0) {
+  if (!str1 || s1 == 0) {
     return 1;
   }
   char strHas[] = "abc";
@@ -106,6 +106,7 @@ int main()
     std::free(str1);
     return 1;
   }
+  resultBuffer[s1 + dgt_size] = '\0';
   strelnikov::doDgtSnd(resultBuffer, str1, strDgt);
   std::cout << hasCommon << '\n' << resultBuffer << '\n';
   std::free(str1);
