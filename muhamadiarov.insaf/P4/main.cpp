@@ -4,14 +4,6 @@
 
 namespace muhamadiarov
 {
-  bool isNotLetter(char ch)
-  {
-    if (!std::isalpha(ch))
-    {
-      return true;
-    }
-    return false;
-  }
   bool checkOnRepeat(const char *line, char symbol, size_t size)
   {
     for (size_t i = 0; i < size; ++i)
@@ -23,7 +15,7 @@ namespace muhamadiarov
     }
     return false;
   }
-  char *getline(std::istream &in, size_t &size, size_t &countNotLetters)
+  char *getline(std::istream &in, size_t &size)
   {
     bool is_skipws = in.flags() & std::ios_base::skipws;
     if (is_skipws)
@@ -57,10 +49,9 @@ namespace muhamadiarov
           in >> std::skipws;
         }
         delete[] str;
-        throw std::bad_alloc();
+        throw;
       }
       str[size] = ch;
-      countNotLetters += isNotLetter(str[size]);
       ++size;
     }
     if (in.fail())
@@ -70,36 +61,13 @@ namespace muhamadiarov
         in >> std::skipws;
       }
       delete[] str;
-      throw std::logic_error("Error input\n");
+      throw std::logic_error("Error input");
     }
     str[size] = '\0';
-    try
-    {
-      if (size + 1 < comp)
-      {
-        char *tmp = new char[size + 1];
-        for (size_t i = 0; i < size + 1; ++i)
-        {
-          tmp[i] = str[i];
-        }
-        delete[] str;
-        str = tmp;
-      }
-    }
-    catch (const std::bad_alloc&)
-    {
-      if (is_skipws)
-      {
-        in >> std::skipws;
-      }
-      delete[] str;
-      throw std::bad_alloc();
-    }
     if (is_skipws)
     {
       in >> std::skipws;
     }
-
     return str;
   }
   char *latRmv(char *res, const char *str)
@@ -131,8 +99,9 @@ namespace muhamadiarov
     }
     return res;
   }
-  char *latTwo(const char *line1, const char *line2, char *res2, size_t& size)
+  char *latTwo(const char *line1, const char *line2, char *res2)
   {
+    size_t size = 0;
     res2 = toAssociatStrings(line1, res2, size);
     res2 = toAssociatStrings(line2, res2, size);
     char tch = ' ';
@@ -157,11 +126,10 @@ int main()
 {
   namespace muh = muhamadiarov;
   char *str = nullptr;
-  size_t countNotLetters = 0;
   size_t size = 0;
   try
   {
-    str = muh::getline(std::cin, size, countNotLetters);
+    str = muh::getline(std::cin, size);
   }
   catch (std::bad_alloc&)
   {
@@ -176,8 +144,8 @@ int main()
   char *res1 = nullptr;
   try
   {
-    char *tmp = new char[countNotLetters + 1];
-    tmp[countNotLetters] = '\0';
+    char *tmp = new char[size + 1];
+    tmp[size] = '\0';
     res1 = muh::latRmv(tmp, str);
   }
   catch (const std::bad_alloc&)
@@ -189,38 +157,18 @@ int main()
   const char *line2 = "def ghk";
   const size_t countLetters2 = 6;
   char *res2 = nullptr;
-  const size_t countLettersOnRes2 = countLetters2 + size - countNotLetters + 1;
-  size_t countElementsRes2 = 0;
+  const size_t countLettersOnRes2 = countLetters2 + size;
   try
   {
-    char *tmp = new char[countLettersOnRes2];
-    res2 = muh::latTwo(str, line2, tmp, countElementsRes2);
+    char *tmp = new char[countLettersOnRes2 + 1];
+    tmp[countLettersOnRes2] = '\0';
+    res2 = muh::latTwo(str, line2, tmp);
   }
   catch (const std::bad_alloc&)
   {
     std::cerr << "Error creating dinamic memmory\n";
     delete[] res1;
     delete[] str;
-    return 1;
-  }
-  try
-  {
-    char *tmp = new char[countElementsRes2 + 1];
-    size_t i = 0;
-    while (res2[i] != '\0')
-    {
-      tmp[i] = res2[i];
-      ++i;
-    }
-    tmp[i] = '\0';
-    delete [] res2;
-    res2 = tmp;
-  }
-  catch (const std::bad_alloc&)
-  {
-    delete [] str;
-    delete [] res1;
-    delete [] res2;
     return 1;
   }
   std::cout << res1;
