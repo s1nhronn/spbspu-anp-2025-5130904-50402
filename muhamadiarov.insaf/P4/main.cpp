@@ -131,12 +131,12 @@ int main()
   {
     str = muh::getline(std::cin, size);
   }
-  catch (std::bad_alloc&)
+  catch (const std::bad_alloc&)
   {
     std::cerr << "Error creating dinamic memmory\n";
     return 1;
   }
-  catch (std::logic_error &e)
+  catch (const std::logic_error &e)
   {
     std::cerr << e.what() << '\n';
     return 1;
