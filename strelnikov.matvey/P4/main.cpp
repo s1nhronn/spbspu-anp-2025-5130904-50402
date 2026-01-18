@@ -71,19 +71,17 @@ namespace strelnikov {
 
   void doDgtSnd(char* resultBuffer, const char* str1, const char* digits)
   {
-
     size_t i = 0;
     while (str1[i] != '\0') {
       resultBuffer[i] = str1[i];
       ++i;
     }
-    for(size_t k = 0; digits[k] != '\0'; ++k){
+    for(size_t k = 0; digits[k] != '\0'; ++k) {
       if(std::isdigit(static_cast< unsigned char >(digits[k]))) {
         resultBuffer[i] = digits[k];
         ++i;
       }
     }
-
     resultBuffer[i] = '\0';
   }
 }
