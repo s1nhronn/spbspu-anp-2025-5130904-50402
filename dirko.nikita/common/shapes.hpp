@@ -32,8 +32,8 @@ namespace dirko
     void move(point_t point) noexcept override;
 
   private:
-    size_t size_;
     point_t *pts_;
+    size_t size_;
     point_t mid_;
     void scale_(double coef) noexcept override;
   };
