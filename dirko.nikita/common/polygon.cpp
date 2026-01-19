@@ -44,7 +44,7 @@ dirko::Polygon::~Polygon() noexcept
   delete[] pts_;
 }
 dirko::Polygon::Polygon(const Polygon &other):
-  pts_(pts_ = new point_t[other.size_]),
+  pts_(other.size_ == 0 ? nullptr : new point_t[other.size_]),
   size_(other.size_),
   mid_(other.mid_)
 {
