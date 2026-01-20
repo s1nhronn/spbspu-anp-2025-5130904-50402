@@ -76,8 +76,8 @@ namespace strelnikov {
       resultBuffer[i] = str1[i];
       ++i;
     }
-    for(size_t k = 0; digits[k] != '\0'; ++k) {
-      if(std::isdigit(static_cast< unsigned char >(digits[k]))) {
+    for (size_t k = 0; digits[k] != '\0'; ++k) {
+      if (std::isdigit(static_cast< unsigned char >(digits[k]))) {
         resultBuffer[i] = digits[k];
         ++i;
       }
@@ -100,7 +100,7 @@ int main()
   char strDgt[dgt_size + 1] = "g1h2k";
 
   char* resultBuffer = reinterpret_cast< char* >(std::malloc(s1 + dgt_size + 1));
-  if(!resultBuffer){
+  if (!resultBuffer) {
     std::free(str1);
     return 1;
   }
